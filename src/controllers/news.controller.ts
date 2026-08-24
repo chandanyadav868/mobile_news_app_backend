@@ -48,14 +48,14 @@ export async function getFeed(req: Request, res: Response) {
     let recentArticles = await prisma.article.findMany({
       where: countryFilter,
       orderBy: { publishedAt: 'desc' },
-      take: 120,
+      take: 200,
     });
 
     // Fallback: if no country-specific articles yet, take latest articles globally
     if (recentArticles.length === 0) {
       recentArticles = await prisma.article.findMany({
         orderBy: { publishedAt: 'desc' },
-        take: 120,
+        take: 200,
       });
     }
 
@@ -76,14 +76,14 @@ export async function getFeed(req: Request, res: Response) {
 
     categoryEntries.sort((a, b) => b.newestTime - a.newestTime);
 
-    // Pick top 5 latest categories
-    const top5Categories = categoryEntries.slice(0, 5);
+    // Pick top 8 latest categories for a richer feed experience
+    const topCategories = categoryEntries.slice(0, 8);
 
-    const categoryClusters = top5Categories.map(({ cat, items }) => ({
+    const categoryClusters = topCategories.map(({ cat, items }) => ({
       id: `cluster-${cat}`,
       categoryTitle: cat,
       leadNews: items[0],
-      subNews: items.slice(1, 3),
+      subNews: items.slice(1, 4),
     }));
 
     // 4. Fetch 5 latest visual insights
@@ -189,28 +189,24 @@ export async function getCategoryNews(req: Request, res: Response) {
 
 /**
  * POST /api/v1/news/refresh
- * Admin manual trigger for immediate RSS ingestion & Mozilla Readability extraction
+ * Non-blocking manual trigger for immediate RSS ingestion & Mozilla Readability extraction
  */
 export async function triggerManualIngest(req: Request, res: Response) {
-  try {
-    console.log('🔄 [Manual Trigger] Starting on-demand RSS ingestion...');
-    const result = await ingestAllFeeds();
-    return res.json({
-      success: true,
-      message: 'Ingestion pipeline executed successfully',
-      stats: {
-        scanned: result.totalScanned,
-        inserted: result.newInserted,
-        durationMs: result.durationMs,
-      },
-    });
-  } catch (error: any) {
-    console.error('Error during manual ingestion:', error);
-    return res.status(500).json({
-      success: false,
-      error: error.message || 'Ingestion failed',
-    });
-  }
+  console.log('🔄 [Manual Trigger] Dispatched non-blocking background RSS ingestion...');
+  
+  // Instantly return 200 OK so client receives response in <50ms without waiting for 12s scraping
+  res.json({
+    success: true,
+    message: 'Ingestion pipeline dispatched successfully in background',
+    status: 'processing',
+    timestamp: new Date().toISOString(),
+  });
+
+  // Run the ingestion task in background
+  ingestAllFeeds().catch((err: any) => {
+    console.error('Background ingestion error:', err);
+    logStream.emitLog('error', `❌ Background ingestion failed: ${err.message}`);
+  });
 }
 
 /**
