@@ -16,7 +16,10 @@ const parser = new Parser({
   },
 });
 
-export interface ParsedArticle {
+export // Mutex lock to prevent duplicate overlapping scraping runs from maxing CPU
+let isIngesting = false;
+
+interface ParsedArticle {
   hash: string;
   title: string;
   summary: string;
@@ -28,6 +31,15 @@ export interface ParsedArticle {
   source: string;
   author: string | null;
   publishedAt: Date;
+}
+
+/**
+ * Fast-path check: if RSS item already contains rich summary and HD image, skip heavy JSDOM parsing
+ */
+function isRichRssItem(summary: string | null, imageUrl: string | null): boolean {
+  if (!summary || summary.length < 120) return false;
+  if (!imageUrl || imageUrl.includes('placeholder')) return false;
+  return true;
 }
 
 export function generateArticleHash(url: string): string {
@@ -212,147 +224,166 @@ export async function ingestAllFeeds(): Promise<{
   newInserted: number;
   durationMs: number;
 }> {
+  if (isIngesting) {
+    console.log('ℹ️ [Ingest Lock] Pipeline is currently executing. Skipping duplicate run.');
+    logStream.emitLog('info', 'ℹ️ Ingestion pipeline is currently active in background. Duplicate run skipped.');
+    return { totalScanned: 0, newInserted: 0, durationMs: 0 };
+  }
+
+  isIngesting = true;
   const startTime = Date.now();
-  logStream.emitLog('info', '🚀 Initializing live ingestion worker across all categories...');
-  const feedsRegistry = getVerifiedFeedsRegistry();
-  const allCandidateArticles: ParsedArticle[] = [];
 
-  // 1. Gather all feeds into a flat task list
-  const feedTasks: Array<{ url: string; category: string; country: string }> = [];
-  for (const [key, feedList] of Object.entries(feedsRegistry)) {
-    const category = key.startsWith('Top Stories:') ? 'Top Stories' : key;
-    feedList.forEach((f) => {
-      feedTasks.push({ url: f.url, category, country: f.country || 'GLOBAL' });
-    });
-  }
+  try {
+    logStream.emitLog('info', '🚀 Initializing live ingestion worker across all categories...');
+    const feedsRegistry = getVerifiedFeedsRegistry();
+    const allCandidateArticles: ParsedArticle[] = [];
 
-  logStream.emitLog(
-    'scan',
-    `📡 Loaded ${feedTasks.length} verified RSS endpoints across ${Object.keys(feedsRegistry).length} categories. Starting XML fetch...`
-  );
+    // 1. Gather all feeds into a flat task list
+    const feedTasks: Array<{ url: string; category: string; country: string }> = [];
+    for (const [key, feedList] of Object.entries(feedsRegistry)) {
+      const category = key.startsWith('Top Stories:') ? 'Top Stories' : key;
+      feedList.forEach((f) => {
+        feedTasks.push({ url: f.url, category, country: f.country || 'GLOBAL' });
+      });
+    }
 
-  // 2. Fetch RSS feeds in parallel batches of 6
-  const batchSize = 6;
-  for (let i = 0; i < feedTasks.length; i += batchSize) {
-    const batch = feedTasks.slice(i, i + batchSize);
-    const results = await Promise.allSettled(
-      batch.map((t) => fetchSingleFeed(t.url, t.category, t.country))
+    logStream.emitLog(
+      'scan',
+      `📡 Loaded ${feedTasks.length} verified RSS endpoints across ${Object.keys(feedsRegistry).length} categories. Starting XML fetch...`
     );
 
-    results.forEach((res) => {
-      if (res.status === 'fulfilled') {
-        allCandidateArticles.push(...res.value);
-      }
-    });
-  }
+    // 2. Fetch RSS feeds in batches of 4 (throttled for low VPS CPU)
+    const batchSize = 4;
+    for (let i = 0; i < feedTasks.length; i += batchSize) {
+      const batch = feedTasks.slice(i, i + batchSize);
+      const results = await Promise.allSettled(
+        batch.map((t) => fetchSingleFeed(t.url, t.category, t.country))
+      );
 
-  // Deduplicate candidate list in memory by hash
-  const uniqueMap = new Map<string, ParsedArticle>();
-  allCandidateArticles.forEach((art) => {
-    if (!uniqueMap.has(art.hash)) {
-      uniqueMap.set(art.hash, art);
+      results.forEach((res) => {
+        if (res.status === 'fulfilled') {
+          allCandidateArticles.push(...res.value);
+        }
+      });
+      // Small pause between XML batches
+      await new Promise((r) => setTimeout(r, 25));
     }
-  });
 
-  const uniqueArticles = Array.from(uniqueMap.values());
-  const candidateHashes = uniqueArticles.map((a) => a.hash);
-
-  // 3. Find which articles are ALREADY in the database
-  const existingArticles = await prisma.article.findMany({
-    where: { hash: { in: candidateHashes } },
-    select: { hash: true },
-  });
-
-  const existingHashSet = new Set(existingArticles.map((a) => a.hash));
-  const newArticles = uniqueArticles.filter((a) => !existingHashSet.has(a.hash));
-
-  const scanMsg = `🔍 Scanned ${uniqueArticles.length} candidate articles. Found ${newArticles.length} brand-new stories to enrich with Mozilla Readability.`;
-  console.log(`🔍 [Ingest Pipeline] ${scanMsg}`);
-  logStream.emitLog('scan', scanMsg, { totalScanned: uniqueArticles.length, newCount: newArticles.length });
-
-  // 4. Enrich brand-new articles with Mozilla Readability (Full Text & HD Images) and stream-save to PostgreSQL in batches of 20
-  const readabilityBatchSize = 10;
-  let insertedCount = 0;
-  let currentChunk: ParsedArticle[] = [];
-
-  for (let i = 0; i < newArticles.length; i += readabilityBatchSize) {
-    const batch = newArticles.slice(i, i + readabilityBatchSize);
-    const extractionResults = await Promise.allSettled(
-      batch.map(async (art) => {
-        const extracted = await extractArticleContent(
-          art.url,
-          art.title,
-          art.summary,
-          art.imageUrl
-        );
-
-        return {
-          ...art,
-          title: extracted.title || art.title,
-          summary: extracted.summary || art.summary,
-          rawContent: extracted.rawContent || art.rawContent,
-          imageUrl: extracted.imageUrl || art.imageUrl,
-          author: extracted.author || art.author,
-          publishedAt: extracted.publishedTime || art.publishedAt,
-        };
-      })
-    );
-
-    extractionResults.forEach((res) => {
-      if (res.status === 'fulfilled') {
-        currentChunk.push(res.value);
-        logStream.emitLog(
-          'enrich',
-          `📑 [Mozilla Readability] Extracted "${res.value.title.slice(0, 45)}..." (${res.value.category})`
-        );
+    // Deduplicate candidate list in memory by hash
+    const uniqueMap = new Map<string, ParsedArticle>();
+    allCandidateArticles.forEach((art) => {
+      if (!uniqueMap.has(art.hash)) {
+        uniqueMap.set(art.hash, art);
       }
     });
 
-    // Yield control to Node.js Event Loop so incoming HTTP API requests are never blocked
-    await new Promise((resolve) => setTimeout(resolve, 30));
+    const uniqueArticles = Array.from(uniqueMap.values());
+    const candidateHashes = uniqueArticles.map((a) => a.hash);
 
-    // Save incrementally to DB every 20 articles so users get fresh content immediately
-    if (currentChunk.length >= 20 || i + readabilityBatchSize >= newArticles.length) {
-      if (currentChunk.length > 0) {
-        const result = await prisma.article.createMany({
-          data: currentChunk.map((art) => ({
-            hash: art.hash,
-            title: art.title,
-            summary: art.summary,
-            rawContent: art.rawContent,
-            url: art.url,
-            imageUrl: art.imageUrl,
-            category: art.category,
-            country: art.country,
-            source: art.source,
-            author: art.author,
-            publishedAt: art.publishedAt,
-          })),
-          skipDuplicates: true,
-        });
-        insertedCount += result.count;
-        const saveMsg = `💾 [PostgreSQL Sync] Saved ${insertedCount}/${newArticles.length} enriched articles to database...`;
-        console.log(`📥 [Mozilla Parser ➔ DB Sync] ${saveMsg}`);
-        logStream.emitLog('save', saveMsg, { current: insertedCount, total: newArticles.length });
-        currentChunk = [];
+    // 3. Find which articles are ALREADY in the database
+    const existingArticles = await prisma.article.findMany({
+      where: { hash: { in: candidateHashes } },
+      select: { hash: true },
+    });
+
+    const existingHashSet = new Set(existingArticles.map((a) => a.hash));
+    const newArticles = uniqueArticles.filter((a) => !existingHashSet.has(a.hash));
+
+    const scanMsg = `🔍 Scanned ${uniqueArticles.length} candidate articles. Found ${newArticles.length} brand-new stories to enrich.`;
+    console.log(`🔍 [Ingest Pipeline] ${scanMsg}`);
+    logStream.emitLog('scan', scanMsg, { totalScanned: uniqueArticles.length, newCount: newArticles.length });
+
+    // 4. Enrich brand-new articles with Mozilla Readability (CPU-throttled to 3 concurrent items)
+    const readabilityBatchSize = 3;
+    let insertedCount = 0;
+    let currentChunk: ParsedArticle[] = [];
+
+    for (let i = 0; i < newArticles.length; i += readabilityBatchSize) {
+      const batch = newArticles.slice(i, i + readabilityBatchSize);
+      const extractionResults = await Promise.allSettled(
+        batch.map(async (art) => {
+          // Fast-path: if article already has rich text & image from RSS, skip heavy JSDOM parsing
+          if (isRichRssItem(art.summary, art.imageUrl)) {
+            return art;
+          }
+
+          const extracted = await extractArticleContent(
+            art.url,
+            art.title,
+            art.summary,
+            art.imageUrl
+          );
+
+          return {
+            ...art,
+            title: extracted.title || art.title,
+            summary: extracted.summary || art.summary,
+            rawContent: extracted.rawContent || art.rawContent,
+            imageUrl: extracted.imageUrl || art.imageUrl,
+            author: extracted.author || art.author,
+            publishedAt: extracted.publishedTime || art.publishedAt,
+          };
+        })
+      );
+
+      extractionResults.forEach((res) => {
+        if (res.status === 'fulfilled') {
+          currentChunk.push(res.value);
+          logStream.emitLog(
+            'enrich',
+            `📑 [Enriched] "${res.value.title.slice(0, 45)}..." (${res.value.category})`
+          );
+        }
+      });
+
+      // Yield CPU to Node.js Event Loop so API requests never suffer latency
+      await new Promise((resolve) => setTimeout(resolve, 40));
+
+      // Save incrementally to DB every 15 articles
+      if (currentChunk.length >= 15 || i + readabilityBatchSize >= newArticles.length) {
+        if (currentChunk.length > 0) {
+          const result = await prisma.article.createMany({
+            data: currentChunk.map((art) => ({
+              hash: art.hash,
+              title: art.title,
+              summary: art.summary,
+              rawContent: art.rawContent,
+              url: art.url,
+              imageUrl: art.imageUrl,
+              category: art.category,
+              country: art.country,
+              source: art.source,
+              author: art.author,
+              publishedAt: art.publishedAt,
+            })),
+            skipDuplicates: true,
+          });
+          insertedCount += result.count;
+          const saveMsg = `💾 [PostgreSQL Sync] Saved ${insertedCount}/${newArticles.length} articles to database...`;
+          console.log(`📥 [DB Sync] ${saveMsg}`);
+          logStream.emitLog('save', saveMsg, { current: insertedCount, total: newArticles.length });
+          currentChunk = [];
+        }
       }
     }
+
+    // 5. Invalidate Redis cache so frontend immediately gets freshest stories
+    if (insertedCount > 0) {
+      await invalidateFeedCache();
+      logStream.emitLog('info', '⚡ Redis cache invalidated with fresh headlines.');
+    }
+
+    const durationMs = Date.now() - startTime;
+    const completeMsg = `🎉 Ingestion Complete! ${insertedCount} new articles enriched & saved in ${(durationMs / 1000).toFixed(1)}s!`;
+    console.log(`🎉 [Ingestion Pipeline Complete] ${completeMsg}`);
+    logStream.emitLog('complete', completeMsg, { totalInserted: insertedCount, durationMs });
+
+    return {
+      totalScanned: uniqueArticles.length,
+      newInserted: insertedCount,
+      durationMs,
+    };
+  } finally {
+    isIngesting = false;
   }
-
-  // 5. Invalidate Redis cache so frontend immediately gets freshest stories
-  if (insertedCount > 0) {
-    await invalidateFeedCache();
-    logStream.emitLog('info', '⚡ Redis cache invalidated with fresh headlines.');
-  }
-
-  const durationMs = Date.now() - startTime;
-  const completeMsg = `🎉 Ingestion Complete! ${insertedCount} new articles enriched & saved in ${(durationMs / 1000).toFixed(1)}s!`;
-  console.log(`🎉 [Ingestion Pipeline Complete] ${completeMsg}`);
-  logStream.emitLog('complete', completeMsg, { totalInserted: insertedCount, durationMs });
-
-  return {
-    totalScanned: uniqueArticles.length,
-    newInserted: insertedCount,
-    durationMs,
-  };
 }
