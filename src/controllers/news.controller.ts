@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { prisma } from '../config/db.js';
 import { getCache, setCache } from '../services/cacheService.js';
 import { ingestAllFeeds } from '../services/rssFetcher.js';
+import { logStream } from '../services/logStreamService.js';
 
 /**
  * GET /api/v1/news/feed
@@ -250,11 +251,44 @@ export async function checkNewArticles(req: Request, res: Response) {
       checkedAt: new Date().toISOString(),
     });
   } catch (error: any) {
-    return res.json({
-      success: true,
+    console.error('Error in checkNewArticles:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to check new articles',
       hasNew: false,
       count: 0,
     });
   }
 }
 
+/**
+ * GET /api/v1/news/stream-logs
+ * Server-Sent Events (SSE) live streaming of backend background activities
+ */
+export async function streamIngestLogs(req: Request, res: Response) {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.flushHeaders?.();
+
+  logStream.addClient(res);
+
+  // If query parameter trigger=true is passed, run ingestion in background
+  if (req.query.trigger === 'true') {
+    ingestAllFeeds().catch((err) => {
+      logStream.emitLog('error', `❌ Ingestion error: ${err.message}`);
+    });
+  }
+}
+
+/**
+ * GET /api/v1/news/logs
+ * Returns recent logs buffer as standard JSON
+ */
+export async function getRecentLogs(_req: Request, res: Response) {
+  return res.json({
+    success: true,
+    logs: logStream.getRecentLogs(),
+  });
+}

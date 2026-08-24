@@ -6,6 +6,7 @@ import path from 'path';
 import { prisma } from '../config/db.js';
 import { invalidateFeedCache } from './cacheService.js';
 import { extractArticleContent } from './articleExtractor.js';
+import { logStream } from './logStreamService.js';
 
 const parser = new Parser({
   timeout: 8000,
@@ -212,6 +213,7 @@ export async function ingestAllFeeds(): Promise<{
   durationMs: number;
 }> {
   const startTime = Date.now();
+  logStream.emitLog('info', '🚀 Initializing live ingestion worker across all categories...');
   const feedsRegistry = getVerifiedFeedsRegistry();
   const allCandidateArticles: ParsedArticle[] = [];
 
@@ -223,6 +225,11 @@ export async function ingestAllFeeds(): Promise<{
       feedTasks.push({ url: f.url, category, country: f.country || 'GLOBAL' });
     });
   }
+
+  logStream.emitLog(
+    'scan',
+    `📡 Loaded ${feedTasks.length} verified RSS endpoints across ${Object.keys(feedsRegistry).length} categories. Starting XML fetch...`
+  );
 
   // 2. Fetch RSS feeds in parallel batches of 6
   const batchSize = 6;
@@ -259,9 +266,9 @@ export async function ingestAllFeeds(): Promise<{
   const existingHashSet = new Set(existingArticles.map((a) => a.hash));
   const newArticles = uniqueArticles.filter((a) => !existingHashSet.has(a.hash));
 
-  console.log(
-    `🔍 [Ingest Pipeline] Scanned ${uniqueArticles.length} articles across feeds. Identified ${newArticles.length} brand-new articles to enrich with Mozilla Readability.`
-  );
+  const scanMsg = `🔍 Scanned ${uniqueArticles.length} candidate articles. Found ${newArticles.length} brand-new stories to enrich with Mozilla Readability.`;
+  console.log(`🔍 [Ingest Pipeline] ${scanMsg}`);
+  logStream.emitLog('scan', scanMsg, { totalScanned: uniqueArticles.length, newCount: newArticles.length });
 
   // 4. Enrich brand-new articles with Mozilla Readability (Full Text & HD Images) and stream-save to PostgreSQL in batches of 20
   const readabilityBatchSize = 10;
@@ -294,6 +301,10 @@ export async function ingestAllFeeds(): Promise<{
     extractionResults.forEach((res) => {
       if (res.status === 'fulfilled') {
         currentChunk.push(res.value);
+        logStream.emitLog(
+          'enrich',
+          `📑 [Mozilla Readability] Extracted "${res.value.title.slice(0, 45)}..." (${res.value.category})`
+        );
       }
     });
 
@@ -317,9 +328,9 @@ export async function ingestAllFeeds(): Promise<{
           skipDuplicates: true,
         });
         insertedCount += result.count;
-        console.log(
-          `📥 [Mozilla Parser ➔ DB Sync] Parsed & Saved ${insertedCount}/${newArticles.length} articles to PostgreSQL...`
-        );
+        const saveMsg = `💾 [PostgreSQL Sync] Saved ${insertedCount}/${newArticles.length} enriched articles to database...`;
+        console.log(`📥 [Mozilla Parser ➔ DB Sync] ${saveMsg}`);
+        logStream.emitLog('save', saveMsg, { current: insertedCount, total: newArticles.length });
         currentChunk = [];
       }
     }
@@ -328,12 +339,13 @@ export async function ingestAllFeeds(): Promise<{
   // 5. Invalidate Redis cache so frontend immediately gets freshest stories
   if (insertedCount > 0) {
     await invalidateFeedCache();
+    logStream.emitLog('info', '⚡ Redis cache invalidated with fresh headlines.');
   }
 
   const durationMs = Date.now() - startTime;
-  console.log(
-    `🎉 [Ingestion Pipeline Complete] Total ${insertedCount} articles enriched with Mozilla Readability & saved to database in ${(durationMs / 1000).toFixed(1)}s!`
-  );
+  const completeMsg = `🎉 Ingestion Complete! ${insertedCount} new articles enriched & saved in ${(durationMs / 1000).toFixed(1)}s!`;
+  console.log(`🎉 [Ingestion Pipeline Complete] ${completeMsg}`);
+  logStream.emitLog('complete', completeMsg, { totalInserted: insertedCount, durationMs });
 
   return {
     totalScanned: uniqueArticles.length,
