@@ -26,7 +26,7 @@ export async function getFeed(req: Request, res: Response) {
     };
 
     // 2. Fetch hero articles (5 latest with real photos)
-    const heroArticles = await prisma.article.findMany({
+    let heroArticles = await prisma.article.findMany({
       where: {
         imageUrl: { not: null },
         ...countryFilter,
@@ -35,12 +35,28 @@ export async function getFeed(req: Request, res: Response) {
       take: 5,
     });
 
+    if (heroArticles.length < 5) {
+      heroArticles = await prisma.article.findMany({
+        where: { imageUrl: { not: null } },
+        orderBy: { publishedAt: 'desc' },
+        take: 5,
+      });
+    }
+
     // 3. Fetch latest articles across categories matching country or global
-    const recentArticles = await prisma.article.findMany({
+    let recentArticles = await prisma.article.findMany({
       where: countryFilter,
       orderBy: { publishedAt: 'desc' },
       take: 120,
     });
+
+    // Fallback: if no country-specific articles yet, take latest articles globally
+    if (recentArticles.length === 0) {
+      recentArticles = await prisma.article.findMany({
+        orderBy: { publishedAt: 'desc' },
+        take: 120,
+      });
+    }
 
     // Group by category
     const categoryMap = new Map<string, Array<(typeof recentArticles)[0]>>();
