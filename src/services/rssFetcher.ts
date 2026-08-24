@@ -263,9 +263,10 @@ export async function ingestAllFeeds(): Promise<{
     `🔍 [Ingest Pipeline] Scanned ${uniqueArticles.length} articles across feeds. Identified ${newArticles.length} brand-new articles to enrich with Mozilla Readability.`
   );
 
-  // 4. Enrich brand-new articles with Mozilla Readability (Full Text & HD Images) in batches of 5
-  const enrichedArticles: ParsedArticle[] = [];
-  const readabilityBatchSize = 5;
+  // 4. Enrich brand-new articles with Mozilla Readability (Full Text & HD Images) and stream-save to PostgreSQL in batches of 20
+  const readabilityBatchSize = 10;
+  let insertedCount = 0;
+  let currentChunk: ParsedArticle[] = [];
 
   for (let i = 0; i < newArticles.length; i += readabilityBatchSize) {
     const batch = newArticles.slice(i, i + readabilityBatchSize);
@@ -292,41 +293,46 @@ export async function ingestAllFeeds(): Promise<{
 
     extractionResults.forEach((res) => {
       if (res.status === 'fulfilled') {
-        enrichedArticles.push(res.value);
+        currentChunk.push(res.value);
       }
     });
+
+    // Save incrementally to DB every 20 articles so users get fresh content immediately
+    if (currentChunk.length >= 20 || i + readabilityBatchSize >= newArticles.length) {
+      if (currentChunk.length > 0) {
+        const result = await prisma.article.createMany({
+          data: currentChunk.map((art) => ({
+            hash: art.hash,
+            title: art.title,
+            summary: art.summary,
+            rawContent: art.rawContent,
+            url: art.url,
+            imageUrl: art.imageUrl,
+            category: art.category,
+            country: art.country,
+            source: art.source,
+            author: art.author,
+            publishedAt: art.publishedAt,
+          })),
+          skipDuplicates: true,
+        });
+        insertedCount += result.count;
+        console.log(
+          `📥 [Mozilla Parser ➔ DB Sync] Parsed & Saved ${insertedCount}/${newArticles.length} articles to PostgreSQL...`
+        );
+        currentChunk = [];
+      }
+    }
   }
 
-  // 5. Batch insert enriched articles into PostgreSQL
-  let insertedCount = 0;
-  if (enrichedArticles.length > 0) {
-    const result = await prisma.article.createMany({
-      data: enrichedArticles.map((art) => ({
-        hash: art.hash,
-        title: art.title,
-        summary: art.summary,
-        rawContent: art.rawContent,
-        url: art.url,
-        imageUrl: art.imageUrl,
-        category: art.category,
-        country: art.country,
-        source: art.source,
-        author: art.author,
-        publishedAt: art.publishedAt,
-      })),
-      skipDuplicates: true,
-    });
-    insertedCount = result.count;
-  }
-
-  // 6. Invalidate Redis cache if new articles were inserted
+  // 5. Invalidate Redis cache so frontend immediately gets freshest stories
   if (insertedCount > 0) {
     await invalidateFeedCache();
   }
 
   const durationMs = Date.now() - startTime;
   console.log(
-    `✅ [Ingestion Pipeline Finished] ${insertedCount} new articles enriched & inserted in ${durationMs}ms.`
+    `🎉 [Ingestion Pipeline Complete] Total ${insertedCount} articles enriched with Mozilla Readability & saved to database in ${(durationMs / 1000).toFixed(1)}s!`
   );
 
   return {
