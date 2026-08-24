@@ -8,7 +8,10 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Install build tools if needed
+# Force development mode during build stage so devDependencies (typescript, tsc) are installed
+ENV NODE_ENV=development
+
+# Install build tools
 RUN apk add --no-cache openssl libc6-compat
 
 # Copy package descriptors
@@ -16,8 +19,8 @@ COPY package*.json ./
 COPY tsconfig.json ./
 COPY prisma ./prisma/
 
-# Install all dependencies (including devDependencies for TypeScript compilation)
-RUN npm ci
+# Install all dependencies (force include devDependencies even if build-arg passed NODE_ENV=production)
+RUN npm ci --include=dev
 
 # Generate Prisma Client
 RUN npx prisma generate
