@@ -92,21 +92,38 @@ function decodeEntities(text: string): string {
 }
 
 /**
- * Load verified feeds registry
+ * Load verified feeds registry with multi-path resolution (supports TS source, compiled dist, and Docker runtime)
  */
 export function getVerifiedFeedsRegistry(): Record<
   string,
   Array<{ title: string; url: string; country: string; category: string }>
 > {
-  const verifiedFeedsPath = path.resolve(process.cwd(), 'src/constants/verifiedFeeds.json');
-  if (fs.existsSync(verifiedFeedsPath)) {
-    try {
-      const data = fs.readFileSync(verifiedFeedsPath, 'utf-8');
-      return JSON.parse(data);
-    } catch (e) {
-      console.warn('Could not parse verifiedFeeds.json:', e);
+  const baseDir = typeof __dirname !== 'undefined' ? __dirname : process.cwd();
+
+  const candidatePaths = [
+    path.resolve(baseDir, '../constants/verifiedFeeds.json'),
+    path.resolve(baseDir, '../../src/constants/verifiedFeeds.json'),
+    path.resolve(baseDir, '../../dist/constants/verifiedFeeds.json'),
+    path.resolve(process.cwd(), 'dist/constants/verifiedFeeds.json'),
+    path.resolve(process.cwd(), 'src/constants/verifiedFeeds.json'),
+    path.resolve(process.cwd(), 'constants/verifiedFeeds.json'),
+  ];
+
+  for (const p of candidatePaths) {
+    if (fs.existsSync(p)) {
+      try {
+        const data = fs.readFileSync(p, 'utf-8');
+        const parsed = JSON.parse(data);
+        if (parsed && Object.keys(parsed).length > 0) {
+          return parsed;
+        }
+      } catch (e) {
+        console.warn(`⚠️ Could not parse verifiedFeeds.json from ${p}:`, e);
+      }
     }
   }
+
+  console.warn('⚠️ [RSS Registry Warning] verifiedFeeds.json not found in any candidate path!');
   return {};
 }
 

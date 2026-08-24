@@ -32,6 +32,9 @@ COPY rss-catalog ./rss-catalog/
 # Build TypeScript to dist/
 RUN npm run build
 
+# Copy constants JSON to dist/constants/ in builder stage
+RUN mkdir -p /app/dist/constants && cp -r /app/src/constants/* /app/dist/constants/ || true
+
 # ─── Stage 2: Production Runner ────────────────────────────────────────────────
 FROM node:20-alpine AS runner
 
@@ -53,8 +56,10 @@ RUN npm ci --omit=dev && npm cache clean --force
 # Generate Prisma Client for runner environment
 RUN npx prisma generate
 
-# Copy built code and assets from builder stage
+# Copy built code, verified feeds constants, and assets from builder stage
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src/constants ./src/constants
+COPY --from=builder /app/src/constants ./dist/constants
 COPY --from=builder /app/rss-catalog ./rss-catalog
 
 # Copy entrypoint script

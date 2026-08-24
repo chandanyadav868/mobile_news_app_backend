@@ -61,6 +61,24 @@ services:
     networks:
       - newsflow-network
 
+  # ─── Prisma Studio Web GUI ───────────────────────────────────────────────────
+  studio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: newsflow-studio
+    restart: always
+    command: ["npx", "prisma", "studio", "--port", "5555", "--browser", "none"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-newsflow_user}:${POSTGRES_PASSWORD:-newsflow_secret_password}@postgres:5432/${POSTGRES_DB:-newsflow_db}?schema=public
+    ports:
+      - "5555:5555"
+    networks:
+      - newsflow-network
+
 volumes:
   postgres_data:
     driver: local
