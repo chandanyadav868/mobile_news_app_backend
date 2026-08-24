@@ -308,6 +308,9 @@ export async function ingestAllFeeds(): Promise<{
       }
     });
 
+    // Yield control to Node.js Event Loop so incoming HTTP API requests are never blocked
+    await new Promise((resolve) => setTimeout(resolve, 30));
+
     // Save incrementally to DB every 20 articles so users get fresh content immediately
     if (currentChunk.length >= 20 || i + readabilityBatchSize >= newArticles.length) {
       if (currentChunk.length > 0) {
