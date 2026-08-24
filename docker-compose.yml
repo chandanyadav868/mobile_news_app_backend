@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # ─── PostgreSQL 16 Database ──────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: newsflow-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-newsflow_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-newsflow_secret_password}
+      POSTGRES_DB: ${POSTGRES_DB:-newsflow_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-newsflow_user} -d ${POSTGRES_DB:-newsflow_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - newsflow-network
+
+  # ─── Redis 7 High-Speed In-Memory Cache ─────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: newsflow-redis
+    restart: always
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - newsflow-network
+
+  # ─── NewsFlow Production Backend Server ──────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: newsflow-api
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-newsflow_user}:${POSTGRES_PASSWORD:-newsflow_secret_password}@postgres:5432/${POSTGRES_DB:-newsflow_db}?schema=public
+      REDIS_URL: redis://redis:6379
+      CORS_ORIGIN: "*"
+      RSS_INGEST_INTERVAL_MINUTES: 5
+      READABILITY_MAX_CONCURRENCY: 3
+    ports:
+      - "${PORT:-4000}:4000"
+    networks:
+      - newsflow-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  newsflow-network:
+    driver: bridge

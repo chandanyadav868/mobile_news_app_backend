@@ -1,0 +1,82 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Article {
+  id          String   @id @default(uuid())
+  hash        String   @unique // MD5(url) for O(1) deduplication
+  title       String
+  summary     String   @db.Text
+  rawContent  String?  @db.Text
+  url         String   @db.Text
+  imageUrl    String?  @db.Text
+  category    String
+  country     String   @default("GLOBAL") // "IN", "US", "GB", "GLOBAL"
+  source      String
+  author      String?
+  publishedAt DateTime @default(now())
+  viewCount   Int      @default(0)
+  shareCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category, publishedAt(sort: Desc)])
+  @@index([country, category, publishedAt(sort: Desc)])
+  @@index([publishedAt(sort: Desc)])
+}
+
+model InsightStory {
+  id         String   @id @default(uuid())
+  title      String
+  subtitle   String?
+  coverImage String
+  slides     Json     // Array of slides: [{ title, content, image, bgGradient }]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([createdAt(sort: Desc)])
+}
+
+model TimelineTopic {
+  id          String          @id @default(uuid())
+  title       String
+  category    String
+  description String?
+  events      TimelineEvent[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([createdAt(sort: Desc)])
+}
+
+model TimelineEvent {
+  id        String        @id @default(uuid())
+  topicId   String
+  topic     TimelineTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  title     String
+  date      String
+  snippet   String
+  source    String
+  sourceUrl String
+  order     Int           @default(0)
+  createdAt DateTime      @default(now())
+
+  @@index([topicId, order])
+}
+
+model DeviceSubscription {
+  id             String    @id @default(uuid())
+  pushToken      String    @unique
+  categories     String[]  // Subscribed categories (minimum 5 enforced)
+  country        String    @default("IN")
+  lastNotifiedAt DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([country])
+}

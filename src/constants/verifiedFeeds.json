@@ -1,0 +1,318 @@
+{
+  "Top Stories:IN": [
+    {
+      "title": "The Hindu - National News",
+      "url": "https://www.thehindu.com/news/national/feeder/default.rss",
+      "country": "IN",
+      "category": "Top Stories"
+    },
+    {
+      "title": "The Indian Express - Front Page",
+      "url": "https://indianexpress.com/print/front-page/feed/",
+      "country": "IN",
+      "category": "Top Stories"
+    },
+    {
+      "title": "NDTV News - Top Stories",
+      "url": "https://feeds.feedburner.com/ndtvnews-top-stories",
+      "country": "IN",
+      "category": "Top Stories"
+    },
+    {
+      "title": "India Today - Latest Stories",
+      "url": "https://www.indiatoday.in/rss/home",
+      "country": "IN",
+      "category": "Top Stories"
+    },
+    {
+      "title": "Deccan Chronicle - Latest India News",
+      "url": "https://www.deccanchronicle.com/rss_feed/",
+      "country": "IN",
+      "category": "Top Stories"
+    }
+  ],
+  "Top Stories:US": [
+    {
+      "title": "The Wall Street Journal - World News",
+      "url": "https://feeds.a.dj.com/rss/RSSWorldNews.xml",
+      "country": "US",
+      "category": "Top Stories"
+    },
+    {
+      "title": "Los Angeles Times - World & Nation",
+      "url": "https://www.latimes.com/world-nation/rss2.0.xml",
+      "country": "US",
+      "category": "Top Stories"
+    },
+    {
+      "title": "FOX News - Latest Headlines",
+      "url": "http://feeds.foxnews.com/foxnews/latest",
+      "country": "US",
+      "category": "Top Stories"
+    },
+    {
+      "title": "HuffPost - World News",
+      "url": "https://www.huffpost.com/section/world-news/feed",
+      "country": "US",
+      "category": "Top Stories"
+    }
+  ],
+  "Top Stories:GB": [
+    {
+      "title": "BBC News - UK News",
+      "url": "http://feeds.bbci.co.uk/news/uk/rss.xml",
+      "country": "GB",
+      "category": "Top Stories"
+    },
+    {
+      "title": "The Guardian - UK News",
+      "url": "https://www.theguardian.com/uk-news/rss",
+      "country": "GB",
+      "category": "Top Stories"
+    },
+    {
+      "title": "The Independent - UK News",
+      "url": "https://www.independent.co.uk/news/uk/rss",
+      "country": "GB",
+      "category": "Top Stories"
+    }
+  ],
+  "Top Stories:GLOBAL": [
+    {
+      "title": "BBC News - World",
+      "url": "http://feeds.bbci.co.uk/news/world/rss.xml",
+      "country": "GLOBAL",
+      "category": "Top Stories"
+    },
+    {
+      "title": "The Guardian - International News",
+      "url": "https://www.theguardian.com/world/rss",
+      "country": "GLOBAL",
+      "category": "Top Stories"
+    },
+    {
+      "title": "France 24 - World News",
+      "url": "https://www.france24.com/en/rss",
+      "country": "GLOBAL",
+      "category": "Top Stories"
+    }
+  ],
+  "Technology": [
+    {
+      "title": "The Verge - Tech News",
+      "url": "https://www.theverge.com/rss/index.xml",
+      "country": "GLOBAL",
+      "category": "Technology"
+    },
+    {
+      "title": "Wired - Tech",
+      "url": "https://www.wired.com/feed/category/gear/latest/rss",
+      "country": "GLOBAL",
+      "category": "Technology"
+    },
+    {
+      "title": "TechCrunch - Technology & Startups",
+      "url": "https://techcrunch.com/feed/",
+      "country": "GLOBAL",
+      "category": "Technology"
+    },
+    {
+      "title": "Ars Technica - Technology News",
+      "url": "https://feeds.arstechnica.com/arstechnica/index",
+      "country": "GLOBAL",
+      "category": "Technology"
+    },
+    {
+      "title": "Hacker News Frontpage",
+      "url": "https://news.ycombinator.com/rss",
+      "country": "GLOBAL",
+      "category": "Technology"
+    }
+  ],
+  "Business": [
+    {
+      "title": "The Economic Times - Business News",
+      "url": "https://economictimes.indiatimes.com/rssfeedsdefault.cms",
+      "country": "IN",
+      "category": "Business"
+    },
+    {
+      "title": "Business Standard - Top Business Stories",
+      "url": "https://www.business-standard.com/rss/home_page_top_stories.rss",
+      "country": "IN",
+      "category": "Business"
+    },
+    {
+      "title": "Forbes - Business News",
+      "url": "https://www.forbes.com/business/feed/",
+      "country": "GLOBAL",
+      "category": "Business"
+    },
+    {
+      "title": "Moneycontrol - Financial Market News",
+      "url": "https://www.moneycontrol.com/rss/latestnews.xml",
+      "country": "IN",
+      "category": "Business"
+    }
+  ],
+  "Science": [
+    {
+      "title": "ScienceDaily - Top Science News",
+      "url": "https://www.sciencedaily.com/rss/top/science.xml",
+      "country": "GLOBAL",
+      "category": "Science"
+    },
+    {
+      "title": "ScienceDaily - Space & Time",
+      "url": "https://www.sciencedaily.com/rss/space_time.xml",
+      "country": "GLOBAL",
+      "category": "Science"
+    },
+    {
+      "title": "Phys.org - Science and Technology",
+      "url": "https://phys.org/rss-feed/",
+      "country": "GLOBAL",
+      "category": "Science"
+    },
+    {
+      "title": "Space.com - Space Exploration",
+      "url": "https://www.space.com/feeds/all",
+      "country": "GLOBAL",
+      "category": "Science"
+    }
+  ],
+  "Sports": [
+    {
+      "title": "ESPN Cricinfo - Cricket News",
+      "url": "http://www.espncricinfo.com/rss/content/story/feeds/0.xml",
+      "country": "GLOBAL",
+      "category": "Sports"
+    },
+    {
+      "title": "BBC Sport - Cricket Headlines",
+      "url": "http://feeds.bbci.co.uk/sport/cricket/rss.xml",
+      "country": "GLOBAL",
+      "category": "Sports"
+    },
+    {
+      "title": "The Indian Express - Sports Desk",
+      "url": "https://indianexpress.com/section/sports/feed/",
+      "country": "IN",
+      "category": "Sports"
+    },
+    {
+      "title": "Wisden - Cricket News & Features",
+      "url": "https://www.wisden.com/feed",
+      "country": "GLOBAL",
+      "category": "Sports"
+    }
+  ],
+  "Entertainment": [
+    {
+      "title": "News18 - Entertainment News",
+      "url": "https://www.news18.com/commonfeeds/v1/eng/rss/entertainment.xml",
+      "country": "IN",
+      "category": "Entertainment"
+    },
+    {
+      "title": "Variety - Film & TV News",
+      "url": "https://variety.com/feed/",
+      "country": "GLOBAL",
+      "category": "Entertainment"
+    },
+    {
+      "title": "Times of India - Entertainment",
+      "url": "https://timesofindia.indiatimes.com/rssfeeds/1081479906.cms",
+      "country": "IN",
+      "category": "Entertainment"
+    },
+    {
+      "title": "Deadline - Hollywood Breaking News",
+      "url": "https://deadline.com/feed/",
+      "country": "GLOBAL",
+      "category": "Entertainment"
+    }
+  ],
+  "Health": [
+    {
+      "title": "ScienceDaily - Health & Medicine",
+      "url": "https://www.sciencedaily.com/rss/health_medicine.xml",
+      "country": "GLOBAL",
+      "category": "Health"
+    },
+    {
+      "title": "The Guardian - Health and Wellbeing",
+      "url": "https://www.theguardian.com/lifeandstyle/health-and-wellbeing/rss",
+      "country": "GLOBAL",
+      "category": "Health"
+    },
+    {
+      "title": "NDTV - Health & Fitness",
+      "url": "https://feeds.feedburner.com/ndtvcooks-latest",
+      "country": "IN",
+      "category": "Health"
+    }
+  ],
+  "Food": [
+    {
+      "title": "The Hindu - Food & Dining",
+      "url": "https://www.thehindu.com/life-and-style/food/feeder/default.rss",
+      "country": "IN",
+      "category": "Food"
+    },
+    {
+      "title": "Eater - Food & Restaurant Culture",
+      "url": "https://www.eater.com/rss/index.xml",
+      "country": "GLOBAL",
+      "category": "Food"
+    }
+  ],
+  "Travel": [
+    {
+      "title": "The Hindu - Travel Stories",
+      "url": "https://www.thehindu.com/life-and-style/travel/feeder/default.rss",
+      "country": "IN",
+      "category": "Travel"
+    },
+    {
+      "title": "Times of India - Travel & Destinations",
+      "url": "https://timesofindia.indiatimes.com/rssfeeds/349479906.cms",
+      "country": "IN",
+      "category": "Travel"
+    }
+  ],
+  "Environment": [
+    {
+      "title": "The Hindu - Environment & Climate",
+      "url": "https://www.thehindu.com/sci-tech/energy-and-environment/feeder/default.rss",
+      "country": "IN",
+      "category": "Environment"
+    },
+    {
+      "title": "The Guardian - Environment News",
+      "url": "https://www.theguardian.com/environment/rss",
+      "country": "GLOBAL",
+      "category": "Environment"
+    }
+  ],
+  "Politics": [
+    {
+      "title": "The Indian Express - Politics Desk",
+      "url": "https://indianexpress.com/section/political-pulse/feed/",
+      "country": "IN",
+      "category": "Politics"
+    },
+    {
+      "title": "NDTV - Top Politics",
+      "url": "https://feeds.feedburner.com/ndtvnews-top-stories",
+      "country": "IN",
+      "category": "Politics"
+    },
+    {
+      "title": "The Hindu - National Politics",
+      "url": "https://www.thehindu.com/news/national/feeder/default.rss",
+      "country": "IN",
+      "category": "Politics"
+    }
+  ]
+}
