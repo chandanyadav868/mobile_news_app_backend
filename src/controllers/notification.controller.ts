@@ -204,6 +204,15 @@ export async function sendDirectTestPush(req: Request, res: Response) {
     };
 
     let expoResponse = null;
+    if (pushToken.includes('Fallback') || pushToken.includes('Simulated')) {
+      return res.json({
+        success: true,
+        message: 'Simulated push alert dispatched (Development/Fallback token)',
+        payload: message,
+        expoResponse: { data: { status: 'ok', id: 'simulated-ticket-id' } },
+      });
+    }
+
     if (pushToken.startsWith('ExponentPushToken')) {
       const response = await axios.post('https://exp.host/--/api/v2/push/send', [message], {
         headers: {
