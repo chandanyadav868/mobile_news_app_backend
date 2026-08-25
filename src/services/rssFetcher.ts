@@ -294,6 +294,8 @@ export async function fetchSingleFeed(
  * 3. Enriches brand-new articles with Mozilla Readability (Full Text & HD Images)
  * 4. Batch inserts into PostgreSQL and invalidates Redis cache
  */
+let lastSuccessfulScrapeTime: Date | null = null;
+
 export async function ingestAllFeeds(): Promise<{
   totalScanned: number;
   newInserted: number;
