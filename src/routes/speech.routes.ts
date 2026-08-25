@@ -1,0 +1,9 @@
+import { Router } from 'express';
+import { SpeechController } from '../controllers/speechController';
+
+const router = Router();
+
+router.post('/synthesize', SpeechController.synthesize);
+router.get('/voices', SpeechController.getVoices);
+
+export default router;

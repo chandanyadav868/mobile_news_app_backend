@@ -4,11 +4,13 @@ import insightsRoutes from './insights.routes.js';
 import timelinesRoutes from './timelines.routes.js';
 import notificationRoutes from './notification.routes.js';
 import feedRoutes from './feed.routes.js';
+import speechRoutes from './speech.routes.js';
 
 const router = Router();
 
 router.use('/news', newsRoutes);
 router.use('/feeds', feedRoutes);
+router.use('/speech', speechRoutes);
 router.use('/insights', insightsRoutes);
 router.use('/timelines', timelinesRoutes);
 router.use('/notifications', notificationRoutes);

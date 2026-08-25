@@ -27,6 +27,7 @@
     "ioredis": "^5.4.1",
     "jsdom": "^29.1.1",
     "morgan": "^1.10.0",
+    "msedge-tts": "^2.0.7",
     "node-cron": "^3.0.3",
     "rss-parser": "^3.13.0",
     "zod": "^3.23.8"
