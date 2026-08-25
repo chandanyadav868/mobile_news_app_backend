@@ -335,9 +335,20 @@ export async function ingestAllFeeds(): Promise<{
       await new Promise((r) => setTimeout(r, 25));
     }
 
-    // Deduplicate candidate list in memory by hash
+    // ─── STAGE 1: IN-MEMORY TIMESTAMP CUTOFF FILTERING ───
+    // Rolling 36-hour window or 2-hour buffer before last successful run
+    const cutoffDate = lastSuccessfulScrapeTime
+      ? new Date(lastSuccessfulScrapeTime.getTime() - 2 * 3600 * 1000)
+      : new Date(Date.now() - 36 * 3600 * 1000);
+
+    const freshCandidates = allCandidateArticles.filter((art) => {
+      const pub = new Date(art.publishedAt);
+      return isNaN(pub.getTime()) || pub >= cutoffDate;
+    });
+
+    // Deduplicate fresh candidate list in memory by hash
     const uniqueMap = new Map<string, ParsedArticle>();
-    allCandidateArticles.forEach((art) => {
+    freshCandidates.forEach((art) => {
       if (!uniqueMap.has(art.hash)) {
         uniqueMap.set(art.hash, art);
       }
@@ -346,18 +357,26 @@ export async function ingestAllFeeds(): Promise<{
     const uniqueArticles = Array.from(uniqueMap.values());
     const candidateHashes = uniqueArticles.map((a) => a.hash);
 
-    // 3. Find which articles are ALREADY in the database
+    // ─── STAGE 2: POSTGRESQL DATE-BOUNDED DEDUPLICATION ───
+    // Query ONLY the indexed recent partition rather than scanning the entire table
     const existingArticles = await prisma.article.findMany({
-      where: { hash: { in: candidateHashes } },
+      where: {
+        publishedAt: { gte: cutoffDate },
+        hash: { in: candidateHashes },
+      },
       select: { hash: true },
     });
 
     const existingHashSet = new Set(existingArticles.map((a) => a.hash));
     const newArticles = uniqueArticles.filter((a) => !existingHashSet.has(a.hash));
 
-    const scanMsg = `🔍 Scanned ${uniqueArticles.length} candidate articles. Found ${newArticles.length} brand-new stories to enrich.`;
+    const scanMsg = `⚡ [Deduplication] Filtered ${allCandidateArticles.length} raw RSS items ➔ ${uniqueArticles.length} fresh candidate stories (cutoff: ${cutoffDate.toLocaleTimeString()}). Found ${newArticles.length} brand-new stories to enrich.`;
     console.log(`🔍 [Ingest Pipeline] ${scanMsg}`);
-    logStream.emitLog('scan', scanMsg, { totalScanned: uniqueArticles.length, newCount: newArticles.length });
+    logStream.emitLog('scan', scanMsg, {
+      totalRaw: allCandidateArticles.length,
+      freshScanned: uniqueArticles.length,
+      newCount: newArticles.length,
+    });
 
     // 4. Enrich brand-new articles with Mozilla Readability (CPU-throttled to 3 concurrent items)
     const readabilityBatchSize = 3;
@@ -438,6 +457,8 @@ export async function ingestAllFeeds(): Promise<{
       await invalidateFeedCache();
       logStream.emitLog('info', '⚡ Redis cache invalidated with fresh headlines.');
     }
+
+    lastSuccessfulScrapeTime = new Date();
 
     const durationMs = Date.now() - startTime;
     const completeMsg = `🎉 Ingestion Complete! ${insertedCount} new articles enriched & saved in ${(durationMs / 1000).toFixed(1)}s!`;
