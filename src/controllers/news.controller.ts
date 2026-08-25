@@ -103,6 +103,8 @@ export async function getFeed(req: Request, res: Response) {
     // Cache for 3 minutes
     await setCache(cacheKey, feedData, 180);
 
+    res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=120');
+
     return res.json({
       success: true,
       source: 'database',
@@ -172,6 +174,8 @@ export async function getCategoryNews(req: Request, res: Response) {
     };
 
     await setCache(cacheKey, responseData, 180);
+
+    res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=120');
 
     return res.json({
       success: true,

@@ -104,6 +104,18 @@ function decodeEntities(text: string): string {
     .trim();
 }
 
+import { RSS_FEEDS } from '../constants/feeds.js';
+
+export function normalizeFeedUrl(url: string): string {
+  try {
+    const parsed = new URL(url.trim());
+    parsed.search = '';
+    return `${parsed.protocol}//${parsed.hostname.toLowerCase()}${parsed.pathname.replace(/\/+$/, '')}`;
+  } catch {
+    return url.trim().toLowerCase().replace(/\/+$/, '');
+  }
+}
+
 /**
  * Load verified feeds registry with multi-path resolution (supports TS source, compiled dist, and Docker runtime)
  */
@@ -138,6 +150,69 @@ export function getVerifiedFeedsRegistry(): Record<
 
   console.warn('⚠️ [RSS Registry Warning] verifiedFeeds.json not found in any candidate path!');
   return {};
+}
+
+/**
+ * Resolves the absolute writable path to verifiedFeeds.json for dynamic updates
+ */
+export function getVerifiedFeedsFilePath(): string {
+  const baseDir = typeof __dirname !== 'undefined' ? __dirname : process.cwd();
+  const candidatePaths = [
+    path.resolve(baseDir, '../constants/verifiedFeeds.json'),
+    path.resolve(baseDir, '../../src/constants/verifiedFeeds.json'),
+    path.resolve(baseDir, '../../dist/constants/verifiedFeeds.json'),
+    path.resolve(process.cwd(), 'dist/constants/verifiedFeeds.json'),
+    path.resolve(process.cwd(), 'src/constants/verifiedFeeds.json'),
+    path.resolve(process.cwd(), 'constants/verifiedFeeds.json'),
+  ];
+
+  for (const p of candidatePaths) {
+    if (fs.existsSync(p)) return p;
+  }
+  return path.resolve(process.cwd(), 'src/constants/verifiedFeeds.json');
+}
+
+/**
+ * Returns unified, deduplicated feed task list combining verifiedFeeds.json AND feeds.ts
+ */
+export function getUnifiedFeedTasks(): Array<{ url: string; category: string; country: string; title?: string }> {
+  const taskMap = new Map<string, { url: string; category: string; country: string; title?: string }>();
+
+  // 1. Ingest from verifiedFeeds.json (primary structured registry)
+  const registry = getVerifiedFeedsRegistry();
+  for (const [key, feedList] of Object.entries(registry)) {
+    const category = key.startsWith('Top Stories:') ? 'Top Stories' : key;
+    feedList.forEach((f) => {
+      const normalized = normalizeFeedUrl(f.url);
+      taskMap.set(normalized, {
+        url: f.url,
+        category,
+        country: f.country || 'GLOBAL',
+        title: f.title,
+      });
+    });
+  }
+
+  // 2. Merge from feeds.ts (RSS_FEEDS) - add any additional/tested feeds not already registered
+  if (RSS_FEEDS && typeof RSS_FEEDS === 'object') {
+    for (const [category, urlList] of Object.entries(RSS_FEEDS)) {
+      if (Array.isArray(urlList)) {
+        urlList.forEach((url) => {
+          const normalized = normalizeFeedUrl(url);
+          if (!taskMap.has(normalized)) {
+            taskMap.set(normalized, {
+              url,
+              category,
+              country: 'IN', // Default country for tested feeds in feeds.ts
+              title: `${category} Feed`,
+            });
+          }
+        });
+      }
+    }
+  }
+
+  return Array.from(taskMap.values());
 }
 
 /**
@@ -234,22 +309,13 @@ export async function ingestAllFeeds(): Promise<{
   const startTime = Date.now();
 
   try {
-    logStream.emitLog('info', '🚀 Initializing live ingestion worker across all categories...');
-    const feedsRegistry = getVerifiedFeedsRegistry();
+    logStream.emitLog('info', '🚀 Initializing live ingestion worker across unified feed registry...');
+    const feedTasks = getUnifiedFeedTasks();
     const allCandidateArticles: ParsedArticle[] = [];
-
-    // 1. Gather all feeds into a flat task list
-    const feedTasks: Array<{ url: string; category: string; country: string }> = [];
-    for (const [key, feedList] of Object.entries(feedsRegistry)) {
-      const category = key.startsWith('Top Stories:') ? 'Top Stories' : key;
-      feedList.forEach((f) => {
-        feedTasks.push({ url: f.url, category, country: f.country || 'GLOBAL' });
-      });
-    }
 
     logStream.emitLog(
       'scan',
-      `📡 Loaded ${feedTasks.length} verified RSS endpoints across ${Object.keys(feedsRegistry).length} categories. Starting XML fetch...`
+      `📡 Loaded ${feedTasks.length} unified & deduplicated RSS endpoints across all categories. Starting XML fetch...`
     );
 
     // 2. Fetch RSS feeds in batches of 4 (throttled for low VPS CPU)
