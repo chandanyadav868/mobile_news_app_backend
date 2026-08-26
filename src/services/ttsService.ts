@@ -10,9 +10,10 @@ interface CachedAudioItem {
     createdAt: number;
 }
 
-// In-Memory LRU Cache (stores up to 200 synthesized breaking stories)
+// In-Memory LRU Cache (stores up to 150 synthesized breaking stories)
 const audioMemoryCache = new Map<string, CachedAudioItem>();
-const MAX_CACHE_ITEMS = 200;
+const MAX_CACHE_ITEMS = 150;
+const CACHE_TTL_MS = 3 * 60 * 60 * 1000; // 3 Hours TTL
 
 export class TTSService {
     /**
@@ -20,6 +21,18 @@ export class TTSService {
      */
     public static computeHash(text: string, voice: string = 'en-IN-NeerjaNeural'): string {
         return crypto.createHash('md5').update(`${voice}:${text.trim().toLowerCase()}`).digest('hex');
+    }
+
+    /**
+     * Periodic sweep to purge expired cache items and keep RAM minimal
+     */
+    private static sweepExpiredCache(): void {
+        const now = Date.now();
+        for (const [key, item] of audioMemoryCache.entries()) {
+            if (now - item.createdAt > CACHE_TTL_MS) {
+                audioMemoryCache.delete(key);
+            }
+        }
     }
 
     /**
@@ -31,11 +44,12 @@ export class TTSService {
         rate: string = '+0%',
         pitch: string = '+0Hz'
     ): Promise<{ audioBase64: string; durationMs: number; wordBoundaries: WordBoundary[]; cached: boolean }> {
+        this.sweepExpiredCache();
         const cacheKey = this.computeHash(text, voice);
 
         // 1. Check Memory Cache (Sub-1ms response)
         const cached = audioMemoryCache.get(cacheKey);
-        if (cached) {
+        if (cached && (Date.now() - cached.createdAt <= CACHE_TTL_MS)) {
             return {
                 audioBase64: cached.audioBase64,
                 durationMs: cached.durationMs,
@@ -57,7 +71,7 @@ export class TTSService {
                 pitch,
             });
         } catch (workerErr) {
-            console.warn('[TTSService] Worker thread unavailable, running in async background fallback:', workerErr);
+            console.warn('[TTSService] Worker thread bypassed, running directly in async fallback:', (workerErr as any)?.message || workerErr);
             result = await synthesizeSpeech(text, voice, rate, pitch);
         }
 
