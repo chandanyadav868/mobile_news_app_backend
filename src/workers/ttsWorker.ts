@@ -37,8 +37,14 @@ export async function synthesizeSpeech(
     const tts = new MsEdgeTTS();
     await tts.setMetadata(voice, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
 
-    // Approximate word timestamps by word length and speech rate
-    const cleanText = text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    // Clean and normalize text, removing unprintable symbols, XML brackets, and emojis
+    const cleanText = text
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/[^\x20-\x7E\u0900-\u097F\u00A0-\u024F.,!?'"-\s]/g, ' ')
+        .replace(/&/g, ' and ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
     const words = cleanText.split(/\s+/).filter(Boolean);
 
     // Convert to streaming chunks
@@ -53,7 +59,14 @@ export async function synthesizeSpeech(
             chunks.push(chunk);
         });
         stream.audioStream.on('end', () => resolve());
-        stream.audioStream.on('error', (err: any) => reject(err));
+        stream.audioStream.on('error', (err: any) => {
+            if (chunks.length > 0) {
+                console.warn('[TTSWorker] Stream ended with notice, recovered audio chunks:', chunks.length);
+                resolve();
+            } else {
+                reject(err);
+            }
+        });
     });
 
     const audioBuffer = Buffer.concat(chunks);

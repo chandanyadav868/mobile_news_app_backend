@@ -29,6 +29,10 @@ export class SpeechController {
             const chosenVoice = voice || 'en-IN-NeerjaNeural';
             const startTime = Date.now();
 
+            console.log(`\n🎙️ [Speech API] Synthesize Request:`);
+            console.log(`   • Voice: ${chosenVoice}`);
+            console.log(`   • Text: "${text.slice(0, 70)}..." (${text.length} chars)`);
+
             const speechData = await TTSService.getSpeechAudio(
                 text.trim(),
                 chosenVoice,
@@ -37,6 +41,7 @@ export class SpeechController {
             );
 
             const elapsedMs = Date.now() - startTime;
+            console.log(`   ✅ [Speech API] Generated ${Math.round(speechData.audioBase64.length / 1024)} KB audio in ${elapsedMs}ms (Cached: ${speechData.cached})\n`);
 
             res.status(200).json({
                 success: true,
@@ -48,11 +53,50 @@ export class SpeechController {
                 latencyMs: elapsedMs,
             });
         } catch (err: any) {
-            console.error('[SpeechController] Synthesize error:', err);
+            console.error('❌ [Speech API] Synthesize error:', err);
             res.status(500).json({
                 success: false,
                 error: err.message || 'Speech synthesis failed.',
             });
+        }
+    }
+
+    /**
+     * GET /api/v1/speech/stream?text=...&voice=...
+     * Returns audio/mpeg streaming directly for native mobile players
+     */
+    public static async stream(req: Request, res: Response): Promise<void> {
+        try {
+            const text = (req.query.text as string) || '';
+            const voice = (req.query.voice as string) || 'en-IN-NeerjaNeural';
+            const rate = (req.query.rate as string) || '+0%';
+            const pitch = (req.query.pitch as string) || '+0Hz';
+
+            if (!text.trim()) {
+                res.status(400).send('Text parameter is required');
+                return;
+            }
+
+            const startTime = Date.now();
+            console.log(`\n🎙️ [Speech Stream] Streaming Request:`);
+            console.log(`   • Voice: ${voice}`);
+            console.log(`   • Text: "${text.slice(0, 70)}..." (${text.length} chars)`);
+
+            const speechData = await TTSService.getSpeechAudio(text.trim(), voice, rate, pitch);
+            const buffer = Buffer.from(speechData.audioBase64, 'base64');
+            const elapsedMs = Date.now() - startTime;
+
+            console.log(`   ✅ [Speech Stream] Streamed ${Math.round(buffer.length / 1024)} KB MP3 in ${elapsedMs}ms (Cached: ${speechData.cached})\n`);
+
+            res.setHeader('Content-Type', 'audio/mpeg');
+            res.setHeader('Content-Length', buffer.length.toString());
+            res.setHeader('Cache-Control', 'public, max-age=86400');
+            res.setHeader('X-Speech-Voice', voice);
+            res.setHeader('X-Duration-Ms', speechData.durationMs.toString());
+            res.status(200).send(buffer);
+        } catch (err: any) {
+            console.error('❌ [Speech Stream] Error:', err);
+            res.status(500).send('Speech streaming failed');
         }
     }
 
