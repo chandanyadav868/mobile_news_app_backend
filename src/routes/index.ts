@@ -16,8 +16,12 @@ router.use('/insights', insightsRoutes);
 router.use('/timelines', timelinesRoutes);
 router.use('/notifications', notificationRoutes);
 
-// ─── Live Telemetry & AI Testing Endpoints ────────────────────────────────────
+// ─── Live Telemetry, SSE Stream & Mission Control Endpoints ──────────────────
 router.get('/dashboard/stats', DashboardController.getStats);
+router.get('/dashboard/stream', DashboardController.streamTelemetry);
+router.post('/dashboard/toggle-ai', DashboardController.toggleAi);
+router.post('/dashboard/trigger-ingest', DashboardController.triggerIngest);
+router.post('/dashboard/clear-cache', DashboardController.clearCache);
 router.post('/dashboard/summarize-test', DashboardController.summarizeTest);
 
 router.get('/health', (_req: Request, res: Response) => {

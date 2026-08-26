@@ -7,13 +7,26 @@ import { prisma } from '../config/db.js';
 import { invalidateFeedCache } from './cacheService.js';
 import { extractArticleContent } from './articleExtractor.js';
 import { logStream } from './logStreamService.js';
+import UniversalLlmService from './universalLlmService.js';
+import TelemetryService from './telemetryService.js';
+
+const CHROME_HEADERS = {
+  'User-Agent':
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+  Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+  'Accept-Language': 'en-US,en;q=0.9',
+  'Cache-Control': 'no-cache',
+  'Sec-Ch-Ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+  'Sec-Ch-Ua-Mobile': '?0',
+  'Sec-Ch-Ua-Platform': '"Windows"',
+  'Sec-Fetch-Dest': 'document',
+  'Sec-Fetch-Mode': 'navigate',
+  'Sec-Fetch-Site': 'none',
+};
 
 const parser = new Parser({
-  timeout: 8000,
-  headers: {
-    'User-Agent': 'Mozilla/5.0 (compatible; NewsFlow-Engine/1.0)',
-    Accept: 'application/rss+xml, application/xml, text/xml, */*',
-  },
+  timeout: 10000,
+  headers: CHROME_HEADERS,
 });
 
 export // Mutex lock to prevent duplicate overlapping scraping runs from maxing CPU
@@ -225,17 +238,15 @@ export async function fetchSingleFeed(
 ): Promise<ParsedArticle[]> {
   try {
     const response = await axios.get(feedUrl, {
-      timeout: 10000,
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-        Accept: 'application/rss+xml, application/xml, text/xml, */*',
-        'Accept-Language': 'en-US,en;q=0.9',
-      },
+      timeout: 12000,
+      headers: CHROME_HEADERS,
     });
 
-    const xmlData = response.data;
+    let xmlData = response.data;
     if (typeof xmlData !== 'string') return [];
+
+    // Pre-sanitize unescaped ampersands to prevent XML entity parse errors
+    xmlData = xmlData.replace(/&(?!(amp|lt|gt|quot|apos|#\d+|#x[a-f\d]+);)/gi, '&amp;');
 
     const parsed = await parser.parseString(xmlData);
     if (!parsed || !parsed.items) return [];
@@ -380,75 +391,139 @@ export async function ingestAllFeeds(): Promise<{
       newCount: newArticles.length,
     });
 
-    // 4. Enrich brand-new articles with Mozilla Readability (CPU-throttled to 3 concurrent items)
-    const readabilityBatchSize = 3;
+    TelemetryService.incrementFunnel('rssScanned', allCandidateArticles.length);
+    TelemetryService.incrementFunnel('deduped', newArticles.length);
+
+    TelemetryService.updateQueueMetrics({
+      isIngesting: true,
+      pendingArticles: newArticles.length,
+      activeJobs: 1,
+    });
+
+    // 4. Enrich brand-new articles with Mozilla Readability & Groq AI (Sequential One-by-One with 600ms throttle)
     let insertedCount = 0;
     let currentChunk: ParsedArticle[] = [];
 
-    for (let i = 0; i < newArticles.length; i += readabilityBatchSize) {
-      const batch = newArticles.slice(i, i + readabilityBatchSize);
-      const extractionResults = await Promise.allSettled(
-        batch.map(async (art) => {
-          // Fast-path: if article already has rich text & image from RSS, skip heavy JSDOM parsing
-          if (isRichRssItem(art.summary, art.imageUrl)) {
-            return art;
-          }
+    for (let i = 0; i < newArticles.length; i++) {
+      const art = newArticles[i];
+      TelemetryService.updateQueueMetrics({ pendingArticles: newArticles.length - i });
 
+      try {
+        let fullBody = art.summary || art.rawContent || '';
+        let finalImg = art.imageUrl;
+        let finalAuthor = art.author;
+        let finalPubTime = art.publishedAt;
+        let finalTitle = art.title;
+
+        // 1. Extract rich full text via Mozilla Readability if not already rich
+        if (!isRichRssItem(art.summary, art.imageUrl)) {
           const extracted = await extractArticleContent(
             art.url,
             art.title,
             art.summary,
             art.imageUrl
           );
-
-          return {
-            ...art,
-            title: extracted.title || art.title,
-            summary: extracted.summary || art.summary,
-            rawContent: extracted.rawContent || art.rawContent,
-            imageUrl: extracted.imageUrl || art.imageUrl,
-            author: extracted.author || art.author,
-            publishedAt: extracted.publishedTime || art.publishedAt,
-          };
-        })
-      );
-
-      extractionResults.forEach((res) => {
-        if (res.status === 'fulfilled') {
-          currentChunk.push(res.value);
-          logStream.emitLog(
-            'enrich',
-            `📑 [Enriched] "${res.value.title.slice(0, 45)}..." (${res.value.category})`
-          );
+          fullBody = extracted.rawContent || extracted.summary || fullBody;
+          finalImg = extracted.imageUrl || finalImg;
+          finalAuthor = extracted.author || finalAuthor;
+          finalPubTime = extracted.publishedTime || finalPubTime;
+          finalTitle = extracted.title || finalTitle;
         }
-      });
 
-      // Yield CPU to Node.js Event Loop so API requests never suffer latency
-      await new Promise((resolve) => setTimeout(resolve, 40));
+        // 2. Smart Selective Summarization / AI Kill-Switch
+        const isAiEnabled = TelemetryService.getAiEnabled();
+        const wordCount = (art.summary || '').split(/\s+/).filter(Boolean).length;
+        const isAlreadyCrisp =
+          wordCount >= 45 &&
+          wordCount <= 85 &&
+          !art.summary.includes('<') &&
+          !art.summary.includes('http');
 
-      // Save incrementally to DB every 15 articles
-      if (currentChunk.length >= 15 || i + readabilityBatchSize >= newArticles.length) {
+        let headline = finalTitle;
+        let story = fullBody;
+        let bulletsText = '';
+        let modelUsed = 'Direct (0 tokens)';
+
+        if (!isAiEnabled) {
+          // 🔴 AI Disabled by Admin: Direct Raw / Mozilla Save (0 Tokens Burned!)
+          headline = finalTitle;
+          story = fullBody.slice(0, 320);
+          const sents = fullBody.split(/[.!?]+/).map((s) => s.trim()).filter((s) => s.length > 15);
+          bulletsText = sents.slice(0, 3).map((b) => `• ${b}`).join('\n');
+          modelUsed = 'AI Paused (Direct Save)';
+          TelemetryService.incrementFunnel('directSaved', 1);
+        } else if (isAlreadyCrisp) {
+          // 0 Tokens Used! Use clean RSS summary directly
+          story = art.summary;
+          headline = finalTitle;
+          const sents = art.summary.split(/[.!?]+/).map((s) => s.trim()).filter((s) => s.length > 15);
+          bulletsText = sents.slice(0, 3).map((b) => `• ${b}`).join('\n');
+          modelUsed = 'RSS-Direct (0 tokens)';
+          TelemetryService.incrementFunnel('directSaved', 1);
+        } else {
+          // 🟢 AI Enabled: Call Universal Multi-Provider AI (SambaNova -> Groq -> Mistral -> Cloudflare)
+          const aiResult = await UniversalLlmService.summarizeNews({
+            title: finalTitle,
+            content: fullBody,
+            category: art.category,
+          });
+          headline = aiResult.headline || finalTitle;
+          story = aiResult.crispyStory || fullBody.slice(0, 300);
+          bulletsText =
+            aiResult.bulletPoints.length > 0
+              ? aiResult.bulletPoints.map((b) => `• ${b}`).join('\n')
+              : fullBody;
+          modelUsed = `${aiResult.providerUsed} (${aiResult.modelUsed})`;
+          TelemetryService.incrementFunnel('llmSummarized', 1);
+        }
+
+        const enrichedArticle: ParsedArticle = {
+          ...art,
+          title: headline,
+          summary: story,
+          rawContent: bulletsText || story,
+          imageUrl: finalImg,
+          author: finalAuthor,
+          publishedAt: finalPubTime,
+        };
+
+        currentChunk.push(enrichedArticle);
+        logStream.emitLog(
+          'enrich',
+          `📑 [${modelUsed}] "${enrichedArticle.title.slice(0, 45)}..." (${enrichedArticle.category})`
+        );
+      } catch (enrichErr: any) {
+        console.warn(`[Enrich Warning] Failed to enrich "${art.title.slice(0, 30)}":`, enrichErr.message);
+        currentChunk.push(art);
+      }
+
+      // Safe 600ms throttle between sequential AI calls to prevent 429 bursts
+      await new Promise((resolve) => setTimeout(resolve, 600));
+
+      // Save incrementally to DB every 10 articles or at the end
+      if (currentChunk.length >= 10 || i === newArticles.length - 1) {
         if (currentChunk.length > 0) {
           const result = await prisma.article.createMany({
-            data: currentChunk.map((art) => ({
-              hash: art.hash,
-              title: art.title,
-              summary: art.summary,
-              rawContent: art.rawContent,
-              url: art.url,
-              imageUrl: art.imageUrl,
-              category: art.category,
-              country: art.country,
-              source: art.source,
-              author: art.author,
-              publishedAt: art.publishedAt,
+            data: currentChunk.map((item) => ({
+              hash: item.hash,
+              title: item.title,
+              summary: item.summary,
+              rawContent: item.rawContent,
+              url: item.url,
+              imageUrl: item.imageUrl,
+              category: item.category,
+              country: item.country,
+              source: item.source,
+              author: item.author,
+              publishedAt: item.publishedAt,
             })),
             skipDuplicates: true,
           });
           insertedCount += result.count;
-          const saveMsg = `💾 [PostgreSQL Sync] Saved ${insertedCount}/${newArticles.length} articles to database...`;
+          TelemetryService.incrementFunnel('dbInserted', result.count);
+          const saveMsg = `💾 [PostgreSQL Sync] Saved ${insertedCount}/${newArticles.length} AI-summarized articles to database...`;
           console.log(`📥 [DB Sync] ${saveMsg}`);
-          logStream.emitLog('save', saveMsg, { current: insertedCount, total: newArticles.length });
+          logStream.emitLog('save', saveMsg);
           currentChunk = [];
         }
       }
@@ -463,6 +538,14 @@ export async function ingestAllFeeds(): Promise<{
     lastSuccessfulScrapeTime = new Date();
 
     const durationMs = Date.now() - startTime;
+    TelemetryService.recordIngestCompletion(durationMs);
+    TelemetryService.updateQueueMetrics({
+      isIngesting: false,
+      pendingArticles: 0,
+      activeJobs: 0,
+      completedToday: insertedCount,
+    });
+
     const completeMsg = `🎉 Ingestion Complete! ${insertedCount} new articles enriched & saved in ${(durationMs / 1000).toFixed(1)}s!`;
     console.log(`🎉 [Ingestion Pipeline Complete] ${completeMsg}`);
     logStream.emitLog('complete', completeMsg, { totalInserted: insertedCount, durationMs });
@@ -474,5 +557,18 @@ export async function ingestAllFeeds(): Promise<{
     };
   } finally {
     isIngesting = false;
+    TelemetryService.updateQueueMetrics({ isIngesting: false, activeJobs: 0, pendingArticles: 0 });
   }
+}
+
+/**
+ * Trigger manual background ingestion from Dashboard Mission Control
+ */
+export async function triggerManualIngest(): Promise<{ success: boolean; message: string }> {
+  if (isIngesting) {
+    return { success: false, message: 'Ingestion is already running in background.' };
+  }
+  // Run asynchronously without blocking HTTP response
+  ingestAllFeeds().catch((err) => console.error('[Manual Ingest Error]', err));
+  return { success: true, message: 'Manual RSS Ingest pipeline triggered successfully!' };
 }

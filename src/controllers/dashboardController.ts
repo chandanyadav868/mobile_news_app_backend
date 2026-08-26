@@ -1,11 +1,14 @@
 import { Request, Response } from 'express';
 import TelemetryService from '../services/telemetryService.js';
-import GroqService from '../services/groqService.js';
+import UniversalLlmService from '../services/universalLlmService.js';
+import GeminiService from '../services/geminiService.js';
+import { triggerManualIngest } from '../services/rssFetcher.js';
+import { invalidateFeedCache } from '../services/cacheService.js';
 
 export class DashboardController {
     /**
      * GET /api/v1/dashboard/stats
-     * Return JSON telemetry metrics
+     * Return JSON telemetry metrics snapshot
      */
     public static async getStats(req: Request, res: Response): Promise<void> {
         try {
@@ -17,24 +20,121 @@ export class DashboardController {
     }
 
     /**
+     * GET /api/v1/dashboard/stream
+     * Real-Time Server-Sent Events (SSE) Stream
+     * Eliminates HTTP polling and eliminates terminal GET request log spam!
+     */
+    public static async streamTelemetry(req: Request, res: Response): Promise<void> {
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache, no-transform');
+        res.setHeader('Connection', 'keep-alive');
+        res.flushHeaders?.();
+
+        TelemetryService.addSseClient(res);
+
+        req.on('close', () => {
+            TelemetryService.removeSseClient(res);
+        });
+    }
+
+    /**
+     * POST /api/v1/dashboard/toggle-ai
+     * Toggle the global AI summarization kill-switch
+     */
+    public static async toggleAi(req: Request, res: Response): Promise<void> {
+        try {
+            const { enabled } = req.body;
+            const current = TelemetryService.getAiEnabled();
+            const target = typeof enabled === 'boolean' ? enabled : !current;
+            const updated = TelemetryService.setAiEnabled(target);
+            res.json({ success: true, aiEnabled: updated });
+        } catch (error: any) {
+            res.status(500).json({ success: false, error: error.message });
+        }
+    }
+
+    /**
+     * POST /api/v1/dashboard/trigger-ingest
+     * Manually trigger background RSS scraper on demand
+     */
+    public static async triggerIngest(req: Request, res: Response): Promise<void> {
+        try {
+            const result = await triggerManualIngest();
+            res.json(result);
+        } catch (error: any) {
+            res.status(500).json({ success: false, message: error.message });
+        }
+    }
+
+    /**
+     * POST /api/v1/dashboard/clear-cache
+     * Invalidate and purge news feed cache
+     */
+    public static async clearCache(req: Request, res: Response): Promise<void> {
+        try {
+            await invalidateFeedCache();
+            res.json({ success: true, message: 'Redis / Memory Feed Cache purged successfully' });
+        } catch (error: any) {
+            res.status(500).json({ success: false, message: error.message });
+        }
+    }
+
+    /**
      * POST /api/v1/dashboard/summarize-test
-     * Interactive test summarization from the dashboard
+     * Interactive test summarization across Multi-Provider AI Mesh
      */
     public static async summarizeTest(req: Request, res: Response): Promise<void> {
         try {
-            const { title, content, category, preferredModel } = req.body;
+            const { title, content, category, preferredProvider, preferredModel } = req.body;
             if (!title && !content) {
                 res.status(400).json({ success: false, error: 'Title or Content is required' });
                 return;
             }
 
-            const result = await GroqService.summarizeNews({
+            const result = await UniversalLlmService.summarizeNews({
                 title: title || 'Breaking News Headline',
                 content: content || title,
                 category: category || 'National',
+                preferredProvider: preferredProvider || undefined,
                 preferredModel: preferredModel || undefined,
             });
 
+            res.json({ success: true, data: result });
+        } catch (error: any) {
+            res.status(500).json({ success: false, error: error.message });
+        }
+    }
+
+    /**
+     * POST /api/v1/dashboard/translate-test
+     * Interactive translation test via Gemini 3.5 Live Translate
+     */
+    public static async translateTest(req: Request, res: Response): Promise<void> {
+        try {
+            const { headline, story, bullets, targetLang } = req.body;
+            const result = await GeminiService.translateStory({
+                headline: headline || 'Breaking News',
+                story: story || '',
+                bullets: bullets || [],
+                targetLang: targetLang || 'hi',
+            });
+            res.json({ success: true, data: result });
+        } catch (error: any) {
+            res.status(500).json({ success: false, error: error.message });
+        }
+    }
+
+    /**
+     * POST /api/v1/dashboard/deepdive-test
+     * Interactive deep dive test via Gemini 3 Flash Live
+     */
+    public static async deepdiveTest(req: Request, res: Response): Promise<void> {
+        try {
+            const { headline, content } = req.body;
+            const result = await GeminiService.generateDeepDive({
+                headline: headline || 'National Headline',
+                content: content || headline,
+            });
             res.json({ success: true, data: result });
         } catch (error: any) {
             res.status(500).json({ success: false, error: error.message });
@@ -51,14 +151,14 @@ export class DashboardController {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NewsFlow • Server & AI Telemetry Dashboard</title>
+    <title>NewsFlow • Production Mission Control</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-base: #0B0F19;
-            --bg-card: #111827;
-            --bg-card-hover: #1F2937;
+            --bg-base: #090D16;
+            --bg-card: #0F172A;
+            --bg-card-hover: #1E293B;
             --border-color: rgba(255, 255, 255, 0.08);
             --primary: #3B82F6;
             --primary-glow: rgba(59, 130, 246, 0.25);
@@ -66,8 +166,8 @@ export class DashboardController {
             --success: #10B981;
             --warning: #F59E0B;
             --danger: #EF4444;
-            --text-main: #F9FAFB;
-            --text-sub: #9CA3AF;
+            --text-main: #F8FAFC;
+            --text-sub: #94A3B8;
         }
 
         * {
@@ -85,11 +185,11 @@ export class DashboardController {
         }
 
         .dashboard-container {
-            max-width: 1400px;
+            max-width: 1440px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 22px;
         }
 
         /* Top Header */
@@ -97,10 +197,12 @@ export class DashboardController {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 24px;
+            padding: 18px 24px;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 16px;
+            flex-wrap: wrap;
+            gap: 16px;
         }
 
         .header-title-box h1 {
@@ -117,52 +219,114 @@ export class DashboardController {
         .header-title-box p {
             font-size: 13px;
             color: var(--text-sub);
-            margin-top: 4px;
+            margin-top: 3px;
         }
 
-        .status-pill {
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Header Buttons */
+        .btn-action {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 14px;
-            background: rgba(16, 185, 129, 0.12);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 30px;
+            padding: 8px 16px;
+            border-radius: 10px;
             font-size: 13px;
             font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        .btn-action:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .btn-action:active {
+            transform: scale(0.97);
+        }
+
+        .btn-ingest {
+            background: linear-gradient(135deg, #2563EB, #1D4ED8);
+            border-color: #3B82F6;
+            color: #FFF;
+        }
+
+        .btn-ingest:hover {
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+        }
+
+        /* Interactive AI Toggle Switch */
+        .ai-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 800;
             color: var(--success);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            outline: none;
+        }
+
+        .ai-toggle-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+        }
+
+        .ai-toggle-btn.disabled {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.4);
+            color: var(--danger);
+        }
+
+        .ai-toggle-btn.disabled:hover {
+            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25);
         }
 
         .status-dot {
-            width: 8px;
-            height: 8px;
+            width: 9px;
+            height: 9px;
             border-radius: 50%;
-            background-color: var(--success);
-            box-shadow: 0 0 10px var(--success);
+            background-color: currentColor;
+            box-shadow: 0 0 10px currentColor;
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
             0% { transform: scale(0.95); opacity: 0.8; }
-            50% { transform: scale(1.2); opacity: 1; }
+            50% { transform: scale(1.25); opacity: 1; }
             100% { transform: scale(0.95); opacity: 0.8; }
         }
 
-        /* Grid Layout */
+        /* Metrics Grid */
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 16px;
         }
 
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 20px;
+            border-radius: 14px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             transition: transform 0.2s, border-color 0.2s;
         }
 
@@ -177,7 +341,7 @@ export class DashboardController {
         }
 
         .card-title {
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.6px;
@@ -192,24 +356,24 @@ export class DashboardController {
         }
 
         .val-large {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 800;
             letter-spacing: -0.5px;
         }
 
         .val-sub {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-sub);
         }
 
         /* Progress Bar */
         .progress-bar-bg {
             width: 100%;
-            height: 8px;
+            height: 7px;
             background: rgba(255, 255, 255, 0.08);
             border-radius: 4px;
             overflow: hidden;
-            margin-top: 6px;
+            margin-top: 4px;
         }
 
         .progress-bar-fill {
@@ -218,30 +382,85 @@ export class DashboardController {
             transition: width 0.4s ease;
         }
 
+        /* ─── Ingestion Funnel Pipeline ─── */
+        .funnel-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 22px 24px;
+        }
+
+        .funnel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .funnel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+        }
+
+        .funnel-step {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            position: relative;
+        }
+
+        .funnel-step-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .funnel-step-val {
+            font-size: 24px;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .funnel-step-sub {
+            font-size: 11px;
+            color: var(--text-sub);
+        }
+
         /* Model Usage Table / Cards */
         .models-section {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 24px;
+            padding: 22px 24px;
         }
 
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .section-title {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 800;
         }
 
         .models-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 14px;
         }
 
         .model-card {
@@ -256,7 +475,7 @@ export class DashboardController {
 
         .model-name {
             font-weight: 700;
-            font-size: 14px;
+            font-size: 13px;
             color: #60A5FA;
         }
 
@@ -273,11 +492,11 @@ export class DashboardController {
             font-family: 'JetBrains Mono', monospace;
         }
 
-        /* Interactive Studio & Live Logs Split */
+        /* Split View: Interactive Test Studio & Live Logs */
         .split-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 24px;
+            gap: 20px;
         }
 
         @media (max-width: 1024px) {
@@ -286,15 +505,14 @@ export class DashboardController {
             }
         }
 
-        /* Test Studio */
-        .studio-card {
+        .studio-card, .logs-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 24px;
+            padding: 22px 24px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
         }
 
         .input-group {
@@ -304,7 +522,7 @@ export class DashboardController {
         }
 
         label {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             color: var(--text-sub);
             text-transform: uppercase;
@@ -327,7 +545,7 @@ export class DashboardController {
 
         textarea {
             resize: vertical;
-            min-height: 90px;
+            min-height: 80px;
         }
 
         .btn-primary {
@@ -350,53 +568,44 @@ export class DashboardController {
             transform: scale(0.98);
         }
 
+        /* Output Box */
         .output-box {
             background: rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 14px;
-            font-size: 13px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
+            font-size: 13px;
+            line-height: 1.5;
         }
 
         .output-headline {
+            font-size: 15px;
             font-weight: 800;
             color: #60A5FA;
-            font-size: 14px;
         }
 
         .output-bullet {
-            display: flex;
-            gap: 8px;
-            color: var(--text-sub);
+            color: #E2E8F0;
+            font-size: 12px;
+            margin-top: 3px;
         }
 
         .output-meta {
             display: flex;
-            gap: 12px;
-            font-size: 11px;
-            color: #A78BFA;
-            font-family: 'JetBrains Mono', monospace;
-            padding-top: 8px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        /* Logs Table */
-        .logs-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
             gap: 16px;
-            max-height: 580px;
-            overflow: hidden;
+            font-size: 11px;
+            color: var(--text-sub);
+            margin-top: 6px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 6px;
         }
 
+        /* Logs */
         .logs-scroll {
+            height: 380px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -405,28 +614,28 @@ export class DashboardController {
         }
 
         .log-item {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
             padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid var(--primary);
+            border-radius: 6px;
             font-size: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .log-msg {
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--text-main);
-            max-width: 70%;
+            color: #E5E7EB;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            max-width: 80%;
         }
 
         .log-time {
             color: var(--text-sub);
-            font-size: 11px;
+            font-size: 10px;
         }
     </style>
 </head>
@@ -435,78 +644,139 @@ export class DashboardController {
         <!-- Top Header -->
         <header class="top-header">
             <div class="header-title-box">
-                <h1>⚡ NewsFlow • Server & AI Telemetry</h1>
-                <p>Real-time VPS Resource Health, Groq Multi-Model Accounting & AI Summarization Engine</p>
+                <h1>⚡ NewsFlow • Mission Control</h1>
+                <p>Real-Time VPS Telemetry, Ingestion Funnel & Groq AI Model Engine</p>
             </div>
-            <div class="status-pill">
-                <div class="status-dot"></div>
-                SYSTEM LIVE & HEALTHY
+            <div class="header-actions">
+                <button class="btn-action btn-ingest" id="btn-trigger-ingest" onclick="triggerIngest()">
+                    <span>⚡ Trigger Ingest Now</span>
+                </button>
+                <button class="btn-action" onclick="flushCache()">
+                    <span>🧹 Flush Cache</span>
+                </button>
+                <button id="ai-toggle-btn" class="ai-toggle-btn" onclick="toggleAiSwitch()">
+                    <span class="status-dot"></span>
+                    <span id="ai-toggle-label">🟢 AI Summarizer: ACTIVE</span>
+                </button>
             </div>
         </header>
 
-        <!-- System & AI Metrics Grid -->
+        <!-- Metrics Grid -->
         <div class="metrics-grid">
-            <!-- CPU Card -->
+            <!-- CPU Utilization -->
             <div class="card">
                 <div class="card-header">
                     <span class="card-title">CPU Utilization</span>
-                    <span id="cpu-badge" class="card-badge" style="background: rgba(59,130,246,0.2); color: #60A5FA;">-- Cores</span>
+                    <span class="card-badge" id="cpu-badge" style="background: rgba(59, 130, 246, 0.15); color: #60A5FA;">8 Cores</span>
                 </div>
                 <div class="val-large" id="cpu-percent">0%</div>
-                <div class="val-sub" id="cpu-model">Detecting CPU...</div>
+                <div class="val-sub" id="cpu-model">Intel Core Processor</div>
                 <div class="progress-bar-bg">
-                    <div id="cpu-bar" class="progress-bar-fill" style="width: 0%; background: #3B82F6;"></div>
+                    <div class="progress-bar-fill" id="cpu-bar" style="width: 0%; background: linear-gradient(90deg, #3B82F6, #60A5FA);"></div>
                 </div>
             </div>
 
-            <!-- RAM Memory Card -->
+            <!-- Server RAM -->
             <div class="card">
                 <div class="card-header">
                     <span class="card-title">Server Memory (RAM)</span>
-                    <span id="ram-badge" class="card-badge" style="background: rgba(16,185,129,0.2); color: #10B981;">0% Used</span>
+                    <span class="card-badge" id="ram-badge" style="background: rgba(16, 185, 129, 0.15); color: #34D399;">0% Used</span>
                 </div>
-                <div class="val-large" id="ram-used">0 MB</div>
-                <div class="val-sub" id="ram-total">Total: 0 MB | Heap: 0 MB</div>
+                <div class="val-large" id="ram-used">0 GB</div>
+                <div class="val-sub" id="ram-total">Total: -- GB • Heap: -- MB</div>
                 <div class="progress-bar-bg">
-                    <div id="ram-bar" class="progress-bar-fill" style="width: 0%; background: #10B981;"></div>
+                    <div class="progress-bar-fill" id="ram-bar" style="width: 0%; background: linear-gradient(90deg, #10B981, #34D399);"></div>
                 </div>
             </div>
 
-            <!-- Tokens Today Card -->
+            <!-- 2,000,000 Groq Quota Progress Gauge -->
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title">Groq Tokens Today</span>
-                    <span class="card-badge" style="background: rgba(139,92,246,0.2); color: #A78BFA;">$0 Cost Tier</span>
+                    <span class="card-title">Daily 2M Token Quota</span>
+                    <span class="card-badge" id="quota-badge" style="background: rgba(139, 92, 246, 0.15); color: #A78BFA;">0% Used</span>
                 </div>
-                <div class="val-large" id="total-tokens">0</div>
-                <div class="val-sub" id="total-requests">0 AI Requests Completed</div>
+                <div class="val-large" id="total-tokens" style="color: #A78BFA;">0</div>
+                <div class="val-sub" id="quota-details">0 / 2,000,000 Daily Tokens</div>
                 <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" style="width: 100%; background: #8B5CF6;"></div>
+                    <div class="progress-bar-fill" id="quota-bar" style="width: 0%; background: linear-gradient(90deg, #8B5CF6, #C084FC);"></div>
                 </div>
             </div>
 
-            <!-- Process & Uptime Card -->
+            <!-- BullMQ Queue Ingestion Monitor -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">🐂 BullMQ Ingest Queue</span>
+                    <span class="card-badge" id="queue-status-badge" style="background: rgba(59, 130, 246, 0.15); color: #60A5FA;">IDLE</span>
+                </div>
+                <div class="val-large" id="queue-pending" style="color: #38BDF8;">0 Pending</div>
+                <div class="val-sub" id="queue-details">Active: 0 • Completed: 0</div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="queue-bar" style="width: 0%; background: linear-gradient(90deg, #0284C7, #38BDF8);"></div>
+                </div>
+            </div>
+
+            <!-- Server Uptime -->
             <div class="card">
                 <div class="card-header">
                     <span class="card-title">Server Uptime</span>
-                    <span class="card-badge" style="background: rgba(245,158,11,0.2); color: #F59E0B;">Node.js</span>
+                    <span class="card-badge" style="background: rgba(245, 158, 11, 0.15); color: #FBBF24;">Node.js</span>
                 </div>
-                <div class="val-large" id="uptime-val">0s</div>
-                <div class="val-sub" id="node-env">Platform: Linux • Node.js</div>
+                <div class="val-large" id="uptime-val" style="color: #FBBF24;">0m 0s</div>
+                <div class="val-sub" id="node-env">win32 • v24.10.0</div>
                 <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" style="width: 100%; background: #F59E0B;"></div>
+                    <div class="progress-bar-fill" style="width: 100%; background: linear-gradient(90deg, #F59E0B, #FBBF24);"></div>
                 </div>
             </div>
         </div>
+
+        <!-- Real-Time Ingestion Funnel Pipeline -->
+        <section class="funnel-section">
+            <div class="funnel-header">
+                <h2 class="section-title">📊 Real-Time Ingestion Funnel & Routing Breakdown</h2>
+                <span class="val-sub" id="funnel-timing">Last Run: Idle</span>
+            </div>
+            <div class="funnel-grid">
+                <!-- Step 1: Scanned -->
+                <div class="funnel-step">
+                    <span class="funnel-step-label">1. RSS Scanned</span>
+                    <div class="funnel-step-val" id="funnel-scanned" style="color: #60A5FA;">0</div>
+                    <span class="funnel-step-sub">Raw articles parsed</span>
+                </div>
+                <!-- Step 2: Deduped -->
+                <div class="funnel-step">
+                    <span class="funnel-step-label">2. Fresh Candidates</span>
+                    <div class="funnel-step-val" id="funnel-deduped" style="color: #38BDF8;">0</div>
+                    <span class="funnel-step-sub">After SHA-256 filter</span>
+                </div>
+                <!-- Step 3: LLM Summarized -->
+                <div class="funnel-step">
+                    <span class="funnel-step-label">3. 🤖 Groq LLM Summarized</span>
+                    <div class="funnel-step-val" id="funnel-llm" style="color: #A78BFA;">0</div>
+                    <span class="funnel-step-sub">60-word stories generated</span>
+                </div>
+                <!-- Step 4: Direct Saved -->
+                <div class="funnel-step">
+                    <span class="funnel-step-label">4. ⏩ Direct Saved (0 Tokens)</span>
+                    <div class="funnel-step-val" id="funnel-direct" style="color: #34D399;">0</div>
+                    <span class="funnel-step-sub">RSS crisp / AI Paused</span>
+                </div>
+                <!-- Step 5: Database Saved -->
+                <div class="funnel-step">
+                    <span class="funnel-step-label">5. 💾 Saved to PostgreSQL</span>
+                    <div class="funnel-step-val" id="funnel-db" style="color: #FBBF24;">0</div>
+                    <span class="funnel-step-sub">Active & cached</span>
+                </div>
+            </div>
+        </section>
 
         <!-- Groq Multi-Model Accounting Pool -->
         <section class="models-section">
             <div class="section-header">
                 <h2 class="section-title">🤖 Groq Multi-Model Auto-Rotation Pool</h2>
-                <span class="val-sub">Automatic 429 Failover & Token Accounting</span>
+                <span class="val-sub">Automatic 429 Failover, Persistent Disk Storage & Token Accounting</span>
             </div>
             <div class="models-list" id="models-container">
-                <!-- Populated dynamically via JS -->
+                <!-- Populated dynamically via SSE -->
             </div>
         </section>
 
@@ -522,17 +792,16 @@ export class DashboardController {
                 <div class="input-group">
                     <label>Preferred Model (or Auto-Rotate)</label>
                     <select id="test-model">
-                        <option value="">Auto-Rotate (Tier 1 Priority: Llama 3.3 70B)</option>
-                        <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (Primary Editor)</option>
-                        <option value="llama-3.1-8b-instant">llama-3.1-8b-instant (Sub-150ms)</option>
-                        <option value="qwen/qwen3.8-27b">qwen/qwen3.8-27b (High Accuracy)</option>
-                        <option value="gemma2-9b-it">gemma2-9b-it (Google Compact)</option>
-                        <option value="mixtral-8x7b-32768">mixtral-8x7b-32768 (MoE Deep)</option>
+                        <option value="">Auto-Rotate (Tier 1 Priority: Qwen 3.8 27B)</option>
+                        <option value="qwen/qwen3.8-27b">qwen/qwen3.8-27b (Primary • 2M TPD)</option>
+                        <option value="qwen/qwen3.6-27b">qwen/qwen3.6-27b (Secondary Turbo)</option>
+                        <option value="openai/gpt-oss-120b">openai/gpt-oss-120b (High Intelligence)</option>
+                        <option value="openai/gpt-oss-20b">openai/gpt-oss-20b (Fast Fallback)</option>
                     </select>
                 </div>
                 <div class="input-group">
                     <label>Raw News Text to Summarize</label>
-                    <textarea id="test-content" placeholder="Paste full raw news article here...">The Ministry of New and Renewable Energy today inaugurated the mega Clean Energy Grid project across five southern states. The initiative aims to add 15,000 MW of renewable solar and wind capacity by 2027. Officials stated that this project will significantly cut carbon emissions and create over 40,000 green jobs in manufacturing and transmission infrastructure.</textarea>
+                    <textarea id="test-content" placeholder="Paste raw news text...">The Ministry of New and Renewable Energy today inaugurated the mega Clean Energy Grid project across five southern states. The initiative aims to add 15,000 MW of renewable solar and wind capacity by 2027. Officials stated that this project will significantly cut carbon emissions and create over 40,000 green jobs in manufacturing and transmission infrastructure.</textarea>
                 </div>
                 <button class="btn-primary" id="btn-run-test" onclick="runSummarizeTest()">⚡ Generate Inshorts 60-Word Story</button>
 
@@ -553,11 +822,11 @@ export class DashboardController {
             <div class="logs-card">
                 <div class="section-header" style="margin-bottom: 0;">
                     <h2 class="section-title">🚨 Live Request & Error Log</h2>
-                    <span class="val-sub">Auto-refreshes every 2.5s</span>
+                    <span class="val-sub">Real-time SSE Stream (0 Polling Spam)</span>
                 </div>
                 <div class="logs-scroll" id="logs-container">
                     <div class="log-item">
-                        <span class="log-msg">Initializing telemetry stream...</span>
+                        <span class="log-msg">Connecting to Live SSE Stream...</span>
                         <span class="log-time">Just now</span>
                     </div>
                 </div>
@@ -566,6 +835,8 @@ export class DashboardController {
     </div>
 
     <script>
+        let currentAiEnabled = true;
+
         function formatBytes(mb) {
             if (mb >= 1024) return (mb / 1024).toFixed(1) + ' GB';
             return mb + ' MB';
@@ -581,77 +852,185 @@ export class DashboardController {
             return \`\${m}m \${s}s\`;
         }
 
-        async function fetchTelemetry() {
+        async function toggleAiSwitch() {
             try {
-                const res = await fetch('/api/v1/dashboard/stats');
+                const res = await fetch('/api/v1/dashboard/toggle-ai', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ enabled: !currentAiEnabled })
+                });
                 const json = await res.json();
-                if (!json.success) return;
-                const d = json.data;
+                if (json.success) {
+                    currentAiEnabled = json.aiEnabled;
+                    updateAiButtonUi(currentAiEnabled);
+                }
+            } catch (err) {
+                alert('Failed to toggle AI state: ' + err.message);
+            }
+        }
 
-                // CPU
-                document.getElementById('cpu-percent').textContent = d.system.cpu.loadPercent + '%';
-                document.getElementById('cpu-model').textContent = d.system.cpu.model;
-                document.getElementById('cpu-badge').textContent = d.system.cpu.cores + ' Cores';
-                document.getElementById('cpu-bar').style.width = Math.min(100, d.system.cpu.loadPercent) + '%';
+        async function triggerIngest() {
+            const btn = document.getElementById('btn-trigger-ingest');
+            btn.disabled = true;
+            btn.innerHTML = '<span>⏳ Ingesting Feeds...</span>';
+            try {
+                const res = await fetch('/api/v1/dashboard/trigger-ingest', { method: 'POST' });
+                const json = await res.json();
+                alert(json.message || 'Ingest started');
+            } catch (e) {
+                alert('Failed to trigger ingest: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>⚡ Trigger Ingest Now</span>';
+            }
+        }
 
-                // RAM
-                document.getElementById('ram-used').textContent = formatBytes(d.system.memory.usedMB);
-                document.getElementById('ram-total').textContent = \`Total: \${formatBytes(d.system.memory.totalMB)} • Heap: \${d.system.memory.processHeapUsedMB} MB\`;
-                document.getElementById('ram-badge').textContent = d.system.memory.usedPercent + '% Used';
-                document.getElementById('ram-bar').style.width = d.system.memory.usedPercent + '%';
+        async function flushCache() {
+            try {
+                const res = await fetch('/api/v1/dashboard/clear-cache', { method: 'POST' });
+                const json = await res.json();
+                alert(json.message || 'Cache flushed');
+            } catch (e) {
+                alert('Failed to flush cache: ' + e.message);
+            }
+        }
 
-                // Tokens & Requests
-                document.getElementById('total-tokens').textContent = d.ai.totalTokensToday.toLocaleString();
-                document.getElementById('total-requests').textContent = \`\${d.ai.totalRequestsToday} AI Requests Completed (\${d.ai.totalErrorsToday} Errors)\`;
+        function updateAiButtonUi(enabled) {
+            const btn = document.getElementById('ai-toggle-btn');
+            const label = document.getElementById('ai-toggle-label');
+            if (enabled) {
+                btn.classList.remove('disabled');
+                label.textContent = '🟢 AI Summarizer: ACTIVE';
+            } else {
+                btn.classList.add('disabled');
+                label.textContent = '🔴 AI Summarizer: PAUSED (Direct Save)';
+            }
+        }
 
-                // Uptime
-                document.getElementById('uptime-val').textContent = formatUptime(d.system.server.processUptimeSeconds);
-                document.getElementById('node-env').textContent = \`\${d.system.server.platform} (\${d.system.server.arch}) • \${d.system.server.nodeVersion}\`;
+        function renderTelemetryData(d) {
+            // AI Toggle state
+            currentAiEnabled = d.aiEnabled;
+            updateAiButtonUi(currentAiEnabled);
 
-                // Models List
-                const modelsContainer = document.getElementById('models-container');
-                modelsContainer.innerHTML = d.ai.models.map(m => {
-                    const statusColor = m.status === 'rate_limited' ? '#F59E0B' : m.status === 'error' ? '#EF4444' : '#10B981';
-                    const statusLabel = m.status === 'rate_limited' ? 'RATE LIMITED (RESTING)' : m.status === 'error' ? 'OFFLINE' : 'READY (ACTIVE)';
+            // CPU
+            document.getElementById('cpu-percent').textContent = d.system.cpu.loadPercent + '%';
+            document.getElementById('cpu-model').textContent = d.system.cpu.model;
+            document.getElementById('cpu-badge').textContent = d.system.cpu.cores + ' Cores';
+            document.getElementById('cpu-bar').style.width = Math.min(100, d.system.cpu.loadPercent) + '%';
+
+            // RAM
+            document.getElementById('ram-used').textContent = formatBytes(d.system.memory.usedMB);
+            document.getElementById('ram-total').textContent = \`Total: \${formatBytes(d.system.memory.totalMB)} • Heap: \${d.system.memory.processHeapUsedMB} MB\`;
+            document.getElementById('ram-badge').textContent = d.system.memory.usedPercent + '% Used';
+            document.getElementById('ram-bar').style.width = d.system.memory.usedPercent + '%';
+
+            // Daily 2M Quota
+            document.getElementById('total-tokens').textContent = d.ai.totalTokensToday.toLocaleString();
+            document.getElementById('quota-details').textContent = \`\${d.ai.totalTokensToday.toLocaleString()} / 2,000,000 Daily Tokens (\${d.ai.dailyQuotaUsedPercent}%)\`;
+            document.getElementById('quota-badge').textContent = \`\${d.ai.dailyQuotaUsedPercent}% Used\`;
+            document.getElementById('quota-bar').style.width = Math.min(100, d.ai.dailyQuotaUsedPercent) + '%';
+
+            // Funnel Metrics
+            if (d.funnel) {
+                document.getElementById('funnel-scanned').textContent = (d.funnel.rssScannedToday || 0).toLocaleString();
+                document.getElementById('funnel-deduped').textContent = (d.funnel.dedupedCandidatesToday || 0).toLocaleString();
+                document.getElementById('funnel-llm').textContent = (d.funnel.llmSummarizedToday || 0).toLocaleString();
+                document.getElementById('funnel-direct').textContent = (d.funnel.directSavedToday || 0).toLocaleString();
+                document.getElementById('funnel-db').textContent = (d.funnel.dbInsertedToday || 0).toLocaleString();
+
+                if (d.funnel.lastIngestAt) {
+                    const durSec = ((d.funnel.lastIngestDurationMs || 0) / 1000).toFixed(1);
+                    document.getElementById('funnel-timing').textContent = \`Last Batch: \${durSec}s at \${new Date(d.funnel.lastIngestAt).toLocaleTimeString()}\`;
+                }
+            }
+
+            // BullMQ Queue Ingestion Metrics
+            if (d.queue) {
+                const isIngesting = d.queue.isIngesting;
+                const badge = document.getElementById('queue-status-badge');
+                badge.textContent = isIngesting ? 'INGESTING LIVE' : 'IDLE';
+                badge.style.background = isIngesting ? 'rgba(16, 185, 129, 0.15)' : 'rgba(59, 130, 246, 0.15)';
+                badge.style.color = isIngesting ? '#34D399' : '#60A5FA';
+
+                document.getElementById('queue-pending').textContent = \`\${d.queue.pendingArticles || 0} Pending\`;
+                document.getElementById('queue-details').textContent = \`Active: \${d.queue.activeJobs || 0} • Completed: \${d.queue.completedToday || 0}\`;
+                document.getElementById('queue-bar').style.width = isIngesting ? '80%' : '0%';
+            }
+
+            // Uptime
+            document.getElementById('uptime-val').textContent = formatUptime(d.system.server.processUptimeSeconds);
+            document.getElementById('node-env').textContent = \`\${d.system.server.platform} (\${d.system.server.arch}) • \${d.system.server.nodeVersion}\`;
+
+            // Models List
+            const modelsContainer = document.getElementById('models-container');
+            modelsContainer.innerHTML = d.ai.models.map(m => {
+                const statusColor = m.status === 'rate_limited' ? '#F59E0B' : m.status === 'error' ? '#EF4444' : '#10B981';
+                const statusLabel = m.status === 'rate_limited' ? 'RATE LIMITED (RESTING)' : m.status === 'error' ? 'OFFLINE' : 'READY (ACTIVE)';
+                return \`
+                    <div class="model-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="model-name">\${m.displayName}</span>
+                            <span style="font-size: 10px; font-weight: 800; color: \${statusColor};">\${statusLabel}</span>
+                        </div>
+                        <div class="model-stats-row">
+                            <span>Requests Today</span>
+                            <span class="model-stats-val">\${m.requestsToday}</span>
+                        </div>
+                        <div class="model-stats-row">
+                            <span>Tokens Used</span>
+                            <span class="model-stats-val">\${m.totalTokensToday.toLocaleString()}</span>
+                        </div>
+                        <div class="model-stats-row">
+                            <span>Avg Latency</span>
+                            <span class="model-stats-val">\${m.lastLatencyMs}ms</span>
+                        </div>
+                    </div>
+                \`;
+            }).join('');
+
+            // Recent Logs
+            const logsContainer = document.getElementById('logs-container');
+            if (d.recentLogs.length > 0) {
+                logsContainer.innerHTML = d.recentLogs.map(l => {
+                    const icon = l.status === 'success' ? '🟢' : l.status === 'rotated' ? '🔄' : '🔴';
+                    const time = new Date(l.timestamp).toLocaleTimeString();
                     return \`
-                        <div class="model-card">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span class="model-name">\${m.displayName}</span>
-                                <span style="font-size: 10px; font-weight: 800; color: \${statusColor};">\${statusLabel}</span>
-                            </div>
-                            <div class="model-stats-row">
-                                <span>Requests Today</span>
-                                <span class="model-stats-val">\${m.requestsToday}</span>
-                            </div>
-                            <div class="model-stats-row">
-                                <span>Tokens Used</span>
-                                <span class="model-stats-val">\${m.totalTokensToday.toLocaleString()}</span>
-                            </div>
-                            <div class="model-stats-row">
-                                <span>Avg Latency</span>
-                                <span class="model-stats-val">\${m.lastLatencyMs}ms</span>
-                            </div>
+                        <div class="log-item">
+                            <span class="log-msg">\${icon} \${l.message}</span>
+                            <span class="log-time">\${time}</span>
                         </div>
                     \`;
                 }).join('');
-
-                // Recent Logs
-                const logsContainer = document.getElementById('logs-container');
-                if (d.recentLogs.length > 0) {
-                    logsContainer.innerHTML = d.recentLogs.map(l => {
-                        const icon = l.status === 'success' ? '🟢' : l.status === 'rotated' ? '🔄' : '🔴';
-                        const time = new Date(l.timestamp).toLocaleTimeString();
-                        return \`
-                            <div class="log-item">
-                                <span class="log-msg">\${icon} \${l.message}</span>
-                                <span class="log-time">\${time}</span>
-                            </div>
-                        \`;
-                    }).join('');
-                }
-            } catch (err) {
-                console.warn('Telemetry fetch failed:', err);
             }
+        }
+
+        // ─── Real-Time Server-Sent Events (SSE) Stream ───
+        function startEventSourceStream() {
+            try {
+                const eventSource = new EventSource('/api/v1/dashboard/stream');
+                eventSource.onmessage = (event) => {
+                    try {
+                        const d = JSON.parse(event.data);
+                        renderTelemetryData(d);
+                    } catch (e) {
+                        console.warn('SSE parse error:', e);
+                    }
+                };
+                eventSource.onerror = () => {
+                    // Fallback to fetch on connection hiccup
+                    fetchFallback();
+                };
+            } catch {
+                fetchFallback();
+            }
+        }
+
+        async function fetchFallback() {
+            try {
+                const res = await fetch('/api/v1/dashboard/stats');
+                const json = await res.json();
+                if (json.success) renderTelemetryData(json.data);
+            } catch {}
         }
 
         async function runSummarizeTest() {
@@ -688,13 +1067,11 @@ export class DashboardController {
             } finally {
                 btn.textContent = '⚡ Generate Inshorts 60-Word Story';
                 btn.disabled = false;
-                fetchTelemetry();
             }
         }
 
-        // Initial fetch & interval
-        fetchTelemetry();
-        setInterval(fetchTelemetry, 2500);
+        // Initialize Live SSE Stream
+        startEventSourceStream();
     </script>
 </body>
 </html>`;

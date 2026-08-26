@@ -292,3 +292,53 @@ export async function getRecentLogs(_req: Request, res: Response) {
     logs: logStream.getRecentLogs(),
   });
 }
+
+/**
+ * POST /api/v1/news/translate
+ * Translates a 60-word news story into Indian Regional Languages using Gemini 3.5 Live Translate
+ */
+export async function translateNewsArticle(req: Request, res: Response) {
+  try {
+    const { headline, story, bullets, targetLang } = req.body;
+    if (!headline || !story) {
+      return res.status(400).json({ success: false, error: 'Headline and story are required' });
+    }
+
+    const { GeminiService } = await import('../services/geminiService.js');
+    const result = await GeminiService.translateStory({
+      headline,
+      story,
+      bullets: Array.isArray(bullets) ? bullets : [],
+      targetLang: targetLang || 'hi',
+    });
+
+    return res.json({ success: true, data: result });
+  } catch (error: any) {
+    console.error('Error in translateNewsArticle:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+/**
+ * POST /api/v1/news/deep-dive
+ * Generates an instant fact-checking and timeline deep dive using Gemini 3 Flash Live
+ */
+export async function getNewsDeepDive(req: Request, res: Response) {
+  try {
+    const { headline, content } = req.body;
+    if (!headline) {
+      return res.status(400).json({ success: false, error: 'Headline is required' });
+    }
+
+    const { GeminiService } = await import('../services/geminiService.js');
+    const result = await GeminiService.generateDeepDive({
+      headline,
+      content: content || headline,
+    });
+
+    return res.json({ success: true, data: result });
+  } catch (error: any) {
+    console.error('Error in getNewsDeepDive:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+}

@@ -1,0 +1,524 @@
+{
+  "trackedDate": "2026-08-26",
+  "aiEnabled": false,
+  "models": [
+    {
+      "model": "qwen/qwen3.8-27b",
+      "displayName": "Qwen 3.8 27B (Primary • 2M TPD)",
+      "tier": 1,
+      "requestsToday": 555,
+      "promptTokensToday": 151017,
+      "completionTokensToday": 85385,
+      "totalTokensToday": 236402,
+      "lastLatencyMs": 774,
+      "status": "rate_limited",
+      "lastUsedAt": "2026-08-26T17:15:57.590Z",
+      "errorsToday": 842,
+      "rateLimitResetAt": "2026-08-26T17:51:49.625Z"
+    },
+    {
+      "model": "qwen/qwen3.6-27b",
+      "displayName": "Qwen 3.6 27B (Secondary Turbo)",
+      "tier": 2,
+      "requestsToday": 39,
+      "promptTokensToday": 11299,
+      "completionTokensToday": 13650,
+      "totalTokensToday": 24949,
+      "lastLatencyMs": 2590,
+      "status": "rate_limited",
+      "lastUsedAt": "2026-08-26T15:22:10.514Z",
+      "errorsToday": 798,
+      "rateLimitResetAt": "2026-08-26T17:51:49.705Z"
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "displayName": "GPT-OSS 120B (High Intelligence)",
+      "tier": 3,
+      "requestsToday": 10,
+      "promptTokensToday": 4169,
+      "completionTokensToday": 3500,
+      "totalTokensToday": 7669,
+      "lastLatencyMs": 4252,
+      "status": "rate_limited",
+      "lastUsedAt": "2026-08-26T15:31:13.074Z",
+      "errorsToday": 784,
+      "rateLimitResetAt": "2026-08-26T17:51:49.802Z"
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "displayName": "GPT-OSS 20B (Fast Fallback)",
+      "tier": 4,
+      "requestsToday": 21,
+      "promptTokensToday": 7254,
+      "completionTokensToday": 7350,
+      "totalTokensToday": 14604,
+      "lastLatencyMs": 2570,
+      "status": "rate_limited",
+      "lastUsedAt": "2026-08-26T15:50:50.283Z",
+      "errorsToday": 758,
+      "rateLimitResetAt": "2026-08-26T17:51:49.876Z"
+    },
+    {
+      "model": "groq:qwen/qwen3.8-27b",
+      "displayName": "groq:qwen/qwen3.8-27b",
+      "tier": 99,
+      "requestsToday": 51,
+      "promptTokensToday": 14899,
+      "completionTokensToday": 8340,
+      "totalTokensToday": 23239,
+      "lastLatencyMs": 896,
+      "status": "ready",
+      "lastUsedAt": "2026-08-26T17:50:44.276Z",
+      "errorsToday": 0,
+      "rateLimitResetAt": null
+    },
+    {
+      "model": "groq:qwen/qwen3.6-27b",
+      "displayName": "groq:qwen/qwen3.6-27b",
+      "tier": 99,
+      "requestsToday": 4,
+      "promptTokensToday": 1577,
+      "completionTokensToday": 1400,
+      "totalTokensToday": 2977,
+      "lastLatencyMs": 2926,
+      "status": "ready",
+      "lastUsedAt": "2026-08-26T17:21:45.666Z",
+      "errorsToday": 0,
+      "rateLimitResetAt": null
+    },
+    {
+      "model": "groq:openai/gpt-oss-120b",
+      "displayName": "groq:openai/gpt-oss-120b",
+      "tier": 99,
+      "requestsToday": 5,
+      "promptTokensToday": 1132,
+      "completionTokensToday": 1750,
+      "totalTokensToday": 2882,
+      "lastLatencyMs": 3851,
+      "status": "ready",
+      "lastUsedAt": "2026-08-26T17:22:28.015Z",
+      "errorsToday": 0,
+      "rateLimitResetAt": null
+    },
+    {
+      "model": "groq:openai/gpt-oss-20b",
+      "displayName": "groq:openai/gpt-oss-20b",
+      "tier": 99,
+      "requestsToday": 5,
+      "promptTokensToday": 1123,
+      "completionTokensToday": 1750,
+      "totalTokensToday": 2873,
+      "lastLatencyMs": 3030,
+      "status": "ready",
+      "lastUsedAt": "2026-08-26T17:25:07.896Z",
+      "errorsToday": 0,
+      "rateLimitResetAt": null
+    },
+    {
+      "model": "sambanova:gemma-4-31B-it",
+      "displayName": "sambanova:gemma-4-31B-it",
+      "tier": 99,
+      "requestsToday": 1,
+      "promptTokensToday": 697,
+      "completionTokensToday": 133,
+      "totalTokensToday": 830,
+      "lastLatencyMs": 9697,
+      "status": "ready",
+      "lastUsedAt": "2026-08-26T17:24:53.459Z",
+      "errorsToday": 0,
+      "rateLimitResetAt": null
+    },
+    {
+      "model": "mistral:mistral-small-latest",
+      "displayName": "mistral:mistral-small-latest",
+      "tier": 99,
+      "requestsToday": 235,
+      "promptTokensToday": 67830,
+      "completionTokensToday": 34970,
+      "totalTokensToday": 102800,
+      "lastLatencyMs": 1593,
+      "status": "ready",
+      "lastUsedAt": "2026-08-26T17:51:21.471Z",
+      "errorsToday": 0,
+      "rateLimitResetAt": null
+    }
+  ],
+  "funnel": {
+    "rssScannedToday": 101282,
+    "dedupedCandidatesToday": 2437,
+    "llmSummarizedToday": 1050,
+    "directSavedToday": 434,
+    "dbInsertedToday": 882,
+    "lastIngestDurationMs": 82320,
+    "lastIngestAt": "2026-08-26T18:06:22.619Z"
+  },
+  "logs": [
+    {
+      "id": "log-1787766682925-ey19",
+      "timestamp": "2026-08-26T17:51:22.925Z",
+      "type": "ai_request",
+      "status": "rotated",
+      "message": "🔴 AI Summarization Paused by Administrator (Direct Raw Mode)"
+    },
+    {
+      "id": "log-1787766681471-12va",
+      "timestamp": "2026-08-26T17:51:21.471Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 306,
+      "latencyMs": 1593,
+      "status": "success",
+      "message": "Summarized \"Nestlé bets big on India’s food market\" in 1593ms (306 tokens)",
+      "details": {
+        "promptTokens": 172,
+        "completionTokens": 134
+      }
+    },
+    {
+      "id": "log-1787766679876-px9i",
+      "timestamp": "2026-08-26T17:51:19.876Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-20b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766679802-veyd",
+      "timestamp": "2026-08-26T17:51:19.802Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766679705-8znb",
+      "timestamp": "2026-08-26T17:51:19.705Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.6-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.6-27b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766679625-noy3",
+      "timestamp": "2026-08-26T17:51:19.625Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.8-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766678904-s8db",
+      "timestamp": "2026-08-26T17:51:18.904Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 319,
+      "latencyMs": 1761,
+      "status": "success",
+      "message": "Summarized \"Tata Power loses $490M arbitration case\" in 1761ms (319 tokens)",
+      "details": {
+        "promptTokens": 170,
+        "completionTokens": 149
+      }
+    },
+    {
+      "id": "log-1787766677138-cjrd",
+      "timestamp": "2026-08-26T17:51:17.138Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-20b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766677047-wghy",
+      "timestamp": "2026-08-26T17:51:17.047Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766676944-7jn9",
+      "timestamp": "2026-08-26T17:51:16.944Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.6-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.6-27b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766676858-e4ix",
+      "timestamp": "2026-08-26T17:51:16.858Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.8-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766676172-5uti",
+      "timestamp": "2026-08-26T17:51:16.172Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 670,
+      "latencyMs": 1953,
+      "status": "success",
+      "message": "Summarized \"Alpha Wave to sell 7.8% stake in Aye Finance\" in 1953ms (670 tokens)",
+      "details": {
+        "promptTokens": 473,
+        "completionTokens": 197
+      }
+    },
+    {
+      "id": "log-1787766674216-4yee",
+      "timestamp": "2026-08-26T17:51:14.216Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-20b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766674123-eklm",
+      "timestamp": "2026-08-26T17:51:14.123Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766674004-37ad",
+      "timestamp": "2026-08-26T17:51:14.004Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.6-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.6-27b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766673767-e5zq",
+      "timestamp": "2026-08-26T17:51:13.767Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.8-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766671162-bwyn",
+      "timestamp": "2026-08-26T17:51:11.162Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 310,
+      "latencyMs": 1530,
+      "status": "success",
+      "message": "Summarized \"iPhone 18 Pro launch confirmed for Sept 9\" in 1530ms (310 tokens)",
+      "details": {
+        "promptTokens": 167,
+        "completionTokens": 143
+      }
+    },
+    {
+      "id": "log-1787766669629-jjk0",
+      "timestamp": "2026-08-26T17:51:09.629Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-20b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766669531-urre",
+      "timestamp": "2026-08-26T17:51:09.531Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766669441-earo",
+      "timestamp": "2026-08-26T17:51:09.441Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.6-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.6-27b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766669363-f8k4",
+      "timestamp": "2026-08-26T17:51:09.363Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.8-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766668530-ddfp",
+      "timestamp": "2026-08-26T17:51:08.530Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 340,
+      "latencyMs": 2067,
+      "status": "success",
+      "message": "Summarized \"Nifty choppy; 24,400 key for rally\" in 2067ms (340 tokens)",
+      "details": {
+        "promptTokens": 180,
+        "completionTokens": 160
+      }
+    },
+    {
+      "id": "log-1787766666459-6hmi",
+      "timestamp": "2026-08-26T17:51:06.459Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-20b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766666200-70rs",
+      "timestamp": "2026-08-26T17:51:06.200Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766665936-pchg",
+      "timestamp": "2026-08-26T17:51:05.936Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.6-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.6-27b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766665675-ejxi",
+      "timestamp": "2026-08-26T17:51:05.675Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.8-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766664813-97r4",
+      "timestamp": "2026-08-26T17:51:04.813Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 351,
+      "latencyMs": 1789,
+      "status": "success",
+      "message": "Summarized \"Nifty may stay choppy; needs 24,400 breakout\" in 1789ms (351 tokens)",
+      "details": {
+        "promptTokens": 180,
+        "completionTokens": 171
+      }
+    },
+    {
+      "id": "log-1787766663015-l71c",
+      "timestamp": "2026-08-26T17:51:03.015Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-20b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766662821-8b5d",
+      "timestamp": "2026-08-26T17:51:02.821Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766662637-rtx2",
+      "timestamp": "2026-08-26T17:51:02.637Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.6-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.6-27b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766662443-j8q8",
+      "timestamp": "2026-08-26T17:51:02.443Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.8-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766661458-9v0m",
+      "timestamp": "2026-08-26T17:51:01.458Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 280,
+      "latencyMs": 1760,
+      "status": "success",
+      "message": "Summarized \"India-China border talks focus on peace\" in 1760ms (280 tokens)",
+      "details": {
+        "promptTokens": 160,
+        "completionTokens": 120
+      }
+    },
+    {
+      "id": "log-1787766659693-j0fy",
+      "timestamp": "2026-08-26T17:50:59.693Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-20b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766659616-ilun",
+      "timestamp": "2026-08-26T17:50:59.616Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766659521-6bi1",
+      "timestamp": "2026-08-26T17:50:59.521Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.6-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.6-27b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766659435-4wlw",
+      "timestamp": "2026-08-26T17:50:59.435Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.8-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766658747-nq8l",
+      "timestamp": "2026-08-26T17:50:58.747Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 299,
+      "latencyMs": 2036,
+      "status": "success",
+      "message": "Summarized \"HDFC Bank hit with US bribery lawsuit\" in 2036ms (299 tokens)",
+      "details": {
+        "promptTokens": 164,
+        "completionTokens": 135
+      }
+    },
+    {
+      "id": "log-1787766656708-0rfl",
+      "timestamp": "2026-08-26T17:50:56.708Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-20b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766656627-cutw",
+      "timestamp": "2026-08-26T17:50:56.627Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1787766656536-aace",
+      "timestamp": "2026-08-26T17:50:56.536Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.6-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.6-27b (429). Automatically rotated to next tier model."
+    }
+  ]
+}

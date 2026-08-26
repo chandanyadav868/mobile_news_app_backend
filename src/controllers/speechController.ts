@@ -62,6 +62,49 @@ export class SpeechController {
     }
 
     /**
+     * POST /api/v1/speech/gemini-synthesize
+     * Body: { text: string, voiceName?: string }
+     */
+    public static async geminiSynthesize(req: Request, res: Response): Promise<void> {
+        try {
+            const { text, voiceName } = req.body;
+            if (!text || typeof text !== 'string' || !text.trim()) {
+                res.status(400).json({ success: false, error: 'Text is required.' });
+                return;
+            }
+
+            const startTime = Date.now();
+            console.log(`\n✨ [Gemini Speech API] Requesting Google Gemini AI Voice:`);
+            console.log(`   • Voice: ${voiceName || 'Aoede (Gemini AI Anchor)'}`);
+            console.log(`   • Text: "${text.slice(0, 70)}..."`);
+
+            const { GeminiService } = await import('../services/geminiService.js');
+            const result = await GeminiService.synthesizeSpeech({
+                text: text.trim(),
+                voiceName: voiceName || 'Aoede',
+            });
+
+            const elapsedMs = Date.now() - startTime;
+            console.log(`   ✅ [Gemini Speech API] Audio generated in ${elapsedMs}ms\n`);
+
+            res.status(200).json({
+                success: true,
+                voice: voiceName || 'Aoede (Google Gemini AI)',
+                audioBase64: result.audioBase64,
+                mimeType: result.mimeType,
+                durationMs: result.durationMs,
+                latencyMs: elapsedMs,
+            });
+        } catch (err: any) {
+            console.error('❌ [Gemini Speech API] error:', err.message);
+            res.status(500).json({
+                success: false,
+                error: err.message || 'Gemini speech synthesis failed.',
+            });
+        }
+    }
+
+    /**
      * GET /api/v1/speech/stream?text=...&voice=...
      * Returns audio/mpeg streaming directly for native mobile players
      */

@@ -13,6 +13,13 @@ const envSchema = z.object({
   GEMINI_API_KEY: z.string().optional().default(''),
   OPENAI_API_KEY: z.string().optional().default(''),
   GROQ_API_KEY: z.string().optional().default(''),
+  SAMBANOVA_API_KEY: z.string().optional().default(''),
+  SAMBANOVA_BASE_URL: z.string().default('https://api.sambanova.ai/v1'),
+  MISTRAL_API_KEY: z.string().optional().default(''),
+  MISTRAL_BASE_URL: z.string().default('https://api.mistral.ai/v1'),
+  CLOUDFLARE_API_TOKEN: z.string().optional().default(''),
+  CLOUDFLARE_ACCOUNT_ID: z.string().optional().default(''),
+  CLOUDFLARE_BASE_URL: z.string().default('https://api.cloudflare.com/client/v4/accounts'),
 });
 
 export const env = envSchema.parse(process.env);

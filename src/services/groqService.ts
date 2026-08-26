@@ -16,27 +16,32 @@ export interface SummarizedNewsResult {
 export class GroqService {
     private static apiKey: string = env.GROQ_API_KEY || process.env.GROQ_API_KEY || '';
 
-    // Model Pool in strict Priority order
+    // Fast completion model pool (excludes heavy compound reasoning models)
     private static modelPool: string[] = [
-        'llama-3.3-70b-versatile',
-        'llama-3.1-8b-instant',
         'qwen/qwen3.8-27b',
-        'gemma2-9b-it',
-        'mixtral-8x7b-32768',
+        'qwen/qwen3.6-27b',
+        'openai/gpt-oss-120b',
+        'openai/gpt-oss-20b',
     ];
 
     /**
-     * Sanitizes raw HTML/Text, stripping dates, bylines, social links & boilerplate
+     * Sanitizes and caps raw text to lead 200 words (saves 80% prompt tokens)
      */
     public static sanitizeRawText(rawText: string): string {
         if (!rawText) return '';
-        return rawText
+        const cleaned = rawText
             .replace(/<[^>]*>/g, ' ') // Strip HTML tags
             .replace(/(published|updated|reported by|written by|follow us|subscribe|read more|click here|copyright|all rights reserved)[\s\S]{0,80}/gi, ' ')
             .replace(/http[s]?:\/\/\S+/g, ' ')
             .replace(/\s+/g, ' ')
-            .trim()
-            .slice(0, 3000); // Feed maximum 3000 chars for high speed
+            .trim();
+
+        // Cap to lead 200 words
+        const words = cleaned.split(' ');
+        if (words.length > 200) {
+            return words.slice(0, 200).join(' ') + '...';
+        }
+        return cleaned;
     }
 
     /**
@@ -55,36 +60,53 @@ export class GroqService {
             ? [params.preferredModel, ...this.modelPool.filter((m) => m !== params.preferredModel)]
             : [...this.modelPool];
 
-        const systemPrompt = `You are a world-class senior news editor for Inshorts.
-Your job is to transform raw news into a punchy, ultra-crisp 60-word news story with 3 key takeaway bullet points.
-
-CRITICAL RULES:
-1. Output MUST be strict valid JSON only without markdown or codeblocks.
-2. The JSON format must be:
-{
-  "headline": "Ultra crisp punchy headline (max 12 words)",
-  "story": "Complete, engaging 60-word news story providing full context and outcome without fluff.",
-  "bullets": [
-    "Bullet point 1: Key fact or number",
-    "Bullet point 2: Direct consequence or statement",
-    "Bullet point 3: What happens next"
-  ]
-}
-3. STRICTLY DO NOT include dates, reporter names, "In a recent statement", or boilerplate.
-4. Keep the tone factual, unbiased, and modern.`;
+        const systemPrompt = `You are an Inshorts news editor. Summarize raw news into an ultra-crisp 60-word story with 3 key takeaway bullets.
+Return strict JSON only:
+{"headline":"Punchy headline (max 10 words)","story":"Crisp 60-word news story with full context.","bullets":["Key fact 1","Key fact 2","Key fact 3"]}
+Do not include dates, author names, or fluff.`;
 
         const userPrompt = `Category: ${params.category || 'General'}
 Headline: ${cleanTitle}
 
-Raw Content:
+Text:
 ${cleanContent || cleanTitle}`;
+
+        // Official Groq Structured Outputs specification (https://console.groq.com/docs/structured-outputs)
+        const jsonSchemaFormat = {
+            type: 'json_schema',
+            json_schema: {
+                name: 'inshorts_story_summary',
+                schema: {
+                    type: 'object',
+                    properties: {
+                        headline: {
+                            type: 'string',
+                            description: 'Ultra-crisp punchy headline (max 10 words)',
+                        },
+                        story: {
+                            type: 'string',
+                            description: 'Engaging, concise 60-word news story providing full factual context without fluff.',
+                        },
+                        bullets: {
+                            type: 'array',
+                            items: { type: 'string' },
+                            description: 'Exactly 3 key takeaway bullet points',
+                        },
+                    },
+                    required: ['headline', 'story', 'bullets'],
+                    additionalProperties: false,
+                },
+                strict: true,
+            },
+        };
 
         let lastError: any = null;
 
         for (const model of modelsToTry) {
             const startTime = Date.now();
             try {
-                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                // 1. First attempt: Official Groq Structured Output (json_schema)
+                let response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${this.apiKey}`,
@@ -96,11 +118,52 @@ ${cleanContent || cleanTitle}`;
                             { role: 'system', content: systemPrompt },
                             { role: 'user', content: userPrompt },
                         ],
-                        temperature: 0.2,
+                        temperature: 0.1,
                         max_tokens: 350,
-                        response_format: { type: 'json_object' },
+                        response_format: jsonSchemaFormat,
                     }),
                 });
+
+                // 2. Fallback: json_object if json_schema is unsupported on specific model
+                if (response.status === 400) {
+                    response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${this.apiKey}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            model,
+                            messages: [
+                                { role: 'system', content: systemPrompt },
+                                { role: 'user', content: userPrompt },
+                            ],
+                            temperature: 0.1,
+                            max_tokens: 350,
+                            response_format: { type: 'json_object' },
+                        }),
+                    });
+                }
+
+                // 3. Fallback: standard completion without response_format if both fail
+                if (response.status === 400) {
+                    response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${this.apiKey}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            model,
+                            messages: [
+                                { role: 'system', content: `${systemPrompt}\n\nStrictly reply with valid JSON only.` },
+                                { role: 'user', content: userPrompt },
+                            ],
+                            temperature: 0.1,
+                            max_tokens: 350,
+                        }),
+                    });
+                }
 
                 const latencyMs = Date.now() - startTime;
 
@@ -117,18 +180,33 @@ ${cleanContent || cleanTitle}`;
                 }
 
                 const data = await response.json();
-                const contentStr = data.choices?.[0]?.message?.content || '{}';
+                const choice = data.choices?.[0];
                 const usage = data.usage || { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 };
+                const rawContentStr = choice?.message?.content || '{}';
 
                 let parsed: any;
                 try {
-                    parsed = JSON.parse(contentStr);
+                    parsed = JSON.parse(rawContentStr);
                 } catch {
-                    parsed = {
-                        headline: cleanTitle,
-                        story: cleanContent.slice(0, 300),
-                        bullets: [cleanTitle],
-                    };
+                    // Extract JSON substring if surrounded by markdown codeblocks
+                    const jsonMatch = rawContentStr.match(/\{[\s\S]*\}/);
+                    if (jsonMatch) {
+                        try {
+                            parsed = JSON.parse(jsonMatch[0]);
+                        } catch {
+                            parsed = {
+                                headline: cleanTitle,
+                                story: cleanContent.slice(0, 300),
+                                bullets: [cleanTitle],
+                            };
+                        }
+                    } else {
+                        parsed = {
+                            headline: cleanTitle,
+                            story: cleanContent.slice(0, 300),
+                            bullets: [cleanTitle],
+                        };
+                    }
                 }
 
                 const headline = parsed.headline || cleanTitle;

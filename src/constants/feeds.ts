@@ -3,7 +3,7 @@ export const RSS_FEEDS: Record<string, string[]> = {
     "https://www.news18.com/commonfeeds/v1/eng/rss/cricket.xml",
     "https://www.hindustantimes.com/feeds/rss/cricket/rssfeed.xml",
     "https://timesofindia.indiatimes.com/rssfeeds/54829575.cms",
-    "https://sports.espn.go.com/espn/rss/news",
+    "https://www.espn.com/espn/rss/news",
     "https://sports.yahoo.com/top/rss.xml",
     "https://www.news18.com/commonfeeds/v1/eng/rss/sports.xml",
     "https://feeds.feedburner.com/ndtvsports-cricket",
@@ -50,7 +50,7 @@ export const RSS_FEEDS: Record<string, string[]> = {
     "https://timesofindia.indiatimes.com/rssfeeds/3908999.cms",
     "https://www.sciencedaily.com/rss/health_medicine.xml",
     "https://www.theguardian.com/lifeandstyle/health-and-wellbeing/rss",
-    "https://feeds.feedburner.com/ndtvcooks-lifestyle",
+    "https://feeds.feedburner.com/ndtvfood-latest",
   ],
 
   Science: [
