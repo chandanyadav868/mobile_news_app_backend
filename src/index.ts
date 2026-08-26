@@ -11,6 +11,7 @@ import apiRouter from './routes/index.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { apiRateLimiter } from './middlewares/rateLimiter.js';
 import { renderDatabaseAdmin } from './controllers/admin.controller.js';
+import { DashboardController } from './controllers/dashboardController.js';
 
 const app = express();
 
@@ -36,7 +37,9 @@ if (env.NODE_ENV !== 'test') {
   app.use(morgan('dev'));
 }
 
-// ─── Visual Database Explorer Admin UI ────────────────────────────────────────
+// ─── Visual Dashboards & Admin UI ─────────────────────────────────────────────
+app.get('/dashboard', DashboardController.renderDashboard);
+app.get('/admin/telemetry', DashboardController.renderDashboard);
 app.get('/admin/database', renderDatabaseAdmin);
 
 // Apply rate limiting to API routes

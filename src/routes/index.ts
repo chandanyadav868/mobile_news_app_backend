@@ -5,6 +5,7 @@ import timelinesRoutes from './timelines.routes.js';
 import notificationRoutes from './notification.routes.js';
 import feedRoutes from './feed.routes.js';
 import speechRoutes from './speech.routes.js';
+import { DashboardController } from '../controllers/dashboardController.js';
 
 const router = Router();
 
@@ -14,6 +15,10 @@ router.use('/speech', speechRoutes);
 router.use('/insights', insightsRoutes);
 router.use('/timelines', timelinesRoutes);
 router.use('/notifications', notificationRoutes);
+
+// ─── Live Telemetry & AI Testing Endpoints ────────────────────────────────────
+router.get('/dashboard/stats', DashboardController.getStats);
+router.post('/dashboard/summarize-test', DashboardController.summarizeTest);
 
 router.get('/health', (_req: Request, res: Response) => {
   res.json({

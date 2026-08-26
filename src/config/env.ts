@@ -12,6 +12,7 @@ const envSchema = z.object({
   INGEST_CRON_SCHEDULE: z.string().default('*/5 * * * *'),
   GEMINI_API_KEY: z.string().optional().default(''),
   OPENAI_API_KEY: z.string().optional().default(''),
+  GROQ_API_KEY: z.string().optional().default(''),
 });
 
 export const env = envSchema.parse(process.env);
