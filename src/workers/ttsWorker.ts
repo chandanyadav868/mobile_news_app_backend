@@ -35,7 +35,10 @@ export async function synthesizeSpeech(
     pitch: string = '+0Hz'
 ): Promise<{ audioBase64: string; durationMs: number; wordBoundaries: WordBoundary[] }> {
     const tts = new MsEdgeTTS();
-    await tts.setMetadata(voice, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
+    await tts.setMetadata(voice, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3, {
+        wordBoundaryEnabled: true,
+        sentenceBoundaryEnabled: true,
+    });
 
     // Clean and normalize text, removing unprintable symbols, XML brackets, and emojis
     const cleanText = text
@@ -54,6 +57,38 @@ export async function synthesizeSpeech(
     });
 
     const chunks: Buffer[] = [];
+    const nativeBoundaries: WordBoundary[] = [];
+
+    if (stream.metadataStream) {
+        stream.metadataStream.on('data', (metaChunk: Buffer) => {
+            try {
+                const str = metaChunk.toString();
+                // Metadata can arrive with JSON strings or multiple records
+                const lines = str.split(/\r?\n/).filter(Boolean);
+                for (const line of lines) {
+                    try {
+                        const item = JSON.parse(line);
+                        const records = Array.isArray(item) ? item : [item];
+                        for (const r of records) {
+                            if (r.Type === 'WordBoundary' && r.Data) {
+                                const offsetMs = Math.round((r.Data.Offset || 0) / 10000);
+                                const durMs = Math.max(120, Math.round((r.Data.Duration || 0) / 10000));
+                                const wordText = r.Data.text?.Text || r.Data.Text || '';
+                                if (wordText) {
+                                    nativeBoundaries.push({
+                                        word: wordText,
+                                        start: offsetMs,
+                                        end: offsetMs + durMs,
+                                    });
+                                }
+                            }
+                        }
+                    } catch (e) {}
+                }
+            } catch (e) {}
+        });
+    }
+
     await new Promise<void>((resolve, reject) => {
         stream.audioStream.on('data', (chunk: Buffer) => {
             chunks.push(chunk);
@@ -75,26 +110,34 @@ export async function synthesizeSpeech(
     // Approximate duration from MP3 length (48 kbps = 6,000 bytes/sec)
     const estimatedDurationMs = Math.max(1000, Math.round((audioBuffer.length / 6000) * 1000));
 
-    // Calculate realistic word boundaries across the audio timeline
-    let currentMs = 100;
-    const totalChars = cleanText.length || 1;
-    const timePerChar = (estimatedDurationMs - 200) / totalChars;
+    // Use native Microsoft Neural word boundaries if captured, otherwise use smart weighted fallback
+    let finalWordBoundaries: WordBoundary[] = [];
+    if (nativeBoundaries.length >= Math.floor(words.length * 0.7)) {
+        finalWordBoundaries = nativeBoundaries;
+    } else {
+        // High-precision pause-aware word boundaries
+        let currentMs = 60;
+        const totalChars = cleanText.length || 1;
+        const netDuration = estimatedDurationMs - 120;
+        const timePerChar = netDuration / totalChars;
 
-    const wordBoundaries: WordBoundary[] = words.map((word) => {
-        const wordDuration = Math.max(150, Math.round(word.length * timePerChar));
-        const boundary: WordBoundary = {
-            word,
-            start: currentMs,
-            end: currentMs + wordDuration,
-        };
-        currentMs += wordDuration + 40; // 40ms pause between words
-        return boundary;
-    });
+        finalWordBoundaries = words.map((word) => {
+            const hasPause = /[.,!?;:]$/.test(word);
+            const wordDuration = Math.max(140, Math.round(word.length * timePerChar));
+            const boundary: WordBoundary = {
+                word,
+                start: currentMs,
+                end: currentMs + wordDuration,
+            };
+            currentMs += wordDuration + (hasPause ? 320 : 35);
+            return boundary;
+        });
+    }
 
     return {
         audioBase64,
         durationMs: estimatedDurationMs,
-        wordBoundaries,
+        wordBoundaries: finalWordBoundaries,
     };
 }
 
