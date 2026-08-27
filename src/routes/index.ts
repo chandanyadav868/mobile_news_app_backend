@@ -5,6 +5,7 @@ import timelinesRoutes from './timelines.routes.js';
 import notificationRoutes from './notification.routes.js';
 import feedRoutes from './feed.routes.js';
 import speechRoutes from './speech.routes.js';
+import pdfRoutes from './pdf.routes.js';
 import { DashboardController } from '../controllers/dashboardController.js';
 
 const router = Router();
@@ -12,6 +13,7 @@ const router = Router();
 router.use('/news', newsRoutes);
 router.use('/feeds', feedRoutes);
 router.use('/speech', speechRoutes);
+router.use('/pdf', pdfRoutes);
 router.use('/insights', insightsRoutes);
 router.use('/timelines', timelinesRoutes);
 router.use('/notifications', notificationRoutes);
