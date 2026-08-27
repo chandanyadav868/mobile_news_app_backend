@@ -28,36 +28,22 @@ export class UniversalLlmService {
     private static getProviders(): LlmProviderConfig[] {
         const providers: LlmProviderConfig[] = [];
 
-        // 1. Google Gemini 3 Flash Live (Tier 1: Unlimited Daily Tokens, 65K TPM)
+        // 1. Google Gemini (Tier 1: High Quality & High Speed)
         if (env.GEMINI_API_KEY) {
             providers.push({
                 id: 'gemini',
-                name: 'Google Gemini 3 Flash',
+                name: 'Google Gemini',
                 baseUrl: 'https://generativelanguage.googleapis.com',
                 apiKey: env.GEMINI_API_KEY,
                 models: [
                     'gemini-3-flash-preview',
+                    'gemini-2.5-flash',
+                    'gemini-3.5-flash',
                 ],
             });
         }
 
-        // 2. Groq Cloud (Secondary LPU Engine)
-        if (env.GROQ_API_KEY) {
-            providers.push({
-                id: 'groq',
-                name: 'Groq Cloud',
-                baseUrl: 'https://api.groq.com/openai/v1',
-                apiKey: env.GROQ_API_KEY,
-                models: [
-                    'qwen/qwen3.8-27b',
-                    'qwen/qwen3.6-27b',
-                    'openai/gpt-oss-120b',
-                    'openai/gpt-oss-20b',
-                ],
-            });
-        }
-
-        // 3. Mistral AI (Tertiary EU Engine)
+        // 2. Mistral AI (Tier 2: Fast European Serverless Engine)
         if (env.MISTRAL_API_KEY) {
             providers.push({
                 id: 'mistral',
@@ -72,7 +58,7 @@ export class UniversalLlmService {
             });
         }
 
-        // 4. Cloudflare Workers AI (Global Edge Tier)
+        // 3. Cloudflare Workers AI (Tier 3: Global Edge Tier)
         if (env.CLOUDFLARE_API_TOKEN && env.CLOUDFLARE_ACCOUNT_ID) {
             providers.push({
                 id: 'cloudflare',
@@ -82,6 +68,22 @@ export class UniversalLlmService {
                 models: [
                     '@cf/meta/llama-3.3-70b-instruct',
                     '@cf/qwen/qwen2.5-7b-instruct',
+                ],
+            });
+        }
+
+        // 4. Groq Cloud (Tier 4: Ultra-Fast LPU Engine)
+        if (env.GROQ_API_KEY) {
+            providers.push({
+                id: 'groq',
+                name: 'Groq Cloud',
+                baseUrl: 'https://api.groq.com/openai/v1',
+                apiKey: env.GROQ_API_KEY,
+                models: [
+                    'qwen/qwen3.8-27b',
+                    'qwen/qwen3.6-27b',
+                    'openai/gpt-oss-120b',
+                    'openai/gpt-oss-20b',
                 ],
             });
         }
@@ -109,7 +111,8 @@ export class UniversalLlmService {
     }
 
     /**
-     * Summarizes news with automatic multi-provider cross-failover
+     * Summarizes news with automatic multi-provider cross-failover hand-off
+     * Supports exactOnly mode for Studio testing (returning raw provider outputs without fallback)
      */
     public static async summarizeNews(params: {
         title: string;
@@ -117,6 +120,7 @@ export class UniversalLlmService {
         category?: string;
         preferredProvider?: string;
         preferredModel?: string;
+        exactOnly?: boolean;
     }): Promise<SummarizedNewsResult> {
         const cleanContent = this.sanitizeRawText(params.content);
         const cleanTitle = params.title.replace(/<[^>]*>/g, '').trim();
@@ -165,15 +169,23 @@ ${cleanContent || cleanTitle}`;
 
         let lastError: any = null;
 
-        // Iterate through Provider Chain (SambaNova -> Groq -> Mistral -> Cloudflare)
+        // Iterate through Provider Chain (Gemini -> Mistral -> Cloudflare -> Groq)
         for (const provider of providers) {
-            const models = params.preferredModel && provider.models.includes(params.preferredModel)
-                ? [params.preferredModel, ...provider.models.filter((m) => m !== params.preferredModel)]
-                : provider.models;
+            let models = provider.models;
+            if (params.preferredModel) {
+                if (params.exactOnly) {
+                    if (!provider.models.includes(params.preferredModel)) {
+                        continue; // Skip providers that don't own this exact model
+                    }
+                    models = [params.preferredModel];
+                } else if (provider.models.includes(params.preferredModel)) {
+                    models = [params.preferredModel, ...provider.models.filter((m) => m !== params.preferredModel)];
+                }
+            }
 
             for (const model of models) {
-                // Check if this model was manually paused/disabled by the administrator
-                if (!TelemetryService.isModelEnabled(model)) {
+                // Check if model was manually disabled (unless in exactOnly testing mode)
+                if (!params.exactOnly && !TelemetryService.isModelEnabled(model)) {
                     continue;
                 }
 
@@ -228,6 +240,9 @@ ${cleanContent || cleanTitle}`;
                                 success: true,
                             };
                         } catch (geminiErr: any) {
+                            if (params.exactOnly) {
+                                throw new Error(`[${model}] ${geminiErr.message || 'Gemini API call failed'}`);
+                            }
                             console.warn(`⚠️ [Google Gemini] Model "${model}" failed: ${geminiErr.message}. Rotating to next tier...`);
                             TelemetryService.recordModelError({
                                 model,
@@ -300,6 +315,9 @@ ${cleanContent || cleanTitle}`;
                     const latencyMs = Date.now() - startTime;
 
                     if (response.status === 429) {
+                        if (params.exactOnly) {
+                            throw new Error(`[${model}] 429 Rate Limit on ${provider.name}. Quota exhausted.`);
+                        }
                         console.warn(`⚠️ [${provider.name}] Rate limit (429) on model "${model}". Rotating to next model/provider...`);
                         TelemetryService.recordRateLimit(model, 30);
                         TelemetryService.recordModelError({
@@ -313,6 +331,9 @@ ${cleanContent || cleanTitle}`;
 
                     if (!response.ok) {
                         const errText = await response.text();
+                        if (params.exactOnly) {
+                            throw new Error(`[${model}] ${response.status} Error: ${errText.slice(0, 150)}`);
+                        }
                         console.warn(`⚠️ [${provider.name}] Model "${model}" failed (${response.status}): ${errText.slice(0, 120)}`);
                         TelemetryService.recordModelError({
                             model,
@@ -373,6 +394,9 @@ ${cleanContent || cleanTitle}`;
                 } catch (err: any) {
                     lastError = err;
                     console.warn(`❌ [${provider.name}] Exception with model "${model}":`, err.message);
+                    if (params.exactOnly) {
+                        throw err;
+                    }
                 }
             }
         }

@@ -467,11 +467,23 @@ export async function ingestAllFeeds(): Promise<{
           modelUsed = 'RSS-Direct (0 tokens)';
           TelemetryService.incrementFunnel('directSaved', 1);
         } else {
-          // 🟢 AI Enabled: Call Universal Multi-Provider AI (SambaNova -> Groq -> Mistral -> Cloudflare)
+          // 🟢 Multi-Model Load-Balancing: Cap Gemini 3 Flash to 4 articles per cycle, then distribute across Gemini 2.5, Mistral, and Cloudflare
+          let preferredModel: string | undefined = undefined;
+          if (i < 4) {
+            preferredModel = 'gemini-3-flash-preview';
+          } else if (i < 9) {
+            preferredModel = 'gemini-2.5-flash';
+          } else if (i < 16) {
+            preferredModel = 'mistral-small-latest';
+          } else {
+            preferredModel = '@cf/meta/llama-3.3-70b-instruct';
+          }
+
           const aiResult = await UniversalLlmService.summarizeNews({
             title: finalTitle,
             content: fullBody,
             category: art.category,
+            preferredModel,
           });
           headline = aiResult.headline || finalTitle;
           story = aiResult.crispyStory || fullBody.slice(0, 300);

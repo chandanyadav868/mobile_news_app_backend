@@ -99,11 +99,11 @@ export class DashboardController {
 
     /**
      * POST /api/v1/dashboard/summarize-test
-     * Interactive test summarization across Multi-Provider AI Mesh
+     * Interactive test summarization across Multi-Provider AI Mesh (supports exactOnly direct model testing)
      */
     public static async summarizeTest(req: Request, res: Response): Promise<void> {
         try {
-            const { title, content, category, preferredProvider, preferredModel } = req.body;
+            const { title, content, category, preferredProvider, preferredModel, exactOnly } = req.body;
             if (!title && !content) {
                 res.status(400).json({ success: false, error: 'Title or Content is required' });
                 return;
@@ -115,6 +115,7 @@ export class DashboardController {
                 category: category || 'National',
                 preferredProvider: preferredProvider || undefined,
                 preferredModel: preferredModel || undefined,
+                exactOnly: exactOnly !== undefined ? exactOnly : !!preferredModel,
             });
 
             res.json({ success: true, data: result });
@@ -841,13 +842,27 @@ export class DashboardController {
                     <input type="text" id="test-title" placeholder="e.g. RBI announces new benchmark repo rate" value="India Launches Next-Generation Clean Energy Grid Project">
                 </div>
                 <div class="input-group">
-                    <label>Preferred Model (or Auto-Rotate)</label>
+                    <label>Preferred Model (Direct Test / Zero Fallback)</label>
                     <select id="test-model">
-                        <option value="">Auto-Rotate (Tier 1 Priority: Qwen 3.8 27B)</option>
-                        <option value="qwen/qwen3.8-27b">qwen/qwen3.8-27b (Primary • 2M TPD)</option>
-                        <option value="qwen/qwen3.6-27b">qwen/qwen3.6-27b (Secondary Turbo)</option>
-                        <option value="openai/gpt-oss-120b">openai/gpt-oss-120b (High Intelligence)</option>
-                        <option value="openai/gpt-oss-20b">openai/gpt-oss-20b (Fast Fallback)</option>
+                        <option value="">Auto-Rotate (Multi-Provider Priority Pool)</option>
+                        <optgroup label="Google Gemini">
+                            <option value="gemini-3-flash-preview">Google Gemini 3 Flash Live (gemini-3-flash-preview)</option>
+                            <option value="gemini-2.5-flash">Google Gemini 2.5 Flash (gemini-2.5-flash)</option>
+                            <option value="gemini-3.5-flash">Google Gemini 3.5 Flash (gemini-3.5-flash)</option>
+                        </optgroup>
+                        <optgroup label="Mistral AI">
+                            <option value="mistral-small-latest">Mistral Small (mistral-small-latest)</option>
+                            <option value="open-mistral-nemo">Mistral Nemo (open-mistral-nemo)</option>
+                        </optgroup>
+                        <optgroup label="Cloudflare Workers AI">
+                            <option value="@cf/meta/llama-3.3-70b-instruct">Cloudflare Llama 3.3 70B (@cf/meta/llama-3.3-70b-instruct)</option>
+                            <option value="@cf/qwen/qwen2.5-7b-instruct">Cloudflare Qwen 2.5 7B (@cf/qwen/qwen2.5-7b-instruct)</option>
+                        </optgroup>
+                        <optgroup label="Groq Cloud">
+                            <option value="qwen/qwen3.8-27b">Groq Qwen 3.8 27B (qwen/qwen3.8-27b)</option>
+                            <option value="openai/gpt-oss-120b">Groq GPT-OSS 120B (openai/gpt-oss-120b)</option>
+                            <option value="openai/gpt-oss-20b">Groq GPT-OSS 20B (openai/gpt-oss-20b)</option>
+                        </optgroup>
                     </select>
                 </div>
                 <div class="input-group">
@@ -1113,19 +1128,19 @@ export class DashboardController {
             const preferredModel = document.getElementById('test-model').value;
             const outputBox = document.getElementById('test-output');
 
-            btn.textContent = '⏳ Summarizing with Groq LPU...';
+            btn.textContent = '⏳ Calling ' + (preferredModel || 'AI Mesh') + '...';
             btn.disabled = true;
 
             try {
                 const res = await fetch('/api/v1/dashboard/summarize-test', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title, content, preferredModel }),
+                    body: JSON.stringify({ title, content, preferredModel, exactOnly: !!preferredModel }),
                 });
                 const json = await res.json();
                 if (json.success) {
                     const data = json.data;
-                    document.getElementById('res-headline').textContent = data.headline;
+                    document.getElementById('res-headline').innerHTML = '<span style="color: #38BDF8;">' + data.headline + '</span>';
                     document.getElementById('res-story').textContent = data.crispyStory;
                     document.getElementById('res-bullets').innerHTML = data.bulletPoints.map(b => \`<div class="output-bullet">• \${b}</div>\`).join('');
                     document.getElementById('res-model').textContent = 'Model: ' + data.modelUsed;
@@ -1133,10 +1148,22 @@ export class DashboardController {
                     document.getElementById('res-latency').textContent = 'Latency: ' + data.latencyMs + 'ms';
                     outputBox.style.display = 'flex';
                 } else {
-                    alert('Error: ' + json.error);
+                    document.getElementById('res-headline').innerHTML = '<span style="color: #EF4444;">❌ Model Execution Error</span>';
+                    document.getElementById('res-story').textContent = json.error || 'Provider returned an error';
+                    document.getElementById('res-bullets').innerHTML = '';
+                    document.getElementById('res-model').textContent = 'Target Model: ' + (preferredModel || 'Auto-Rotate');
+                    document.getElementById('res-tokens').textContent = 'Status: Direct Call Failed (0 Tokens)';
+                    document.getElementById('res-latency').textContent = 'No Fallback Used';
+                    outputBox.style.display = 'flex';
                 }
             } catch (e) {
-                alert('Test failed: ' + e.message);
+                document.getElementById('res-headline').innerHTML = '<span style="color: #EF4444;">❌ Network / Server Error</span>';
+                document.getElementById('res-story').textContent = e.message;
+                document.getElementById('res-bullets').innerHTML = '';
+                document.getElementById('res-model').textContent = 'Target Model: ' + (preferredModel || 'Auto-Rotate');
+                document.getElementById('res-tokens').textContent = 'Status: Network Failed';
+                document.getElementById('res-latency').textContent = '--';
+                outputBox.style.display = 'flex';
             } finally {
                 btn.textContent = '⚡ Generate Inshorts 60-Word Story';
                 btn.disabled = false;
