@@ -8,8 +8,10 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Force development mode during build stage so devDependencies (typescript, tsc) are installed
+# Ensure development dependencies (TypeScript, tsc) are installed even if Coolify injects NODE_ENV=production
+ARG NODE_ENV=development
 ENV NODE_ENV=development
+ENV NPM_CONFIG_PRODUCTION=false
 
 # Install build tools
 RUN apk add --no-cache openssl libc6-compat
@@ -19,8 +21,8 @@ COPY package*.json ./
 COPY tsconfig.json ./
 COPY prisma ./prisma/
 
-# Install all dependencies (force include devDependencies even if build-arg passed NODE_ENV=production)
-RUN npm ci --include=dev
+# Force install devDependencies (TypeScript) regardless of build args
+RUN npm install --include=dev
 
 # Generate Prisma Client
 RUN npx prisma generate
@@ -29,8 +31,8 @@ RUN npx prisma generate
 COPY src ./src/
 COPY rss-catalog ./rss-catalog/
 
-# Build TypeScript to dist/
-RUN npm run build
+# Build TypeScript to dist/ using direct local binary to guarantee execution
+RUN ./node_modules/.bin/tsc || npx tsc
 
 # Copy constants JSON to dist/constants/ in builder stage
 RUN mkdir -p /app/dist/constants && cp -r /app/src/constants/* /app/dist/constants/ || true
