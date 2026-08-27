@@ -1,130 +1,144 @@
 {
-  "trackedDate": "2026-08-26",
-  "aiEnabled": false,
+  "trackedDate": "2026-08-27",
+  "aiEnabled": true,
   "models": [
+    {
+      "model": "gemini-3-flash-preview",
+      "displayName": "Gemini 3 Flash Live (Primary • Unlimited)",
+      "tier": 1,
+      "requestsToday": 36,
+      "promptTokensToday": 18293,
+      "completionTokensToday": 3677,
+      "totalTokensToday": 21970,
+      "lastLatencyMs": 11504,
+      "status": "rate_limited",
+      "lastUsedAt": "2026-08-27T08:34:06.674Z",
+      "errorsToday": 155,
+      "rateLimitResetAt": null
+    },
+    {
+      "model": "mistral-small-latest",
+      "displayName": "Mistral Small (Secondary Fast Tier)",
+      "tier": 2,
+      "requestsToday": 0,
+      "promptTokensToday": 0,
+      "completionTokensToday": 0,
+      "totalTokensToday": 0,
+      "lastLatencyMs": 0,
+      "status": "error",
+      "lastUsedAt": null,
+      "errorsToday": 3,
+      "rateLimitResetAt": null
+    },
+    {
+      "model": "@cf/meta/llama-3.3-70b-instruct",
+      "displayName": "Cloudflare Llama 3.3 70B (Edge Tier)",
+      "tier": 3,
+      "requestsToday": 0,
+      "promptTokensToday": 0,
+      "completionTokensToday": 0,
+      "totalTokensToday": 0,
+      "lastLatencyMs": 0,
+      "status": "rate_limited",
+      "lastUsedAt": null,
+      "errorsToday": 0,
+      "rateLimitResetAt": null
+    },
     {
       "model": "qwen/qwen3.8-27b",
       "displayName": "Qwen 3.8 27B (Primary • 2M TPD)",
       "tier": 1,
-      "requestsToday": 555,
-      "promptTokensToday": 151017,
-      "completionTokensToday": 85385,
-      "totalTokensToday": 236402,
-      "lastLatencyMs": 774,
+      "requestsToday": 0,
+      "promptTokensToday": 0,
+      "completionTokensToday": 0,
+      "totalTokensToday": 0,
+      "lastLatencyMs": 0,
       "status": "rate_limited",
-      "lastUsedAt": "2026-08-26T17:15:57.590Z",
-      "errorsToday": 842,
-      "rateLimitResetAt": "2026-08-26T17:51:49.625Z"
+      "lastUsedAt": null,
+      "errorsToday": 298,
+      "rateLimitResetAt": "2026-08-27T05:03:40.196Z"
+    },
+    {
+      "model": "gemini-3.6-flash",
+      "displayName": "gemini-3.6-flash",
+      "tier": 99,
+      "requestsToday": 8,
+      "promptTokensToday": 3021,
+      "completionTokensToday": 810,
+      "totalTokensToday": 3831,
+      "lastLatencyMs": 19697,
+      "status": "rate_limited",
+      "lastUsedAt": "2026-08-27T04:43:02.010Z",
+      "errorsToday": 53,
+      "rateLimitResetAt": null
     },
     {
       "model": "qwen/qwen3.6-27b",
       "displayName": "Qwen 3.6 27B (Secondary Turbo)",
       "tier": 2,
-      "requestsToday": 39,
-      "promptTokensToday": 11299,
-      "completionTokensToday": 13650,
-      "totalTokensToday": 24949,
-      "lastLatencyMs": 2590,
+      "requestsToday": 0,
+      "promptTokensToday": 0,
+      "completionTokensToday": 0,
+      "totalTokensToday": 0,
+      "lastLatencyMs": 0,
       "status": "rate_limited",
-      "lastUsedAt": "2026-08-26T15:22:10.514Z",
-      "errorsToday": 798,
-      "rateLimitResetAt": "2026-08-26T17:51:49.705Z"
+      "lastUsedAt": null,
+      "errorsToday": 298,
+      "rateLimitResetAt": "2026-08-27T05:03:40.265Z"
     },
     {
       "model": "openai/gpt-oss-120b",
       "displayName": "GPT-OSS 120B (High Intelligence)",
       "tier": 3,
-      "requestsToday": 10,
-      "promptTokensToday": 4169,
-      "completionTokensToday": 3500,
-      "totalTokensToday": 7669,
-      "lastLatencyMs": 4252,
+      "requestsToday": 0,
+      "promptTokensToday": 0,
+      "completionTokensToday": 0,
+      "totalTokensToday": 0,
+      "lastLatencyMs": 0,
       "status": "rate_limited",
-      "lastUsedAt": "2026-08-26T15:31:13.074Z",
-      "errorsToday": 784,
-      "rateLimitResetAt": "2026-08-26T17:51:49.802Z"
+      "lastUsedAt": null,
+      "errorsToday": 298,
+      "rateLimitResetAt": "2026-08-27T05:03:40.332Z"
     },
     {
       "model": "openai/gpt-oss-20b",
       "displayName": "GPT-OSS 20B (Fast Fallback)",
       "tier": 4,
-      "requestsToday": 21,
-      "promptTokensToday": 7254,
-      "completionTokensToday": 7350,
-      "totalTokensToday": 14604,
-      "lastLatencyMs": 2570,
+      "requestsToday": 0,
+      "promptTokensToday": 0,
+      "completionTokensToday": 0,
+      "totalTokensToday": 0,
+      "lastLatencyMs": 0,
       "status": "rate_limited",
-      "lastUsedAt": "2026-08-26T15:50:50.283Z",
-      "errorsToday": 758,
-      "rateLimitResetAt": "2026-08-26T17:51:49.876Z"
+      "lastUsedAt": null,
+      "errorsToday": 298,
+      "rateLimitResetAt": "2026-08-27T05:03:40.405Z"
+    },
+    {
+      "model": "gemini-2.5-flash",
+      "displayName": "gemini-2.5-flash",
+      "tier": 99,
+      "requestsToday": 11,
+      "promptTokensToday": 4176,
+      "completionTokensToday": 1147,
+      "totalTokensToday": 5323,
+      "lastLatencyMs": 5154,
+      "status": "rate_limited",
+      "lastUsedAt": "2026-08-27T04:43:52.023Z",
+      "errorsToday": 53,
+      "rateLimitResetAt": null
     },
     {
       "model": "groq:qwen/qwen3.8-27b",
       "displayName": "groq:qwen/qwen3.8-27b",
       "tier": 99,
-      "requestsToday": 51,
-      "promptTokensToday": 14899,
-      "completionTokensToday": 8340,
-      "totalTokensToday": 23239,
-      "lastLatencyMs": 896,
-      "status": "ready",
-      "lastUsedAt": "2026-08-26T17:50:44.276Z",
-      "errorsToday": 0,
-      "rateLimitResetAt": null
-    },
-    {
-      "model": "groq:qwen/qwen3.6-27b",
-      "displayName": "groq:qwen/qwen3.6-27b",
-      "tier": 99,
-      "requestsToday": 4,
-      "promptTokensToday": 1577,
-      "completionTokensToday": 1400,
-      "totalTokensToday": 2977,
-      "lastLatencyMs": 2926,
-      "status": "ready",
-      "lastUsedAt": "2026-08-26T17:21:45.666Z",
-      "errorsToday": 0,
-      "rateLimitResetAt": null
-    },
-    {
-      "model": "groq:openai/gpt-oss-120b",
-      "displayName": "groq:openai/gpt-oss-120b",
-      "tier": 99,
-      "requestsToday": 5,
-      "promptTokensToday": 1132,
-      "completionTokensToday": 1750,
-      "totalTokensToday": 2882,
-      "lastLatencyMs": 3851,
-      "status": "ready",
-      "lastUsedAt": "2026-08-26T17:22:28.015Z",
-      "errorsToday": 0,
-      "rateLimitResetAt": null
-    },
-    {
-      "model": "groq:openai/gpt-oss-20b",
-      "displayName": "groq:openai/gpt-oss-20b",
-      "tier": 99,
-      "requestsToday": 5,
-      "promptTokensToday": 1123,
-      "completionTokensToday": 1750,
-      "totalTokensToday": 2873,
-      "lastLatencyMs": 3030,
-      "status": "ready",
-      "lastUsedAt": "2026-08-26T17:25:07.896Z",
-      "errorsToday": 0,
-      "rateLimitResetAt": null
-    },
-    {
-      "model": "sambanova:gemma-4-31B-it",
-      "displayName": "sambanova:gemma-4-31B-it",
-      "tier": 99,
-      "requestsToday": 1,
-      "promptTokensToday": 697,
-      "completionTokensToday": 133,
-      "totalTokensToday": 830,
-      "lastLatencyMs": 9697,
-      "status": "ready",
-      "lastUsedAt": "2026-08-26T17:24:53.459Z",
+      "requestsToday": 13,
+      "promptTokensToday": 7343,
+      "completionTokensToday": 1863,
+      "totalTokensToday": 9206,
+      "lastLatencyMs": 834,
+      "status": "rate_limited",
+      "lastUsedAt": "2026-08-27T05:00:23.506Z",
       "errorsToday": 0,
       "rateLimitResetAt": null
     },
@@ -132,393 +146,580 @@
       "model": "mistral:mistral-small-latest",
       "displayName": "mistral:mistral-small-latest",
       "tier": 99,
-      "requestsToday": 235,
-      "promptTokensToday": 67830,
-      "completionTokensToday": 34970,
-      "totalTokensToday": 102800,
-      "lastLatencyMs": 1593,
+      "requestsToday": 458,
+      "promptTokensToday": 225586,
+      "completionTokensToday": 69010,
+      "totalTokensToday": 294596,
+      "lastLatencyMs": 1980,
       "status": "ready",
-      "lastUsedAt": "2026-08-26T17:51:21.471Z",
+      "lastUsedAt": "2026-08-27T09:08:32.252Z",
       "errorsToday": 0,
+      "rateLimitResetAt": null
+    },
+    {
+      "model": "mistral:open-mistral-nemo",
+      "displayName": "mistral:open-mistral-nemo",
+      "tier": 99,
+      "requestsToday": 36,
+      "promptTokensToday": 16764,
+      "completionTokensToday": 6966,
+      "totalTokensToday": 23730,
+      "lastLatencyMs": 2168,
+      "status": "ready",
+      "lastUsedAt": "2026-08-27T08:54:23.950Z",
+      "errorsToday": 0,
+      "rateLimitResetAt": null
+    },
+    {
+      "model": "gemini-1.5-flash",
+      "displayName": "gemini-1.5-flash",
+      "tier": 99,
+      "requestsToday": 0,
+      "promptTokensToday": 0,
+      "completionTokensToday": 0,
+      "totalTokensToday": 0,
+      "lastLatencyMs": 0,
+      "status": "error",
+      "lastUsedAt": null,
+      "errorsToday": 53,
+      "rateLimitResetAt": null
+    },
+    {
+      "model": "@cf/qwen/qwen2.5-7b-instruct",
+      "displayName": "@cf/qwen/qwen2.5-7b-instruct",
+      "tier": 99,
+      "requestsToday": 0,
+      "promptTokensToday": 0,
+      "completionTokensToday": 0,
+      "totalTokensToday": 0,
+      "lastLatencyMs": 0,
+      "status": "error",
+      "lastUsedAt": null,
+      "errorsToday": 2,
       "rateLimitResetAt": null
     }
   ],
   "funnel": {
-    "rssScannedToday": 101282,
-    "dedupedCandidatesToday": 2437,
-    "llmSummarizedToday": 1050,
-    "directSavedToday": 434,
-    "dbInsertedToday": 882,
-    "lastIngestDurationMs": 82320,
-    "lastIngestAt": "2026-08-26T18:06:22.619Z"
+    "rssScannedToday": 107594,
+    "dedupedCandidatesToday": 4960,
+    "llmSummarizedToday": 574,
+    "directSavedToday": 512,
+    "dbInsertedToday": 891,
+    "lastIngestDurationMs": 215460,
+    "lastIngestAt": "2026-08-27T09:08:35.782Z"
   },
   "logs": [
     {
-      "id": "log-1787766682925-ey19",
-      "timestamp": "2026-08-26T17:51:22.925Z",
-      "type": "ai_request",
-      "status": "rotated",
-      "message": "🔴 AI Summarization Paused by Administrator (Direct Raw Mode)"
-    },
-    {
-      "id": "log-1787766681471-12va",
-      "timestamp": "2026-08-26T17:51:21.471Z",
+      "id": "log-1787821712252-wymr",
+      "timestamp": "2026-08-27T09:08:32.252Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 306,
-      "latencyMs": 1593,
+      "tokens": 561,
+      "latencyMs": 1980,
       "status": "success",
-      "message": "Summarized \"Nestlé bets big on India’s food market\" in 1593ms (306 tokens)",
+      "message": "Summarized \"Punjab CM slams rivals, courts BJP alliance\" in 1980ms (561 tokens)",
       "details": {
-        "promptTokens": 172,
-        "completionTokens": 134
+        "promptTokens": 397,
+        "completionTokens": 164
       }
     },
     {
-      "id": "log-1787766679876-px9i",
-      "timestamp": "2026-08-26T17:51:19.876Z",
+      "id": "log-1787821710266-lamx",
+      "timestamp": "2026-08-27T09:08:30.266Z",
       "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766679802-veyd",
-      "timestamp": "2026-08-26T17:51:19.802Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766679705-8znb",
-      "timestamp": "2026-08-26T17:51:19.705Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.6-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.6-27b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766679625-noy3",
-      "timestamp": "2026-08-26T17:51:19.625Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.8-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766678904-s8db",
-      "timestamp": "2026-08-26T17:51:18.904Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 319,
-      "latencyMs": 1761,
-      "status": "success",
-      "message": "Summarized \"Tata Power loses $490M arbitration case\" in 1761ms (319 tokens)",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "promptTokens": 170,
-        "completionTokens": 149
+        "articleTitle": "Akali leadership on 'knees' to forge alliance with BJP: Punjab CM Mann",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 21.944238194s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"21s\"}]}}",
+        "statusCode": 429
       }
     },
     {
-      "id": "log-1787766677138-cjrd",
-      "timestamp": "2026-08-26T17:51:17.138Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766677047-wghy",
-      "timestamp": "2026-08-26T17:51:17.047Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766676944-7jn9",
-      "timestamp": "2026-08-26T17:51:16.944Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.6-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.6-27b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766676858-e4ix",
-      "timestamp": "2026-08-26T17:51:16.858Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.8-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766676172-5uti",
-      "timestamp": "2026-08-26T17:51:16.172Z",
+      "id": "log-1787821699587-cgf9",
+      "timestamp": "2026-08-27T09:08:19.587Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 670,
-      "latencyMs": 1953,
+      "tokens": 579,
+      "latencyMs": 1979,
       "status": "success",
-      "message": "Summarized \"Alpha Wave to sell 7.8% stake in Aye Finance\" in 1953ms (670 tokens)",
+      "message": "Summarized \"AP races to rescue Telugu flood victims in Nepal\" in 1979ms (579 tokens)",
       "details": {
-        "promptTokens": 473,
-        "completionTokens": 197
+        "promptTokens": 403,
+        "completionTokens": 176
       }
     },
     {
-      "id": "log-1787766674216-4yee",
-      "timestamp": "2026-08-26T17:51:14.216Z",
+      "id": "log-1787821697544-z7yq",
+      "timestamp": "2026-08-27T09:08:17.544Z",
       "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766674123-eklm",
-      "timestamp": "2026-08-26T17:51:14.123Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766674004-37ad",
-      "timestamp": "2026-08-26T17:51:14.004Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.6-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.6-27b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766673767-e5zq",
-      "timestamp": "2026-08-26T17:51:13.767Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.8-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766671162-bwyn",
-      "timestamp": "2026-08-26T17:51:11.162Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 310,
-      "latencyMs": 1530,
-      "status": "success",
-      "message": "Summarized \"iPhone 18 Pro launch confirmed for Sept 9\" in 1530ms (310 tokens)",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "promptTokens": 167,
-        "completionTokens": 143
+        "articleTitle": "Andhra Pradesh government steps up efforts to trace Telugu people stranded in Nepal flash floods",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 34.608685234s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"34s\"}]}}",
+        "statusCode": 429
       }
     },
     {
-      "id": "log-1787766669629-jjk0",
-      "timestamp": "2026-08-26T17:51:09.629Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766669531-urre",
-      "timestamp": "2026-08-26T17:51:09.531Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766669441-earo",
-      "timestamp": "2026-08-26T17:51:09.441Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.6-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.6-27b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766669363-f8k4",
-      "timestamp": "2026-08-26T17:51:09.363Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.8-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766668530-ddfp",
-      "timestamp": "2026-08-26T17:51:08.530Z",
+      "id": "log-1787821693734-yavz",
+      "timestamp": "2026-08-27T09:08:13.734Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 340,
-      "latencyMs": 2067,
+      "tokens": 796,
+      "latencyMs": 2677,
       "status": "success",
-      "message": "Summarized \"Nifty choppy; 24,400 key for rally\" in 2067ms (340 tokens)",
+      "message": "Summarized \"Chidambaram hails Tamil Nadu’s corruption crackdown\" in 2677ms (796 tokens)",
       "details": {
-        "promptTokens": 180,
-        "completionTokens": 160
+        "promptTokens": 651,
+        "completionTokens": 145
       }
     },
     {
-      "id": "log-1787766666459-6hmi",
-      "timestamp": "2026-08-26T17:51:06.459Z",
+      "id": "log-1787821691053-cvvv",
+      "timestamp": "2026-08-27T09:08:11.053Z",
       "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "Chidambaram says there has been “no corruption or virtually nil corruption” at many govt. offices in Tamil Nadu",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 41.358081796s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"41s\"}]}}",
+        "statusCode": 429
+      }
     },
     {
-      "id": "log-1787766666200-70rs",
-      "timestamp": "2026-08-26T17:51:06.200Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766665936-pchg",
-      "timestamp": "2026-08-26T17:51:05.936Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.6-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.6-27b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766665675-ejxi",
-      "timestamp": "2026-08-26T17:51:05.675Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.8-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766664813-97r4",
-      "timestamp": "2026-08-26T17:51:04.813Z",
+      "id": "log-1787821681828-16am",
+      "timestamp": "2026-08-27T09:08:01.828Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 351,
-      "latencyMs": 1789,
+      "tokens": 507,
+      "latencyMs": 1932,
       "status": "success",
-      "message": "Summarized \"Nifty may stay choppy; needs 24,400 breakout\" in 1789ms (351 tokens)",
+      "message": "Summarized \"Chidambaram slams 'One Nation' polls plan\" in 1932ms (507 tokens)",
       "details": {
-        "promptTokens": 180,
+        "promptTokens": 371,
+        "completionTokens": 136
+      }
+    },
+    {
+      "id": "log-1787821679891-o225",
+      "timestamp": "2026-08-27T09:07:59.891Z",
+      "type": "rate_limit",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "Chidambaram tells JPC ‘One Nation, One Election’ Bills are unconstitutional, mindless",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 52.2671275s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"52s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1787821675797-zdcz",
+      "timestamp": "2026-08-27T09:07:55.797Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 800,
+      "latencyMs": 1944,
+      "status": "success",
+      "message": "Summarized \"Tamil Nadu launches health revolution!\" in 1944ms (800 tokens)",
+      "details": {
+        "promptTokens": 627,
+        "completionTokens": 173
+      }
+    },
+    {
+      "id": "log-1787821673849-1ano",
+      "timestamp": "2026-08-27T09:07:53.849Z",
+      "type": "rate_limit",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "Tamil Nadu to take advanced healthcare facilities beyond Chennai: Minister",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 58.432456899s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"58s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1787821669201-82q9",
+      "timestamp": "2026-08-27T09:07:49.201Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 527,
+      "latencyMs": 2362,
+      "status": "success",
+      "message": "Summarized \"Chennai beaches: love's highs, heartbreak's tides\" in 2362ms (527 tokens)",
+      "details": {
+        "promptTokens": 382,
+        "completionTokens": 145
+      }
+    },
+    {
+      "id": "log-1787821666834-lwc3",
+      "timestamp": "2026-08-27T09:07:46.834Z",
+      "type": "rate_limit",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "In Chennai, the beach finds its way into love and heartbreak",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 5.323620029s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"5s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1787821662984-8re9",
+      "timestamp": "2026-08-27T09:07:42.984Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 874,
+      "latencyMs": 2059,
+      "status": "success",
+      "message": "Summarized \"ICG scrambles to save 22 sailors lost at sea\" in 2059ms (874 tokens)",
+      "details": {
+        "promptTokens": 698,
+        "completionTokens": 176
+      }
+    },
+    {
+      "id": "log-1787821660921-icdm",
+      "timestamp": "2026-08-27T09:07:40.921Z",
+      "type": "rate_limit",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "ICG intensifies search and rescue following sinking of Panama-flagged vessel in Bay of Bengal",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 11.234949669s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"11s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1787821656546-uzb5",
+      "timestamp": "2026-08-27T09:07:36.546Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 468,
+      "latencyMs": 2224,
+      "status": "success",
+      "message": "Summarized \"India urged: Stop hate speech now!\" in 2224ms (468 tokens)",
+      "details": {
+        "promptTokens": 359,
+        "completionTokens": 109
+      }
+    },
+    {
+      "id": "log-1787821654318-u3fb",
+      "timestamp": "2026-08-27T09:07:34.318Z",
+      "type": "rate_limit",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "UN committee calls for addressing ‘hate speech’ and ‘hate crimes’ in India",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 17.868520887s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"17s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1787821649441-pulp",
+      "timestamp": "2026-08-27T09:07:29.441Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 780,
+      "latencyMs": 2264,
+      "status": "success",
+      "message": "Summarized \"Violent clash erupts during Id Milad procession\" in 2264ms (780 tokens)",
+      "details": {
+        "promptTokens": 622,
+        "completionTokens": 158
+      }
+    },
+    {
+      "id": "log-1787821647174-bz3d",
+      "timestamp": "2026-08-27T09:07:27.174Z",
+      "type": "rate_limit",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "Bengaluru: Clash during Id Milad procession, youth injured",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 24.98831507s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"24s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1787821636459-2gfb",
+      "timestamp": "2026-08-27T09:07:16.459Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 512,
+      "latencyMs": 2605,
+      "status": "success",
+      "message": "Summarized \"Maharashtra's anti-conversion law sparks fear\" in 2605ms (512 tokens)",
+      "details": {
+        "promptTokens": 365,
+        "completionTokens": 147
+      }
+    },
+    {
+      "id": "log-1787821633851-42cn",
+      "timestamp": "2026-08-27T09:07:13.851Z",
+      "type": "rate_limit",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "Consent forms, notices, prison terms: Maharashtra anti-conversion law | Explained",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 38.358072609s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"38s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1787821629078-2rx8",
+      "timestamp": "2026-08-27T09:07:09.078Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 586,
+      "latencyMs": 2268,
+      "status": "success",
+      "message": "Summarized \"UPI hits 10 years, blows past 24,000 crore!\" in 2268ms (586 tokens)",
+      "details": {
+        "promptTokens": 415,
         "completionTokens": 171
       }
     },
     {
-      "id": "log-1787766663015-l71c",
-      "timestamp": "2026-08-26T17:51:03.015Z",
+      "id": "log-1787821626808-f7qm",
+      "timestamp": "2026-08-27T09:07:06.808Z",
       "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766662821-8b5d",
-      "timestamp": "2026-08-26T17:51:02.821Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766662637-rtx2",
-      "timestamp": "2026-08-26T17:51:02.637Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.6-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.6-27b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766662443-j8q8",
-      "timestamp": "2026-08-26T17:51:02.443Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.8-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766661458-9v0m",
-      "timestamp": "2026-08-26T17:51:01.458Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 280,
-      "latencyMs": 1760,
-      "status": "success",
-      "message": "Summarized \"India-China border talks focus on peace\" in 1760ms (280 tokens)",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "promptTokens": 160,
-        "completionTokens": 120
+        "articleTitle": "UPI completes 10 years of digital payments, sees 13,000-fold surge in transaction volume, 4,000-fold rise in value",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 45.355514101s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"45s\"}]}}",
+        "statusCode": 429
       }
     },
     {
-      "id": "log-1787766659693-j0fy",
-      "timestamp": "2026-08-26T17:50:59.693Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766659616-ilun",
-      "timestamp": "2026-08-26T17:50:59.616Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766659521-6bi1",
-      "timestamp": "2026-08-26T17:50:59.521Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.6-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.6-27b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766659435-4wlw",
-      "timestamp": "2026-08-26T17:50:59.435Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.8-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1787766658747-nq8l",
-      "timestamp": "2026-08-26T17:50:58.747Z",
+      "id": "log-1787821622750-9v38",
+      "timestamp": "2026-08-27T09:07:02.750Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 299,
-      "latencyMs": 2036,
+      "tokens": 472,
+      "latencyMs": 1813,
       "status": "success",
-      "message": "Summarized \"HDFC Bank hit with US bribery lawsuit\" in 2036ms (299 tokens)",
+      "message": "Summarized \"UPI could soon cost you money\" in 1813ms (472 tokens)",
       "details": {
-        "promptTokens": 164,
+        "promptTokens": 357,
+        "completionTokens": 115
+      }
+    },
+    {
+      "id": "log-1787821620934-ig31",
+      "timestamp": "2026-08-27T09:07:00.934Z",
+      "type": "rate_limit",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "Will UPI remain free to use? | Explained",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 51.223661113s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-3-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"51s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1787821617091-0xhe",
+      "timestamp": "2026-08-27T09:06:57.091Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 496,
+      "latencyMs": 1986,
+      "status": "success",
+      "message": "Summarized \"Skywatchers mark August 2026 lunar eclipse!\" in 1986ms (496 tokens)",
+      "details": {
+        "promptTokens": 361,
         "completionTokens": 135
       }
     },
     {
-      "id": "log-1787766656708-0rfl",
-      "timestamp": "2026-08-26T17:50:56.708Z",
+      "id": "log-1787821615101-kos9",
+      "timestamp": "2026-08-27T09:06:55.101Z",
       "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "Lunar eclipse August 2026: When and where will it be visible from?",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 57.057453957s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"57s\"}]}}",
+        "statusCode": 429
+      }
     },
     {
-      "id": "log-1787766656627-cutw",
-      "timestamp": "2026-08-26T17:50:56.627Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
+      "id": "log-1787821611290-yrbl",
+      "timestamp": "2026-08-27T09:06:51.290Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 488,
+      "latencyMs": 1873,
+      "status": "success",
+      "message": "Summarized \"Nepal floods trap Tamil Nadu pilgrims\" in 1873ms (488 tokens)",
+      "details": {
+        "promptTokens": 367,
+        "completionTokens": 121
+      }
     },
     {
-      "id": "log-1787766656536-aace",
-      "timestamp": "2026-08-26T17:50:56.536Z",
+      "id": "log-1787821609413-twan",
+      "timestamp": "2026-08-27T09:06:49.413Z",
       "type": "rate_limit",
-      "model": "qwen/qwen3.6-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.6-27b (429). Automatically rotated to next tier model."
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "Nepal floods: T.N. CM Vijay directs Ministers, officials to oversee rescue and safe return of Tamil Nadu pilgrims",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 2.873881846s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"2s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1787820985101-fjjt",
+      "timestamp": "2026-08-27T08:56:25.101Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 809,
+      "latencyMs": 2590,
+      "status": "success",
+      "message": "Summarized \"Nvidia snaps up Hugging Face for $12.9 billion!\" in 2590ms (809 tokens)",
+      "details": {
+        "promptTokens": 617,
+        "completionTokens": 192
+      }
+    },
+    {
+      "id": "log-1787820982507-ptom",
+      "timestamp": "2026-08-27T08:56:22.507Z",
+      "type": "rate_limit",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "Nvidia To Buy AI Platform Hugging Face For $12.9 Billion: Report",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 29.650803847s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"29s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1787820977899-0ax7",
+      "timestamp": "2026-08-27T08:56:17.899Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 735,
+      "latencyMs": 3066,
+      "status": "success",
+      "message": "Summarized \"Wedding bus flips in Kerala crash chaos\" in 3066ms (735 tokens)",
+      "details": {
+        "promptTokens": 603,
+        "completionTokens": 132
+      }
+    },
+    {
+      "id": "log-1787820974814-br2a",
+      "timestamp": "2026-08-27T08:56:14.814Z",
+      "type": "rate_limit",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "Wedding Bus Overturns in Kerala’s Koothattukulam, Over 35 Injured",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 37.610421579s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"37s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1787820958341-lp32",
+      "timestamp": "2026-08-27T08:55:58.341Z",
+      "type": "error",
+      "status": "failed",
+      "message": "All providers exhausted. Using extractive fallback. Error: fetch failed"
+    },
+    {
+      "id": "log-1787820958314-a234",
+      "timestamp": "2026-08-27T08:55:58.314Z",
+      "type": "error",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (500) fetch failed",
+      "details": {
+        "articleTitle": "Kamineni Hospitals Warn of Monsoon Viral Fever Surge in Hyderabad",
+        "fullError": "fetch failed",
+        "statusCode": 500
+      }
+    },
+    {
+      "id": "log-1787820954777-qqw3",
+      "timestamp": "2026-08-27T08:55:54.777Z",
+      "type": "error",
+      "status": "failed",
+      "message": "All providers exhausted. Using extractive fallback. Error: fetch failed"
+    },
+    {
+      "id": "log-1787820954745-ko04",
+      "timestamp": "2026-08-27T08:55:54.745Z",
+      "type": "error",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (500) fetch failed",
+      "details": {
+        "articleTitle": "Tharoor, in Kathmandu, Airs Concern over Nepal Floods, Backs India's Relief Aid",
+        "fullError": "fetch failed",
+        "statusCode": 500
+      }
+    },
+    {
+      "id": "log-1787820951201-5lam",
+      "timestamp": "2026-08-27T08:55:51.201Z",
+      "type": "error",
+      "status": "failed",
+      "message": "All providers exhausted. Using extractive fallback. Error: fetch failed"
+    },
+    {
+      "id": "log-1787820951184-0uby",
+      "timestamp": "2026-08-27T08:55:51.184Z",
+      "type": "error",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (500) fetch failed",
+      "details": {
+        "articleTitle": "700 OpenAI AI Agents Hacked Hugging Face, Tried To Cover Tracks: Report",
+        "fullError": "fetch failed",
+        "statusCode": 500
+      }
+    },
+    {
+      "id": "log-1787820947593-gbuu",
+      "timestamp": "2026-08-27T08:55:47.593Z",
+      "type": "error",
+      "status": "failed",
+      "message": "All providers exhausted. Using extractive fallback. Error: fetch failed"
+    },
+    {
+      "id": "log-1787820947573-ds4d",
+      "timestamp": "2026-08-27T08:55:47.573Z",
+      "type": "error",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (500) fetch failed",
+      "details": {
+        "articleTitle": "Indian Scientists: Climate Change & Construction Cause Nepal Floods",
+        "fullError": "fetch failed",
+        "statusCode": 500
+      }
     }
   ]
 }

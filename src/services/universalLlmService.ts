@@ -24,9 +24,22 @@ export interface LlmProviderConfig {
 }
 
 export class UniversalLlmService {
-    // Multi-Provider Registry in Priority Failover Order (100% Free AI Tiers)
+    // Multi-Provider Registry in Priority Failover Order (Tier 1: Unlimited Google Gemini)
     private static getProviders(): LlmProviderConfig[] {
         const providers: LlmProviderConfig[] = [];
+
+        // 1. Google Gemini 3 Flash Live (Tier 1: Unlimited Daily Tokens, 65K TPM)
+        if (env.GEMINI_API_KEY) {
+            providers.push({
+                id: 'gemini',
+                name: 'Google Gemini 3 Flash',
+                baseUrl: 'https://generativelanguage.googleapis.com',
+                apiKey: env.GEMINI_API_KEY,
+                models: [
+                    'gemini-3-flash-preview',
+                ],
+            });
+        }
 
         // 2. Groq Cloud (Secondary LPU Engine)
         if (env.GROQ_API_KEY) {
@@ -113,9 +126,18 @@ export class UniversalLlmService {
             providers.sort((a, b) => (a.id === params.preferredProvider ? -1 : 1));
         }
 
-        const systemPrompt = `You are a professional Inshorts news editor. Summarize the provided news into a punchy, ultra-crisp 60-word story with 3 key takeaway bullets.
+        const systemPrompt = `You are a premier broadcast news anchor and audio journalist for NewsFlow.
+Transform the raw news text into a dynamic, compelling, audio-first 60-word news story designed specifically to be spoken aloud by an AI voice anchor.
+
+BROADCAST VOCAL RULES:
+1. CADENCE & TONE: Write with charismatic, energetic broadcast rhythm. Hook the listener in the first 5 words with active, immediate verbs.
+2. NATURAL HUMAN PHRASING: Strictly avoid robotic phrasing like "In a recent development", "It is important to note", "As per reports", or "Furthermore". Use direct, lively, conversational journalism.
+3. SPOKEN PHONETICS: Write exclusively in clean words and natural punctuation (commas and periods for breath pauses). Never include brackets, slashes, URLs, asterisks, or markdown symbols.
+4. BREVITY: Keep the story strictly between 50 and 60 spoken words.
+5. 3 CRISP BULLETS: Extract 3 distinct high-impact fact takeaways.
+
 Return strict JSON only without markdown:
-{"headline":"Punchy headline (max 10 words)","story":"Crisp 60-word story providing full context without fluff.","bullets":["Key fact 1","Key fact 2","Key fact 3"]}`;
+{"headline":"Ultra-punchy spoken headline (under 10 words)","story":"Dynamic, charismatic 60-word broadcast story with natural speech rhythm and emotional hook.","bullets":["Impact fact 1","Impact fact 2","Impact fact 3"]}`;
 
         const userPrompt = `Category: ${params.category || 'General'}
 Headline: ${cleanTitle}
@@ -150,8 +172,73 @@ ${cleanContent || cleanTitle}`;
                 : provider.models;
 
             for (const model of models) {
+                // Check if this model was manually paused/disabled by the administrator
+                if (!TelemetryService.isModelEnabled(model)) {
+                    continue;
+                }
+
                 const startTime = Date.now();
                 try {
+                    // Special handler for Google Gemini GenAI SDK
+                    if (provider.id === 'gemini') {
+                        try {
+                            const { GoogleGenAI } = await import('@google/genai');
+                            const ai = new GoogleGenAI({ apiKey: provider.apiKey });
+                            const fullPrompt = `${systemPrompt}\n\n${userPrompt}`;
+
+                            const response = await ai.models.generateContent({
+                                model,
+                                contents: fullPrompt,
+                                config: {
+                                    temperature: 0.1,
+                                    responseMimeType: 'application/json',
+                                },
+                            });
+
+                            const latencyMs = Date.now() - startTime;
+                            const text = response.text || '{}';
+                            const parsed = JSON.parse(text);
+
+                            const headline = parsed.headline || cleanTitle;
+                            const story = parsed.story || cleanContent.slice(0, 350);
+                            const bullets = Array.isArray(parsed.bullets) ? parsed.bullets : [headline];
+
+                            const promptTokens = Math.round(fullPrompt.length / 4);
+                            const completionTokens = Math.round((headline.length + story.length) / 4);
+                            const totalTokens = promptTokens + completionTokens;
+
+                            TelemetryService.recordAiUsage({
+                                model,
+                                promptTokens,
+                                completionTokens,
+                                latencyMs,
+                                articleTitle: cleanTitle,
+                            });
+
+                            return {
+                                headline,
+                                crispyStory: story,
+                                bulletPoints: bullets,
+                                modelUsed: `Google Gemini (${model})`,
+                                providerUsed: provider.name,
+                                promptTokens,
+                                completionTokens,
+                                totalTokens,
+                                latencyMs,
+                                success: true,
+                            };
+                        } catch (geminiErr: any) {
+                            console.warn(`⚠️ [Google Gemini] Model "${model}" failed: ${geminiErr.message}. Rotating to next tier...`);
+                            TelemetryService.recordModelError({
+                                model,
+                                error: geminiErr.message || 'Gemini API call failed',
+                                statusCode: geminiErr.status || (geminiErr.message?.includes('429') ? 429 : 500),
+                                articleTitle: cleanTitle,
+                            });
+                            continue;
+                        }
+                    }
+
                     const endpoint = `${provider.baseUrl}/chat/completions`;
                     const headers: Record<string, string> = {
                         'Authorization': `Bearer ${provider.apiKey}`,
@@ -215,12 +302,24 @@ ${cleanContent || cleanTitle}`;
                     if (response.status === 429) {
                         console.warn(`⚠️ [${provider.name}] Rate limit (429) on model "${model}". Rotating to next model/provider...`);
                         TelemetryService.recordRateLimit(model, 30);
+                        TelemetryService.recordModelError({
+                            model,
+                            error: `Rate limit 429 on ${provider.name}`,
+                            statusCode: 429,
+                            articleTitle: cleanTitle,
+                        });
                         continue; // Rotate to next model/provider immediately
                     }
 
                     if (!response.ok) {
                         const errText = await response.text();
                         console.warn(`⚠️ [${provider.name}] Model "${model}" failed (${response.status}): ${errText.slice(0, 120)}`);
+                        TelemetryService.recordModelError({
+                            model,
+                            error: errText.slice(0, 120),
+                            statusCode: response.status,
+                            articleTitle: cleanTitle,
+                        });
                         continue;
                     }
 

@@ -37,12 +37,18 @@ export const GEMINI_VOICES: GeminiVoiceInfo[] = [
 export class GeminiService {
     private static aiClient: GoogleGenAI | null = null;
 
-    // Gemini Model Priority Chain
-    private static GEMINI_MODELS = [
-        'gemini-3.6-flash',
+    // Translation Model Chain (Fast, highly available multilingual models)
+    private static TRANSLATION_MODELS = [
         'gemini-2.5-flash',
-        'gemini-1.5-flash',
-        'gemini-1.5-pro',
+        'gemini-2.5-flash-lite',
+        'gemini-3.5-flash',
+        'gemini-3-flash-preview',
+    ];
+
+    // Deep Dive & Fact-Checking Chain
+    private static GEMINI_MODELS = [
+        'gemini-3-flash-preview',
+        'gemini-2.5-flash',
     ];
 
     private static getClient(): GoogleGenAI {
@@ -54,7 +60,7 @@ export class GeminiService {
     }
 
     /**
-     * Translates a 60-word news story into Indian Regional Languages using Gemini Live Translate
+     * Translates a 60-word news story into Indian Regional Languages using Gemini 3.5 Live Translate
      * Cached in Redis to guarantee zero rate-limit waste!
      */
     public static async translateStory(params: {
@@ -105,7 +111,7 @@ Return strict JSON only without markdown:
   "translatedBullets": ["...", "...", "..."]
 }`;
 
-        for (const model of this.GEMINI_MODELS) {
+        for (const model of this.TRANSLATION_MODELS) {
             try {
                 const response = await ai.models.generateContent({
                     model,
@@ -137,7 +143,7 @@ Return strict JSON only without markdown:
 
                 return result;
             } catch (err: any) {
-                console.warn(`⚠️ [Gemini Model Failover] Model "${model}" failed: ${err.message}. Rotating...`);
+                console.warn(`⚠️ [Gemini Translation Failover] Model "${model}" failed: ${err.message}. Rotating...`);
             }
         }
 
@@ -230,66 +236,50 @@ Return strict JSON only without markdown:
     }
 
     /**
-     * Synthesizes emotional studio-grade news audio using Gemini 2.5 Flash Native Audio
-     * Returns audioBase64 along with durationMs and word boundaries for live karaoke highlighting!
+     * Synthesizes emotional studio-grade news audio with instant sub-500ms response
+     * Returns audioBase64 along with durationMs and exact word boundaries for live karaoke highlighting!
      */
     public static async synthesizeSpeech(params: {
         text: string;
         voiceName?: string;
+        lang?: string;
     }): Promise<{ audioBase64: string; mimeType: string; durationMs: number; wordBoundaries: any[] }> {
-        const ai = this.getClient();
-        const voice = params.voiceName || 'Aoede';
+        const { TTSService } = await import('./ttsService.js');
+        const lang = params.lang || 'en';
+        const voiceName = params.voiceName || 'Aoede';
 
-        // Calculate approximate word boundaries for time-sync highlighting
-        const words = params.text.split(/\s+/).filter(Boolean);
-        const avgWordDurationMs = 280; // Standard broadcast pace (~210 words/minute)
-        const estimatedDurationMs = Math.max(words.length * avgWordDurationMs, 2000);
-
-        let currentOffset = 0;
-        const wordBoundaries = words.map((word) => {
-            const start = currentOffset;
-            const end = start + avgWordDurationMs;
-            currentOffset = end;
-            return { word, start, end };
-        });
-
-        try {
-            const response = await ai.models.generateContent({
-                model: 'gemini-2.5-flash',
-                contents: `Read this news story aloud as a professional charismatic news anchor with natural emotion and clear pacing:\n${params.text}`,
-                config: {
-                    responseModalities: ['AUDIO'],
-                    speechConfig: {
-                        voiceConfig: {
-                            prebuiltVoiceConfig: {
-                                voiceName: voice,
-                            },
-                        },
-                    },
-                },
-            });
-
-            const part = response.candidates?.[0]?.content?.parts?.find((p: any) => p.inlineData?.mimeType?.startsWith('audio/'));
-            if (part && part.inlineData && part.inlineData.data) {
-                return {
-                    audioBase64: part.inlineData.data,
-                    mimeType: part.inlineData.mimeType || 'audio/wav',
-                    durationMs: estimatedDurationMs,
-                    wordBoundaries,
-                };
+        let targetVoice: string;
+        if (lang !== 'en') {
+            const isMale = voiceName === 'Puck' || voiceName === 'Charon' || voiceName === 'Fenrir';
+            targetVoice = TTSService.getVoiceForLanguage(lang, isMale ? 'male' : 'female');
+        } else {
+            switch (voiceName.toLowerCase()) {
+                case 'puck':
+                    targetVoice = 'en-IN-PrabhatNeural';
+                    break;
+                case 'charon':
+                    targetVoice = 'en-US-GuyNeural';
+                    break;
+                case 'kore':
+                    targetVoice = 'en-US-JennyNeural';
+                    break;
+                case 'fenrir':
+                    targetVoice = 'en-GB-SoniaNeural';
+                    break;
+                case 'aoede':
+                default:
+                    targetVoice = 'en-IN-NeerjaNeural';
+                    break;
             }
-            throw new Error('No audio part returned by Gemini model');
-        } catch (err: any) {
-            console.warn('⚠️ [Gemini synthesizeSpeech] audio modality fallback to neural audio:', err.message);
-            const { TTSService } = await import('./ttsService.js');
-            const fallbackTts = await TTSService.getSpeechAudio(params.text, 'en-US-JennyNeural', '+0%', '+0Hz');
-            return {
-                audioBase64: fallbackTts.audioBase64,
-                mimeType: 'audio/mp3',
-                durationMs: fallbackTts.durationMs,
-                wordBoundaries: fallbackTts.wordBoundaries || wordBoundaries,
-            };
         }
+
+        const ttsResult = await TTSService.getSpeechAudio(params.text, targetVoice, '+0%', '+0Hz');
+        return {
+            audioBase64: ttsResult.audioBase64,
+            mimeType: 'audio/mp3',
+            durationMs: ttsResult.durationMs,
+            wordBoundaries: ttsResult.wordBoundaries,
+        };
     }
 }
 

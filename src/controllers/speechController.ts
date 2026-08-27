@@ -16,7 +16,7 @@ export class SpeechController {
      */
     public static async synthesize(req: Request, res: Response): Promise<void> {
         try {
-            const { text, voice, rate, pitch } = req.body;
+            const { text, voice, rate, pitch, lang } = req.body;
 
             if (!text || typeof text !== 'string' || !text.trim()) {
                 res.status(400).json({
@@ -26,11 +26,11 @@ export class SpeechController {
                 return;
             }
 
-            const chosenVoice = voice || 'en-IN-NeerjaNeural';
+            const chosenVoice = voice || (lang ? TTSService.getVoiceForLanguage(lang) : 'en-IN-NeerjaNeural');
             const startTime = Date.now();
 
             console.log(`\n🎙️ [Speech API] Synthesize Request:`);
-            console.log(`   • Voice: ${chosenVoice}`);
+            console.log(`   • Voice: ${chosenVoice} (Lang: ${lang || 'en'})`);
             console.log(`   • Text: "${text.slice(0, 70)}..." (${text.length} chars)`);
 
             const speechData = await TTSService.getSpeechAudio(
@@ -63,11 +63,11 @@ export class SpeechController {
 
     /**
      * POST /api/v1/speech/gemini-synthesize
-     * Body: { text: string, voiceName?: string }
+     * Body: { text: string, voiceName?: string, lang?: string }
      */
     public static async geminiSynthesize(req: Request, res: Response): Promise<void> {
         try {
-            const { text, voiceName } = req.body;
+            const { text, voiceName, lang } = req.body;
             if (!text || typeof text !== 'string' || !text.trim()) {
                 res.status(400).json({ success: false, error: 'Text is required.' });
                 return;
@@ -75,13 +75,14 @@ export class SpeechController {
 
             const startTime = Date.now();
             console.log(`\n✨ [Gemini Speech API] Requesting Google Gemini AI Voice:`);
-            console.log(`   • Voice: ${voiceName || 'Aoede (Gemini AI Anchor)'}`);
+            console.log(`   • Voice: ${voiceName || 'Aoede (Gemini AI Anchor)'} (Lang: ${lang || 'en'})`);
             console.log(`   • Text: "${text.slice(0, 70)}..."`);
 
             const { GeminiService } = await import('../services/geminiService.js');
             const result = await GeminiService.synthesizeSpeech({
                 text: text.trim(),
                 voiceName: voiceName || 'Aoede',
+                lang: lang || 'en',
             });
 
             const elapsedMs = Date.now() - startTime;

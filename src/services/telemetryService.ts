@@ -82,13 +82,22 @@ export class TelemetryService {
     // Active SSE Stream Clients
     private static sseClients: Response[] = [];
 
+    // Set of manually disabled models by user
+    private static disabledModels: Set<string> = new Set<string>([
+        // Groq disabled by default due to daily token exhaustion
+        'qwen/qwen3.8-27b',
+        'qwen/qwen3.6-27b',
+        'openai/gpt-oss-120b',
+        'openai/gpt-oss-20b',
+    ]);
+
     // Per-Model Accounting Map
     private static modelMetrics: Map<string, ModelUsageMetric> = new Map([
         [
-            'qwen/qwen3.8-27b',
+            'gemini-3-flash-preview',
             {
-                model: 'qwen/qwen3.8-27b',
-                displayName: 'Qwen 3.8 27B (Primary • 2M TPD)',
+                model: 'gemini-3-flash-preview',
+                displayName: 'Gemini 3 Flash Live (Primary • Unlimited)',
                 tier: 1,
                 requestsToday: 0,
                 promptTokensToday: 0,
@@ -102,10 +111,10 @@ export class TelemetryService {
             },
         ],
         [
-            'qwen/qwen3.6-27b',
+            'mistral-small-latest',
             {
-                model: 'qwen/qwen3.6-27b',
-                displayName: 'Qwen 3.6 27B (Secondary Turbo)',
+                model: 'mistral-small-latest',
+                displayName: 'Mistral Small (Secondary Fast Tier)',
                 tier: 2,
                 requestsToday: 0,
                 promptTokensToday: 0,
@@ -119,10 +128,10 @@ export class TelemetryService {
             },
         ],
         [
-            'openai/gpt-oss-120b',
+            '@cf/meta/llama-3.3-70b-instruct',
             {
-                model: 'openai/gpt-oss-120b',
-                displayName: 'GPT-OSS 120B (High Intelligence)',
+                model: '@cf/meta/llama-3.3-70b-instruct',
+                displayName: 'Cloudflare Llama 3.3 70B (Edge Tier)',
                 tier: 3,
                 requestsToday: 0,
                 promptTokensToday: 0,
@@ -136,17 +145,17 @@ export class TelemetryService {
             },
         ],
         [
-            'openai/gpt-oss-20b',
+            'qwen/qwen3.8-27b',
             {
-                model: 'openai/gpt-oss-20b',
-                displayName: 'GPT-OSS 20B (Fast Fallback)',
+                model: 'qwen/qwen3.8-27b',
+                displayName: 'Qwen 3.8 27B (Groq • Exhausted)',
                 tier: 4,
                 requestsToday: 0,
                 promptTokensToday: 0,
                 completionTokensToday: 0,
                 totalTokensToday: 0,
                 lastLatencyMs: 0,
-                status: 'ready',
+                status: 'rate_limited',
                 lastUsedAt: null,
                 errorsToday: 0,
                 rateLimitResetAt: null,
@@ -355,6 +364,87 @@ export class TelemetryService {
             details: {
                 promptTokens: params.promptTokens,
                 completionTokens: params.completionTokens,
+            },
+        });
+
+        this.saveStateToDisk();
+        this.broadcastTelemetry();
+    }
+
+    /**
+     * Check if a model is currently enabled for AI rotation
+     */
+    public static isModelEnabled(modelId: string): boolean {
+        return !this.disabledModels.has(modelId);
+    }
+
+    /**
+     * Manually toggle or set model enabled/disabled status
+     */
+    public static toggleModelStatus(modelId: string, enabled?: boolean): boolean {
+        const isCurrentlyDisabled = this.disabledModels.has(modelId);
+        const shouldEnable = typeof enabled === 'boolean' ? enabled : isCurrentlyDisabled;
+
+        if (shouldEnable) {
+            this.disabledModels.delete(modelId);
+        } else {
+            this.disabledModels.add(modelId);
+        }
+
+        const metric = this.modelMetrics.get(modelId);
+        if (metric) {
+            metric.status = shouldEnable ? 'ready' : 'rate_limited';
+            this.modelMetrics.set(modelId, metric);
+        }
+
+        this.addLog({
+            type: 'ai_request',
+            status: shouldEnable ? 'success' : 'rotated',
+            message: shouldEnable ? `🟢 Model "${modelId}" enabled by user` : `🔴 Model "${modelId}" paused by user`,
+        });
+
+        this.saveStateToDisk();
+        this.broadcastTelemetry();
+        return shouldEnable;
+    }
+
+    /**
+     * Record a model error or rate limit with rich diagnostics
+     */
+    public static recordModelError(params: {
+        model: string;
+        error: string;
+        statusCode?: number;
+        articleTitle?: string;
+    }) {
+        const metric = this.modelMetrics.get(params.model) || {
+            model: params.model,
+            displayName: params.model,
+            tier: 99,
+            requestsToday: 0,
+            promptTokensToday: 0,
+            completionTokensToday: 0,
+            totalTokensToday: 0,
+            lastLatencyMs: 0,
+            status: 'ready',
+            lastUsedAt: null,
+            errorsToday: 0,
+            rateLimitResetAt: null,
+        };
+
+        metric.errorsToday += 1;
+        metric.status = params.statusCode === 429 ? 'rate_limited' : 'error';
+        this.modelMetrics.set(params.model, metric);
+
+        this.addLog({
+            type: params.statusCode === 429 ? 'rate_limit' : 'error',
+            model: params.model,
+            status: 'failed',
+            message: `⚠️ [${params.model}] ${params.statusCode ? `(${params.statusCode}) ` : ''}${params.error.slice(0, 120)}`,
+            details: {
+                articleTitle: params.articleTitle,
+                fullError: params.error,
+                statusCode: params.statusCode,
             },
         });
 

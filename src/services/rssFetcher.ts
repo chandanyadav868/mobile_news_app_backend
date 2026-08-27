@@ -400,13 +400,19 @@ export async function ingestAllFeeds(): Promise<{
       activeJobs: 1,
     });
 
-    // 4. Enrich brand-new articles with Mozilla Readability & Groq AI (Sequential One-by-One with 600ms throttle)
+    // 4. Enrich brand-new articles with Google Gemini AI (Safe 15-Article Batching with 3.5s Throttle to stay below 20 RPM limit)
     let insertedCount = 0;
     let currentChunk: ParsedArticle[] = [];
+    const MAX_ENRICH_BATCH = 15;
+    const articlesToProcess = newArticles.slice(0, MAX_ENRICH_BATCH);
 
-    for (let i = 0; i < newArticles.length; i++) {
-      const art = newArticles[i];
-      TelemetryService.updateQueueMetrics({ pendingArticles: newArticles.length - i });
+    if (newArticles.length > MAX_ENRICH_BATCH) {
+      console.log(`⏱️ [Quota Pacer] Processing top ${MAX_ENRICH_BATCH} of ${newArticles.length} new articles this cycle. ${newArticles.length - MAX_ENRICH_BATCH} safely deferred.`);
+    }
+
+    for (let i = 0; i < articlesToProcess.length; i++) {
+      const art = articlesToProcess[i];
+      TelemetryService.updateQueueMetrics({ pendingArticles: articlesToProcess.length - i });
 
       try {
         let fullBody = art.summary || art.rawContent || '';
@@ -497,11 +503,11 @@ export async function ingestAllFeeds(): Promise<{
         currentChunk.push(art);
       }
 
-      // Safe 600ms throttle between sequential AI calls to prevent 429 bursts
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      // Safe 3,500ms throttle between sequential AI calls to stay under 20 RPM Google Gemini limit
+      await new Promise((resolve) => setTimeout(resolve, 3500));
 
       // Save incrementally to DB every 10 articles or at the end
-      if (currentChunk.length >= 10 || i === newArticles.length - 1) {
+      if (currentChunk.length >= 10 || i === articlesToProcess.length - 1) {
         if (currentChunk.length > 0) {
           const result = await prisma.article.createMany({
             data: currentChunk.map((item) => ({

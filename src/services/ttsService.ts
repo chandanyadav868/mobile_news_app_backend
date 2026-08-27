@@ -17,6 +17,41 @@ const CACHE_TTL_MS = 3 * 60 * 60 * 1000; // 3 Hours TTL
 
 export class TTSService {
     /**
+     * Map language code to corresponding regional native Edge-TTS neural voice
+     */
+    public static getVoiceForLanguage(lang: string = 'en', gender: 'female' | 'male' = 'female'): string {
+        const langLower = (lang || 'en').toLowerCase().trim();
+        switch (langLower) {
+            case 'hi':
+            case 'hindi':
+                return gender === 'male' ? 'hi-IN-MadhurNeural' : 'hi-IN-SwaraNeural';
+            case 'ta':
+            case 'tamil':
+                return gender === 'male' ? 'ta-IN-ValluvarNeural' : 'ta-IN-PallaviNeural';
+            case 'te':
+            case 'telugu':
+                return gender === 'male' ? 'te-IN-MohanNeural' : 'te-IN-ShrutiNeural';
+            case 'mr':
+            case 'marathi':
+                return gender === 'male' ? 'mr-IN-ManoharNeural' : 'mr-IN-AarohiNeural';
+            case 'bn':
+            case 'bengali':
+                return gender === 'male' ? 'bn-IN-BashkarNeural' : 'bn-IN-TanishaaNeural';
+            case 'gu':
+            case 'gujarati':
+                return gender === 'male' ? 'gu-IN-NiranjanNeural' : 'gu-IN-DhwaniNeural';
+            case 'kn':
+            case 'kannada':
+                return gender === 'male' ? 'kn-IN-GaganNeural' : 'kn-IN-SapnaNeural';
+            case 'ml':
+            case 'malayalam':
+                return gender === 'male' ? 'ml-IN-MidhunNeural' : 'ml-IN-SobhanaNeural';
+            default:
+                return gender === 'male' ? 'en-IN-PrabhatNeural' : 'en-IN-NeerjaNeural';
+        }
+    }
+
+    /**
      * Compute hash key for audio caching
      */
     public static computeHash(text: string, voice: string = 'en-IN-NeerjaNeural'): string {

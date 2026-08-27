@@ -20,6 +20,7 @@ router.use('/notifications', notificationRoutes);
 router.get('/dashboard/stats', DashboardController.getStats);
 router.get('/dashboard/stream', DashboardController.streamTelemetry);
 router.post('/dashboard/toggle-ai', DashboardController.toggleAi);
+router.post('/dashboard/toggle-model', DashboardController.toggleModel);
 router.post('/dashboard/trigger-ingest', DashboardController.triggerIngest);
 router.post('/dashboard/clear-cache', DashboardController.clearCache);
 router.post('/dashboard/summarize-test', DashboardController.summarizeTest);

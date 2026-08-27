@@ -54,6 +54,24 @@ export class DashboardController {
     }
 
     /**
+     * POST /api/v1/dashboard/toggle-model
+     * Toggle specific AI model on or off
+     */
+    public static async toggleModel(req: Request, res: Response): Promise<void> {
+        try {
+            const { model, enabled } = req.body;
+            if (!model) {
+                res.status(400).json({ success: false, error: 'Model parameter is required' });
+                return;
+            }
+            const updated = TelemetryService.toggleModelStatus(model, enabled);
+            res.json({ success: true, model, enabled: updated });
+        } catch (error: any) {
+            res.status(500).json({ success: false, error: error.message });
+        }
+    }
+
+    /**
      * POST /api/v1/dashboard/trigger-ingest
      * Manually trigger background RSS scraper on demand
      */
@@ -492,6 +510,39 @@ export class DashboardController {
             font-family: 'JetBrains Mono', monospace;
         }
 
+        .model-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            background: rgba(16, 185, 129, 0.15);
+            color: #34D399;
+            transition: all 0.2s;
+            margin-top: 6px;
+            width: 100%;
+        }
+
+        .model-toggle-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .model-toggle-btn.disabled {
+            border-color: rgba(239, 68, 68, 0.4);
+            background: rgba(239, 68, 68, 0.15);
+            color: #F87171;
+        }
+
+        .model-toggle-btn.disabled:hover {
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+        }
+
         /* Split View: Interactive Test Studio & Live Logs */
         .split-grid {
             display: grid;
@@ -750,7 +801,7 @@ export class DashboardController {
                 </div>
                 <!-- Step 3: LLM Summarized -->
                 <div class="funnel-step">
-                    <span class="funnel-step-label">3. 🤖 Groq LLM Summarized</span>
+                    <span class="funnel-step-label">3. 🧠 Multi-Model AI Summarized</span>
                     <div class="funnel-step-val" id="funnel-llm" style="color: #A78BFA;">0</div>
                     <span class="funnel-step-sub">60-word stories generated</span>
                 </div>
@@ -769,11 +820,11 @@ export class DashboardController {
             </div>
         </section>
 
-        <!-- Groq Multi-Model Accounting Pool -->
+        <!-- Multi-Model AI Accounting Pool -->
         <section class="models-section">
             <div class="section-header">
-                <h2 class="section-title">🤖 Groq Multi-Model Auto-Rotation Pool</h2>
-                <span class="val-sub">Automatic 429 Failover, Persistent Disk Storage & Token Accounting</span>
+                <h2 class="section-title">🧠 Multi-Model AI Auto-Rotation & Failover Pool</h2>
+                <span class="val-sub">Google Gemini 3 Flash • Mistral AI • Cloudflare Workers AI • Groq (Optional)</span>
             </div>
             <div class="models-list" id="models-container">
                 <!-- Populated dynamically via SSE -->
@@ -866,6 +917,22 @@ export class DashboardController {
                 }
             } catch (err) {
                 alert('Failed to toggle AI state: ' + err.message);
+            }
+        }
+
+        async function toggleModel(modelName) {
+            try {
+                const res = await fetch('/api/v1/dashboard/toggle-model', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ model: modelName })
+                });
+                const json = await res.json();
+                if (!json.success) {
+                    alert('Failed to toggle model: ' + json.error);
+                }
+            } catch (e) {
+                alert('Toggle error: ' + e.message);
             }
         }
 
@@ -964,8 +1031,11 @@ export class DashboardController {
             // Models List
             const modelsContainer = document.getElementById('models-container');
             modelsContainer.innerHTML = d.ai.models.map(m => {
-                const statusColor = m.status === 'rate_limited' ? '#F59E0B' : m.status === 'error' ? '#EF4444' : '#10B981';
-                const statusLabel = m.status === 'rate_limited' ? 'RATE LIMITED (RESTING)' : m.status === 'error' ? 'OFFLINE' : 'READY (ACTIVE)';
+                const isPaused = m.status === 'rate_limited' || m.status === 'error';
+                const statusColor = isPaused ? '#F59E0B' : '#10B981';
+                const statusLabel = isPaused ? 'PAUSED / OFF' : 'ACTIVE (READY)';
+                const btnLabel = isPaused ? '▶️ Click to Enable' : '⏸️ Click to Pause';
+                const btnClass = isPaused ? 'disabled' : '';
                 return \`
                     <div class="model-card">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -984,6 +1054,9 @@ export class DashboardController {
                             <span>Avg Latency</span>
                             <span class="model-stats-val">\${m.lastLatencyMs}ms</span>
                         </div>
+                        <button class="model-toggle-btn \${btnClass}" onclick="toggleModel('\${m.model}')">
+                            \${btnLabel}
+                        </button>
                     </div>
                 \`;
             }).join('');
