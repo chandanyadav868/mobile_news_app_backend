@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
 import * as path from 'path';
 import { Worker } from 'worker_threads';
-import { synthesizeSpeech, WordBoundary, TTSJobRequest, TTSJobResponse } from '../workers/ttsWorker';
+import { synthesizeSpeech, WordBoundary, TTSJobRequest, TTSJobResponse } from '../workers/ttsWorker.js';
 
 interface CachedAudioItem {
     audioBase64: string;
