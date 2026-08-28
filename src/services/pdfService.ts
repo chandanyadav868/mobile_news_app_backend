@@ -115,14 +115,85 @@ export class PdfService {
     }
 
     /**
+     * 🔐 Automatic Caesar-Cipher / Shifted-Font Decoding Engine
+     * Detects if the PDF was generated with shifted font tables (e.g. MSxpsPS +3 Caesar shift: 'SURWDJRQLVW' ➔ 'PROTAGONIST')
+     * and automatically reverses the character shift.
+     */
+    public static detectAndDecodeCipherShift(text: string): string {
+        if (!text || text.length < 20) return text;
+
+        const COMMON_WORDS = new Set([
+            'THE', 'AND', 'FOR', 'THAT', 'THIS', 'WITH', 'FROM', 'HAVE', 'WHICH',
+            'PROTAGONIST', 'KNOWLEDGE', 'IGNORANCE', 'MOMENT', 'SECTION', 'CHAPTER',
+            'THEORY', 'EXAMPLE', 'DEFINITION', 'PROBABILITY', 'VALUE', 'NUMBER',
+            'OEDIPUS', 'TRAGEDY', 'FORTUNES', 'EFFECTS', 'REVERSAL', 'DISCOVERY',
+            'POETICS', 'ARISTOTLE', 'CHANGE', 'GOOD', 'BAD', 'HERO', 'CHARACTER'
+        ]);
+
+        const sampleWords = text
+            .toUpperCase()
+            .split(/[^A-Z]+/)
+            .filter(w => w.length >= 3)
+            .slice(0, 60);
+
+        if (sampleWords.length === 0) return text;
+
+        let bestShift = 0;
+        let maxMatches = 0;
+
+        for (let shift = 0; shift < 26; shift++) {
+            let matches = 0;
+            for (const word of sampleWords) {
+                let decodedWord = '';
+                for (let i = 0; i < word.length; i++) {
+                    const code = word.charCodeAt(i) - 65;
+                    const newCode = (code - shift + 26) % 26;
+                    decodedWord += String.fromCharCode(newCode + 65);
+                }
+                if (COMMON_WORDS.has(decodedWord)) {
+                    matches++;
+                }
+            }
+            if (matches > maxMatches) {
+                maxMatches = matches;
+                bestShift = shift;
+            }
+        }
+
+        if (bestShift > 0 && maxMatches >= 2) {
+            console.log(`🔐 [PdfService] Detected +${bestShift} Caesar shifted font encoding (e.g. MSxpsPS). Auto-decoding text...`);
+            let decoded = '';
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const code = text.charCodeAt(i);
+
+                if (code >= 65 && code <= 90) {
+                    const newCode = (code - 65 - bestShift + 26) % 26;
+                    decoded += String.fromCharCode(newCode + 65);
+                } else if (code >= 97 && code <= 122) {
+                    const newCode = (code - 97 - bestShift + 26) % 26;
+                    decoded += String.fromCharCode(newCode + 97);
+                } else {
+                    decoded += char;
+                }
+            }
+            return decoded;
+        }
+
+        return text;
+    }
+
+    /**
      * Sanitizes raw extracted PDF text:
+     * - Decodes shifted font encodings (MSxpsPS)
      * - Removes broken CID artifacts (e.g. (cid:123))
      * - Normalizes weird hyphens and line wraps
      * - Preserves natural punctuation for voice breath pauses
      */
     public static sanitizeText(text: string): string {
         if (!text) return '';
-        return text
+        const decoded = this.detectAndDecodeCipherShift(text);
+        return decoded
             .replace(/\(cid:\d+\)/gi, '')
             .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
             .replace(/\uFFFD/g, ' ')
