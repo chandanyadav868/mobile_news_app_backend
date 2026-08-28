@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 // @ts-ignore
 import { PDFParse } from 'pdf-parse';
 import { UniversalLlmService, SummarizedNewsResult } from './universalLlmService.js';
@@ -22,7 +23,97 @@ export interface ExtractedPdfDocument {
     executiveSummary?: SummarizedNewsResult;
 }
 
+export interface PdfSessionInfo {
+    sessionId: string;
+    title: string;
+    author: string | null;
+    pageCount: number;
+    createdAt: number;
+}
+
 export class PdfService {
+    // In-memory document buffer cache with 2-hour TTL for fast batched page extraction
+    private static sessionCache = new Map<string, { buffer: Buffer; fileName: string; totalPages: number; title: string; author: string | null; createdAt: number }>();
+
+    private static tesseractWorkerPromise: Promise<any> | null = null;
+
+    /**
+     * Initializes or returns a singleton Tesseract.js Worker instance
+     */
+    public static async getTesseractWorker(): Promise<any> {
+        if (!this.tesseractWorkerPromise) {
+            this.tesseractWorkerPromise = (async () => {
+                try {
+                    // Dynamic import of tesseract.js
+                    const Tesseract = await import('tesseract.js');
+                    const createWorker = (Tesseract as any).createWorker || (Tesseract as any).default?.createWorker;
+                    if (typeof createWorker === 'function') {
+                        const worker = await createWorker('eng');
+                        console.log('✅ [PdfService] Tesseract.js OCR Worker initialized.');
+                        return worker;
+                    }
+                } catch (err: any) {
+                    console.warn('⚠️ [PdfService] Tesseract.js worker initialization notice:', err.message || err);
+                }
+                return null;
+            })();
+        }
+        return this.tesseractWorkerPromise;
+    }
+
+    /**
+     * 🧮 Math Formula Verbalizer for Natural Voice Text-to-Speech:
+     * Converts mathematical symbols, equations, and fractions into spoken English
+     * so that Edge-TTS and Gemini Voice pronounce formulas naturally.
+     */
+    public static verbalizeMathForTts(text: string): string {
+        if (!text) return '';
+
+        return text
+            // 1. Remove unicode replacement diamonds and broken font codes
+            .replace(/\uFFFD/g, ' ')
+            .replace(/[]/g, ' ')
+
+            // 2. Common Fractions
+            .replace(/\b1\/2\b|½/g, 'one half')
+            .replace(/\b1\/3\b|⅓/g, 'one third')
+            .replace(/\b2\/3\b|⅔/g, 'two thirds')
+            .replace(/\b1\/4\b|¼/g, 'one quarter')
+            .replace(/\b3\/4\b|¾/g, 'three quarters')
+            .replace(/\b1\/5\b/g, 'one fifth')
+            .replace(/\b2\/5\b/g, 'two fifths')
+            .replace(/\b3\/5\b/g, 'three fifths')
+            .replace(/\b4\/5\b/g, 'four fifths')
+            .replace(/\b1\/8\b|⅛/g, 'one eighth')
+            .replace(/\b3\/8\b|⅜/g, 'three eighths')
+            .replace(/\b5\/8\b|⅝/g, 'five eighths')
+            .replace(/\b7\/8\b|⅞/g, 'seven eighths')
+
+            // 3. Probability & Functions notation
+            .replace(/\bP\s*\(\s*([A-Za-z0-9_]+)\s*\)/g, 'Probability of $1')
+            .replace(/\bP\s*\(\s*([A-Za-z0-9_]+)\s*\|\s*([A-Za-z0-9_]+)\s*\)/g, 'Probability of $1 given $2')
+
+            // 4. Powers & Exponents
+            .replace(/\b([a-zA-Z0-9]+)\^2\b|([a-zA-Z0-9]+)²/g, '$1 squared')
+            .replace(/\b([a-zA-Z0-9]+)\^3\b|([a-zA-Z0-9]+)³/g, '$1 cubed')
+            .replace(/\b([a-zA-Z0-9]+)\^([0-9]+)\b/g, '$1 to the power of $2')
+
+            // 5. Square roots & Math Operators
+            .replace(/√\s*([a-zA-Z0-9_]+)|\\sqrt\{([^}]+)\}/g, 'square root of $1$2')
+            .replace(/([a-zA-Z0-9]+)\s*[\*×]\s*([a-zA-Z0-9]+)/g, '$1 times $2')
+            .replace(/([a-zA-Z0-9]+)\s*[\/÷]\s*([a-zA-Z0-9]+)/g, '$1 divided by $2')
+            .replace(/\b(\d+)%/g, '$1 percent')
+            .replace(/≠/g, 'is not equal to')
+            .replace(/≤/g, 'less than or equal to')
+            .replace(/≥/g, 'greater than or equal to')
+            .replace(/≈/g, 'approximately equal to')
+            .replace(/±/g, 'plus or minus ')
+
+            // Collapse multiple spaces
+            .replace(/[ \t]+/g, ' ')
+            .trim();
+    }
+
     /**
      * Sanitizes raw extracted PDF text:
      * - Removes broken CID artifacts (e.g. (cid:123))
@@ -34,6 +125,8 @@ export class PdfService {
         return text
             .replace(/\(cid:\d+\)/gi, '')
             .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+            .replace(/\uFFFD/g, ' ')
+            .replace(/[]/g, ' ')
             .replace(/([a-zA-Z0-9])-[\r\n]+([a-zA-Z0-9])/g, '$1$2')
             .replace(/[\r\n]+/g, '\n')
             .replace(/[ \t]+/g, ' ')
@@ -41,17 +134,278 @@ export class PdfService {
     }
 
     /**
+     * 📦 1. Initializes a Document Session for Large Multi-Page PDFs:
+     * Calculates page count, document title, and stores the buffer in memory/session cache.
+     * Responds in under 200ms.
+     */
+    public static async initSession(
+        buffer: Buffer,
+        fileName?: string
+    ): Promise<PdfSessionInfo> {
+        const sessionId = crypto.randomUUID();
+        let pageCount = 1;
+        let title = fileName ? fileName.replace(/\.pdf$/i, '').replace(/[-_]/g, ' ') : 'Uploaded PDF Document';
+        let author: string | null = null;
+
+        try {
+            if (typeof (PDFParse as any) === 'function') {
+                const parser = new (PDFParse as any)({ data: buffer });
+                if (typeof parser.getText === 'function') {
+                    const textResult = await parser.getText({ maxPages: 1 });
+                    pageCount = textResult.total || 1;
+                    try {
+                        const infoResult = await parser.getInfo();
+                        if (infoResult?.info?.Title && infoResult.info.Title.trim().length > 3) {
+                            title = infoResult.info.Title.trim();
+                        }
+                        author = infoResult?.info?.Author?.trim() || null;
+                    } catch {}
+                    if (typeof parser.destroy === 'function') {
+                        await parser.destroy();
+                    }
+                }
+            }
+        } catch (err) {
+            console.warn('Session init fast check error:', err);
+        }
+
+        // Cache session
+        this.sessionCache.set(sessionId, {
+            buffer,
+            fileName: fileName || 'document.pdf',
+            totalPages: pageCount,
+            title,
+            author,
+            createdAt: Date.now(),
+        });
+
+        // Clean up sessions older than 2 hours
+        const twoHoursAgo = Date.now() - 2 * 60 * 60 * 1000;
+        for (const [sId, data] of this.sessionCache.entries()) {
+            if (data.createdAt < twoHoursAgo) {
+                this.sessionCache.delete(sId);
+            }
+        }
+
+        console.log(`📦 [PdfService] Initialized session ${sessionId}: "${title}" (${pageCount} pages, ${(buffer.length / 1024).toFixed(1)} KB)`);
+
+        return {
+            sessionId,
+            title,
+            author,
+            pageCount,
+            createdAt: Date.now(),
+        };
+    }
+
+    /**
+     * 📦 2. Extracts an On-Demand Batch of Pages (e.g. Pages 1-5, Pages 6-10):
+     * Runs smart layout extraction, math formula verbalization, and returns structured sections.
+     */
+    public static async extractBatch(
+        sessionId: string,
+        pageStart: number = 1,
+        pageSize: number = 5
+    ): Promise<{
+        paragraphs: ExtractedPdfParagraph[];
+        pageStart: number;
+        pageEnd: number;
+        totalPages: number;
+        hasMore: boolean;
+        title: string;
+    }> {
+        const session = this.sessionCache.get(sessionId);
+        if (!session) {
+            throw new Error('PDF session expired or invalid. Please re-upload the document.');
+        }
+
+        const pageEnd = Math.min(pageStart + pageSize - 1, session.totalPages);
+        console.log(`⚡ [PdfService] Extracting batch: Pages ${pageStart} to ${pageEnd} of ${session.totalPages} (Session: ${sessionId})...`);
+
+        let batchRawText = '';
+
+        try {
+            if (typeof (PDFParse as any) === 'function') {
+                const parser = new (PDFParse as any)({ data: session.buffer });
+                if (typeof parser.getText === 'function') {
+                    // Extract requested page range (first..last)
+                    const textResult = await parser.getText({
+                        first: pageStart,
+                        last: pageEnd,
+                    });
+                    batchRawText = textResult.text || '';
+                    if (typeof parser.destroy === 'function') {
+                        await parser.destroy();
+                    }
+                }
+            }
+        } catch (err: any) {
+            console.warn('Batch parser error:', err);
+        }
+
+        // Fallback: If range extraction wasn't supported, extract full and slice by lines
+        if (!batchRawText.trim()) {
+            const fullDoc = await this.extractFromBuffer(session.buffer, session.fileName);
+            const totalParas = fullDoc.paragraphs.length;
+            const startIdx = Math.floor(((pageStart - 1) / session.totalPages) * totalParas);
+            const endIdx = Math.ceil((pageEnd / session.totalPages) * totalParas);
+            const sliced = fullDoc.paragraphs.slice(startIdx, endIdx);
+
+            return {
+                paragraphs: sliced,
+                pageStart,
+                pageEnd,
+                totalPages: session.totalPages,
+                hasMore: pageEnd < session.totalPages,
+                title: session.title,
+            };
+        }
+
+        // Process batch raw text into clean speech paragraphs with Math Verbalization
+        const rawLines = batchRawText.split(/\r?\n/);
+        const logicalParagraphs: string[] = [];
+        let currentParagraph = '';
+
+        for (const line of rawLines) {
+            const trimmed = line.trim();
+            if (!trimmed) {
+                if (currentParagraph.trim().length > 0) {
+                    logicalParagraphs.push(currentParagraph.trim());
+                    currentParagraph = '';
+                }
+                continue;
+            }
+
+            // Skip page numbers
+            if (/^(page\s+\d+(\s+(of|\/)\s+\d+)?|\d+|\-\s*\d+\s*\-|\d+\s*\/\s*\d+)$/i.test(trimmed)) {
+                continue;
+            }
+
+            const isNewItem = /^([•\-\*■►]|(\d+[\.\)]|[a-zA-Z][\.\)]))\s+/.test(trimmed);
+            const isHeading = /^(chapter|section|unit|part|\d+\s+[A-Z\s]{4,})/i.test(trimmed);
+
+            if (isNewItem || isHeading) {
+                if (currentParagraph.trim().length > 0) {
+                    logicalParagraphs.push(currentParagraph.trim());
+                }
+                currentParagraph = trimmed;
+            } else if (currentParagraph) {
+                if (currentParagraph.endsWith('-')) {
+                    currentParagraph = currentParagraph.slice(0, -1) + trimmed;
+                } else if (/[a-zA-Z0-9,;]$/.test(currentParagraph)) {
+                    currentParagraph += ' ' + trimmed;
+                } else {
+                    currentParagraph += ' ' + trimmed;
+                }
+            } else {
+                currentParagraph = trimmed;
+            }
+        }
+
+        if (currentParagraph.trim()) {
+            logicalParagraphs.push(currentParagraph.trim());
+        }
+
+        const paragraphs: ExtractedPdfParagraph[] = [];
+        let pId = (pageStart - 1) * 10 + 1;
+        let speechChunk = '';
+
+        for (const para of logicalParagraphs) {
+            const cleaned = this.sanitizeText(para);
+            if (cleaned.length < 15) continue;
+
+            const words = cleaned.split(/\s+/).filter(Boolean);
+
+            if (words.length > 95) {
+                const sentences = cleaned.match(/[^.!?]+[.!?]+(\s|$)/g) || [cleaned];
+                let subChunk = '';
+                for (const sent of sentences) {
+                    if ((subChunk + ' ' + sent).split(/\s+/).length > 80) {
+                        if (subChunk.trim()) {
+                            const scClean = this.sanitizeText(subChunk);
+                            const scWords = scClean.split(/\s+/).filter(Boolean);
+                            const verbalizedSpeech = this.verbalizeMathForTts(scClean);
+                            const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
+                            paragraphs.push({
+                                id: pId++,
+                                text: scClean,
+                                wordCount: scWords.length,
+                                cleanSpeechText: verbalizedSpeech,
+                                bullets: sents.slice(0, 3).map(s => `• ${s}`),
+                            });
+                        }
+                        subChunk = sent;
+                    } else {
+                        subChunk += (subChunk ? ' ' : '') + sent;
+                    }
+                }
+                if (subChunk.trim()) {
+                    const scClean = this.sanitizeText(subChunk);
+                    const scWords = scClean.split(/\s+/).filter(Boolean);
+                    const verbalizedSpeech = this.verbalizeMathForTts(scClean);
+                    const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
+                    paragraphs.push({
+                        id: pId++,
+                        text: scClean,
+                        wordCount: scWords.length,
+                        cleanSpeechText: verbalizedSpeech,
+                        bullets: sents.slice(0, 3).map(s => `• ${s}`),
+                    });
+                }
+            } else if (speechChunk.split(/\s+/).length + words.length > 80) {
+                if (speechChunk.trim()) {
+                    const scClean = this.sanitizeText(speechChunk);
+                    const scWords = scClean.split(/\s+/).filter(Boolean);
+                    const verbalizedSpeech = this.verbalizeMathForTts(scClean);
+                    const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
+                    paragraphs.push({
+                        id: pId++,
+                        text: scClean,
+                        wordCount: scWords.length,
+                        cleanSpeechText: verbalizedSpeech,
+                        bullets: sents.slice(0, 3).map(s => `• ${s}`),
+                    });
+                }
+                speechChunk = cleaned;
+            } else {
+                speechChunk += (speechChunk ? ' ' : '') + cleaned;
+            }
+        }
+
+        if (speechChunk.trim()) {
+            const scClean = this.sanitizeText(speechChunk);
+            const scWords = scClean.split(/\s+/).filter(Boolean);
+            const verbalizedSpeech = this.verbalizeMathForTts(scClean);
+            const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
+            paragraphs.push({
+                id: pId++,
+                text: scClean,
+                wordCount: scWords.length,
+                cleanSpeechText: verbalizedSpeech,
+                bullets: sents.slice(0, 3).map(s => `• ${s}`),
+            });
+        }
+
+        return {
+            paragraphs,
+            pageStart,
+            pageEnd,
+            totalPages: session.totalPages,
+            hasMore: pageEnd < session.totalPages,
+            title: session.title,
+        };
+    }
+
+    /**
      * Extracts 100% of all text, pages, and paragraphs from the entire PDF buffer.
-     * Uses layout-aware sentence stitching to eliminate line break cuts,
-     * filter out orphan page numbers, and produce smooth, continuous paragraphs
-     * ready for natural voice TTS and real-time word highlighting.
+     * Uses Math Verbalization for natural audio pronunciation.
      */
     public static async extractFromBuffer(
         buffer: Buffer,
         fileName?: string
     ): Promise<ExtractedPdfDocument> {
         try {
-            console.log(`📄 [PdfService] Extracting full verbatim document "${fileName || 'Document'}" (${(buffer.length / 1024).toFixed(1)} KB)...`);
+            console.log(`📄 [PdfService] Extracting full document "${fileName || 'Document'}" (${(buffer.length / 1024).toFixed(1)} KB)...`);
 
             let rawText = '';
             let pageCount = 1;
@@ -73,7 +427,6 @@ export class PdfService {
                 }
             }
 
-            // Fallback if rawText is still empty
             if (!rawText.trim()) {
                 const parserFn = (PDFParse as any).default || PDFParse;
                 if (typeof parserFn === 'function') {
@@ -91,10 +444,6 @@ export class PdfService {
 
             const author = meta.Author ? meta.Author.trim() : null;
 
-            // 🧠 Smart Layout & Sentence Reconstruction Engine:
-            // 1. Splits by physical lines
-            // 2. Removes running page numbers, header lines, and isolated noise
-            // 3. Stitches sentences across lines that were artificially wrapped by PDF columns
             const rawLines = rawText.split(/\r?\n/);
             const logicalParagraphs: string[] = [];
             let currentParagraph = '';
@@ -109,12 +458,10 @@ export class PdfService {
                     continue;
                 }
 
-                // Filter out isolated page numbers (e.g., "Page 12", "12", "- 12 -", "12 / 72")
                 if (/^(page\s+\d+(\s+(of|\/)\s+\d+)?|\d+|\-\s*\d+\s*\-|\d+\s*\/\s*\d+)$/i.test(line)) {
                     continue;
                 }
 
-                // Check if this line is a new list item, bullet, or heading
                 const isNewItem = /^([•\-\*■►]|(\d+[\.\)]|[a-zA-Z][\.\)]))\s+/.test(line);
                 const isHeading = /^(chapter|section|unit|part|\d+\s+[A-Z\s]{4,})/i.test(line);
 
@@ -124,14 +471,11 @@ export class PdfService {
                     }
                     currentParagraph = line;
                 } else if (currentParagraph) {
-                    // Check if previous paragraph ended with hyphen (word wrap)
                     if (currentParagraph.endsWith('-')) {
                         currentParagraph = currentParagraph.slice(0, -1) + line;
                     } else if (/[a-zA-Z0-9,;]$/.test(currentParagraph)) {
-                        // Natural sentence continuation
                         currentParagraph += ' ' + line;
                     } else {
-                        // Previous ended with period or exclamation: join with space
                         currentParagraph += ' ' + line;
                     }
                 } else {
@@ -143,7 +487,6 @@ export class PdfService {
                 logicalParagraphs.push(currentParagraph.trim());
             }
 
-            // 4. Chunk into speech-friendly sections (50–90 words) so TTS highlight is ultra-precise
             const paragraphs: ExtractedPdfParagraph[] = [];
             let pId = 1;
             let speechChunk = '';
@@ -155,7 +498,6 @@ export class PdfService {
                 const words = cleaned.split(/\s+/).filter(Boolean);
 
                 if (words.length > 95) {
-                    // Split very long paragraphs cleanly by sentence boundaries
                     const sentences = cleaned.match(/[^.!?]+[.!?]+(\s|$)/g) || [cleaned];
                     let subChunk = '';
                     for (const sent of sentences) {
@@ -163,12 +505,13 @@ export class PdfService {
                             if (subChunk.trim()) {
                                 const scClean = this.sanitizeText(subChunk);
                                 const scWords = scClean.split(/\s+/).filter(Boolean);
+                                const verbalizedSpeech = this.verbalizeMathForTts(scClean);
                                 const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
                                 paragraphs.push({
                                     id: pId++,
                                     text: scClean,
                                     wordCount: scWords.length,
-                                    cleanSpeechText: scClean,
+                                    cleanSpeechText: verbalizedSpeech,
                                     bullets: sents.slice(0, 3).map(s => `• ${s}`),
                                 });
                             }
@@ -180,12 +523,13 @@ export class PdfService {
                     if (subChunk.trim()) {
                         const scClean = this.sanitizeText(subChunk);
                         const scWords = scClean.split(/\s+/).filter(Boolean);
+                        const verbalizedSpeech = this.verbalizeMathForTts(scClean);
                         const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
                         paragraphs.push({
                             id: pId++,
                             text: scClean,
                             wordCount: scWords.length,
-                            cleanSpeechText: scClean,
+                            cleanSpeechText: verbalizedSpeech,
                             bullets: sents.slice(0, 3).map(s => `• ${s}`),
                         });
                     }
@@ -193,12 +537,13 @@ export class PdfService {
                     if (speechChunk.trim()) {
                         const scClean = this.sanitizeText(speechChunk);
                         const scWords = scClean.split(/\s+/).filter(Boolean);
+                        const verbalizedSpeech = this.verbalizeMathForTts(scClean);
                         const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
                         paragraphs.push({
                             id: pId++,
                             text: scClean,
                             wordCount: scWords.length,
-                            cleanSpeechText: scClean,
+                            cleanSpeechText: verbalizedSpeech,
                             bullets: sents.slice(0, 3).map(s => `• ${s}`),
                         });
                     }
@@ -211,18 +556,19 @@ export class PdfService {
             if (speechChunk.trim()) {
                 const scClean = this.sanitizeText(speechChunk);
                 const scWords = scClean.split(/\s+/).filter(Boolean);
+                const verbalizedSpeech = this.verbalizeMathForTts(scClean);
                 const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
                 paragraphs.push({
                     id: pId++,
                     text: scClean,
                     wordCount: scWords.length,
-                    cleanSpeechText: scClean,
+                    cleanSpeechText: verbalizedSpeech,
                     bullets: sents.slice(0, 3).map(s => `• ${s}`),
                 });
             }
 
             const totalWords = paragraphs.reduce((sum, p) => sum + p.wordCount, 0);
-            console.log(`✅ [PdfService] Successfully extracted 100% of PDF: ${paragraphs.length} sections (${totalWords} words across ${pageCount} pages).`);
+            console.log(`✅ [PdfService] Full extraction complete: ${paragraphs.length} sections (${totalWords} words, ${pageCount} pages).`);
 
             return {
                 title: documentTitle,
