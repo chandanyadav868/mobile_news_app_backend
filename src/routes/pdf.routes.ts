@@ -21,4 +21,7 @@ router.post('/extract', upload.single('file'), PdfController.extractPdf);
 // POST /api/v1/pdf/summarize (Universal LLM 60-word briefing)
 router.post('/summarize', PdfController.summarizePdf);
 
+// POST /api/v1/pdf/chat (Interactive Q&A on selected reference cards)
+router.post('/chat', PdfController.chatWithPdf);
+
 export default router;

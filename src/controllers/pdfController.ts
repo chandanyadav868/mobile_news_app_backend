@@ -150,6 +150,41 @@ export class PdfController {
             });
         }
     }
+
+    /**
+     * POST /api/v1/pdf/chat
+     * Answers user questions with full context from selected reference cards
+     */
+    public static async chatWithPdf(req: Request, res: Response): Promise<void> {
+        try {
+            const { question, selectedSections, docTitle } = req.body;
+            if (!question || !question.trim()) {
+                res.status(400).json({
+                    success: false,
+                    error: 'Question is required.',
+                });
+                return;
+            }
+
+            console.log(`💬 [PdfController] Q&A request on "${docTitle || 'Document'}" (${selectedSections?.length || 0} sections selected)...`);
+            const answer = await PdfService.askDocumentQuestion(
+                question,
+                Array.isArray(selectedSections) ? selectedSections : [],
+                docTitle || 'PDF Document'
+            );
+
+            res.json({
+                success: true,
+                data: answer,
+            });
+        } catch (error: any) {
+            console.error('❌ [PdfController] Q&A Error:', error);
+            res.status(500).json({
+                success: false,
+                error: error.message || 'Failed to answer document question',
+            });
+        }
+    }
 }
 
 export default PdfController;

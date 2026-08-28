@@ -40,13 +40,17 @@ export async function synthesizeSpeech(
         sentenceBoundaryEnabled: true,
     });
 
-    // Clean and normalize text, removing unprintable symbols, XML brackets, and emojis
-    const cleanText = text
+    // Clean and normalize text, limiting oversized text chunks to 1200 characters to prevent Edge-TTS socket disconnect
+    let cleanText = text
         .replace(/<[^>]*>/g, ' ')
         .replace(/[^\x20-\x7E\u0900-\u097F\u00A0-\u024F.,!?'"-\s]/g, ' ')
         .replace(/&/g, ' and ')
         .replace(/\s+/g, ' ')
         .trim();
+
+    if (cleanText.length > 1200) {
+        cleanText = cleanText.slice(0, 1200);
+    }
 
     const words = cleanText.split(/\s+/).filter(Boolean);
 
@@ -87,6 +91,9 @@ export async function synthesizeSpeech(
                 }
             } catch (e) {}
         });
+        stream.metadataStream.on('error', (err: any) => {
+            console.warn('[TTSWorker] Metadata stream notice:', err?.message || err);
+        });
     }
 
     await new Promise<void>((resolve, reject) => {
@@ -95,7 +102,7 @@ export async function synthesizeSpeech(
         });
         stream.audioStream.on('end', () => resolve());
         stream.audioStream.on('error', (err: any) => {
-            if (chunks.length > 0) {
+            if (chunks.length > 0 || (err?.message && err.message.includes('Stream closed'))) {
                 console.warn('[TTSWorker] Stream ended with notice, recovered audio chunks:', chunks.length);
                 resolve();
             } else {

@@ -1,6 +1,8 @@
 import crypto from 'crypto';
 // @ts-ignore
 import { PDFParse } from 'pdf-parse';
+import { GoogleGenAI } from '@google/genai';
+import { env } from '../config/env.js';
 import { UniversalLlmService, SummarizedNewsResult } from './universalLlmService.js';
 
 export interface ExtractedPdfParagraph {
@@ -670,6 +672,78 @@ export class PdfService {
             content: leadExcerpt,
             category: 'Document Analysis',
         });
+    }
+
+    /**
+     * 🧠 Interactive AI Document Q&A (Selected Section Inquiries)
+     */
+    public static async askDocumentQuestion(
+        question: string,
+        selectedSections: { id: number; text: string }[],
+        docTitle: string = 'Document'
+    ): Promise<{ answer: string; keyTakeaways: string[] }> {
+        if (!question || !question.trim()) {
+            throw new Error('Question cannot be empty.');
+        }
+
+        const contextText = selectedSections.length > 0
+            ? selectedSections.map(s => `[Section #${s.id}]:\n${s.text}`).join('\n\n')
+            : 'No specific sections selected. Please answer based on general context.';
+
+        const prompt = `You are a world-class AI Document Research Assistant specializing in academic, educational, and business analysis.
+
+Document: "${docTitle}"
+
+Selected Reference Sections:
+"""
+${contextText}
+"""
+
+User Question:
+"${question}"
+
+Instructions:
+1. Provide a direct, highly articulate, and insightful explanation answering the user's question based on the selected reference sections.
+2. If mathematical formulas or literary/technical terms appear, explain their significance clearly.
+3. Include 2-4 bullet points highlighting Key Takeaways.
+4. Format your output strictly in valid JSON format:
+{
+  "answer": "Clear, direct explanation...",
+  "keyTakeaways": ["Key point 1", "Key point 2"]
+}`;
+
+        const apiKey = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY || '';
+        const ai = new GoogleGenAI({ apiKey });
+        const models = ['gemini-2.5-flash', 'gemini-3-flash-preview', 'gemini-3.5-flash'];
+
+        for (const model of models) {
+            try {
+                const response = await ai.models.generateContent({
+                    model,
+                    contents: prompt,
+                    config: {
+                        temperature: 0.2,
+                        responseMimeType: 'application/json',
+                    },
+                });
+
+                const text = response.text || '{}';
+                const parsed = JSON.parse(text);
+                if (parsed && parsed.answer) {
+                    return {
+                        answer: parsed.answer,
+                        keyTakeaways: Array.isArray(parsed.keyTakeaways) ? parsed.keyTakeaways : [],
+                    };
+                }
+            } catch (err: any) {
+                console.warn(`[PdfService] Q&A Model ${model} notice:`, err.message);
+            }
+        }
+
+        return {
+            answer: 'Could not generate an answer at this time. Please try asking again.',
+            keyTakeaways: [],
+        };
     }
 }
 
