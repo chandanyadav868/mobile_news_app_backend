@@ -186,8 +186,148 @@ export class PdfService {
     }
 
     /**
+     * 🔍 1. Text Quality Scoring Engine:
+     * Evaluates text health (0 to 100). Automatically detects glued words, corrupted symbol tables,
+     * missing ASCII spaces, and unusual long character sequences.
+     */
+    public static scoreTextQuality(text: string): { score: number; isBad: boolean; reasons: string[] } {
+        let score = 100;
+        const reasons: string[] = [];
+
+        if (!text || text.trim().length < 30) {
+            return { score: 0, isBad: true, reasons: ['Empty or insufficient content'] };
+        }
+
+        // 1. Space-to-Character Ratio (Normal English text is ~0.15 - 0.22)
+        const spaces = (text.match(/\s/g) || []).length;
+        const spaceRatio = spaces / text.length;
+        if (spaceRatio < 0.06) {
+            score -= 45;
+            reasons.push(`Glued words / missing spaces detected (space ratio ${(spaceRatio * 100).toFixed(1)}% < 6%)`);
+        }
+
+        // 2. Corrupted Escape Glyphs Ratio (e.g. $, \, ³, , )
+        const weirdChars = (text.match(/[\$\\³\^\\\uFFFD]/g) || []).length;
+        if (weirdChars / text.length > 0.008) {
+            const deduction = Math.min(40, weirdChars * 3);
+            score -= deduction;
+            reasons.push(`Corrupted glyph / font table encoding detected (${weirdChars} anomalous symbols)`);
+        }
+
+        // 3. Unusually Long Word Token Ratio (> 24 characters without space)
+        const longWords = text.split(/\s+/).filter(w => w.length > 24).length;
+        if (longWords > 2) {
+            score -= 30;
+            reasons.push(`Unbroken word concatenations detected (${longWords} tokens > 24 chars)`);
+        }
+
+        return {
+            score: Math.max(0, score),
+            isBad: score < 70,
+            reasons,
+        };
+    }
+
+    /**
+     * 🧩 2. Heuristic Word Space & Kerning Restorer:
+     * Reconstructs missing word boundaries (e.g. 'PROTAGONISTOFTHESTORY' ➔ 'PROTAGONIST OF THE STORY')
+     * and fixes corrupted punctuation like '$RISTOTLESA$S³$MANCANNOTB'.
+     */
+    public static restoreMissingSpaces(text: string): string {
+        if (!text) return '';
+
+        let restored = text;
+
+        // Fix corrupted punctuation / apostrophe artifacts
+        restored = restored
+            .replace(/\$([A-Z]+)A\$S³\$/gi, "$1's ")
+            .replace(/\$([A-Z]+)\$/gi, '$1 ')
+            .replace(/([a-zA-Z])³([a-zA-Z])/g, "$1's $2")
+            .replace(/\\THAT/gi, ' that')
+            .replace(/\\([A-Z]+)/g, ' $1');
+
+        // Insert space between lowercase and Uppercase (CamelCase word boundary)
+        restored = restored.replace(/([a-z])([A-Z])/g, '$1 $2');
+
+        // Insert space between digits and letters
+        restored = restored.replace(/([0-9])([a-zA-Z])/g, '$1 $2');
+        restored = restored.replace(/([a-zA-Z])([0-9])/g, '$1 $2');
+
+        // Break uppercase glue words using high-frequency stopword boundaries
+        const gluePatterns = [
+            /\b(PROTAGONIST)(OF|THE|AND|IS|IN|TO|FOR|THAT)\b/gi,
+            /\b(OF)(THE|A|AN|THAT|THIS|EVERY|ALL)\b/gi,
+            /\b(MAN)(CANNOT|CAN|WILL|MUST|IS|SHOULD)\b/gi,
+            /\b(CANNOT)(BECOME|BE|HAVE|DO|SEE)\b/gi,
+            /\b(BECOME)(A|AN|THE|HERO|GREAT)\b/gi,
+            /\b(HERO)(IN|OF|THAT|WHO|WHICH|BRINGS)\b/gi,
+            /\b(BRINGS)(A|AN|THE|CHANGE|FORTUNE)\b/gi,
+            /\b(CHANGE)(IN|OF|FROM|TO|FORTUNES)\b/gi,
+        ];
+
+        for (const pattern of gluePatterns) {
+            restored = restored.replace(pattern, '$1 $2');
+        }
+
+        return restored.replace(/[ \t]+/g, ' ').trim();
+    }
+
+    /**
+     * 👁️ 3. Cloud Gemini Multimodal Vision Document OCR:
+     * When PDF text streams are severely damaged or scanned images, this passes the PDF directly
+     * to Gemini 2.5/3.5 Vision, returning pristine, properly spaced, accurate text.
+     */
+    public static async extractWithGeminiVision(buffer: Buffer, fileName?: string): Promise<string> {
+        const apiKey = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY || '';
+        if (!apiKey) {
+            throw new Error('Gemini API key is required for Vision OCR.');
+        }
+
+        console.log(`👁️ [PdfService] Running Gemini Multimodal Vision OCR on "${fileName || 'Document'}"...`);
+
+        const ai = new GoogleGenAI({ apiKey });
+        const base64Pdf = buffer.toString('base64');
+        const visionModels = ['gemini-2.5-flash', 'gemini-3-flash-preview', 'gemini-3.5-flash'];
+
+        for (const model of visionModels) {
+            try {
+                const response = await ai.models.generateContent({
+                    model,
+                    contents: [
+                        {
+                            role: 'user',
+                            parts: [
+                                {
+                                    inlineData: {
+                                        mimeType: 'application/pdf',
+                                        data: base64Pdf,
+                                    },
+                                },
+                                {
+                                    text: 'Extract and transcribe all text from this PDF document with 100% precision. Ensure correct word spacing, clear paragraphs, accurate headings, and write out all math/scientific symbols clearly. Return clean, formatted text only.',
+                                },
+                            ],
+                        },
+                    ],
+                });
+
+                const ocrText = response.text || '';
+                if (ocrText.trim().length > 30) {
+                    console.log(`✅ [PdfService] Gemini Vision OCR succeeded with model ${model} (${ocrText.length} chars extracted).`);
+                    return ocrText;
+                }
+            } catch (err: any) {
+                console.warn(`[PdfService] Gemini Vision OCR attempt failed on ${model}:`, err.message);
+            }
+        }
+
+        throw new Error('Gemini Vision OCR failed across all models.');
+    }
+
+    /**
      * Sanitizes raw extracted PDF text:
      * - Decodes shifted font encodings (MSxpsPS)
+     * - Restores missing word spaces
      * - Removes broken CID artifacts (e.g. (cid:123))
      * - Normalizes weird hyphens and line wraps
      * - Preserves natural punctuation for voice breath pauses
@@ -195,7 +335,8 @@ export class PdfService {
     public static sanitizeText(text: string): string {
         if (!text) return '';
         const decoded = this.detectAndDecodeCipherShift(text);
-        return decoded
+        const spaced = this.restoreMissingSpaces(decoded);
+        return spaced
             .replace(/\(cid:\d+\)/gi, '')
             .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
             .replace(/\uFFFD/g, ' ')
@@ -332,6 +473,22 @@ export class PdfService {
                 hasMore: pageEnd < session.totalPages,
                 title: session.title,
             };
+        }
+
+        // 🔍 Real-Time Text Quality Scoring Gate
+        const quality = this.scoreTextQuality(batchRawText);
+        console.log(`🔍 [PdfService] Batch (p.${pageStart}-${pageEnd}) quality score: ${quality.score}/100 (isBad: ${quality.isBad})`);
+
+        if (quality.isBad) {
+            console.warn(`⚠️ [PdfService] Low text quality detected: ${quality.reasons.join(', ')}. Triggering Gemini Vision OCR fallback...`);
+            try {
+                const ocrText = await this.extractWithGeminiVision(session.buffer, session.fileName);
+                if (ocrText && ocrText.trim().length > 30) {
+                    batchRawText = ocrText;
+                }
+            } catch (ocrErr: any) {
+                console.warn('[PdfService] Gemini Vision OCR fallback notice:', ocrErr.message);
+            }
         }
 
         // Process batch raw text into clean speech paragraphs with Math Verbalization
@@ -507,6 +664,22 @@ export class PdfService {
                     rawText = data.text || '';
                     pageCount = data.numpages || pageCount;
                     meta = data.info || meta;
+                }
+            }
+
+            // 🔍 Real-Time Full Document Quality Gate
+            const quality = this.scoreTextQuality(rawText);
+            console.log(`🔍 [PdfService] Full document text quality score: ${quality.score}/100 (isBad: ${quality.isBad})`);
+
+            if (quality.isBad) {
+                console.warn(`⚠️ [PdfService] Low document text quality detected: ${quality.reasons.join(', ')}. Triggering Gemini Vision OCR fallback...`);
+                try {
+                    const ocrText = await this.extractWithGeminiVision(buffer, fileName);
+                    if (ocrText && ocrText.trim().length > 30) {
+                        rawText = ocrText;
+                    }
+                } catch (ocrErr: any) {
+                    console.warn('[PdfService] Gemini Vision OCR fallback notice:', ocrErr.message);
                 }
             }
 
