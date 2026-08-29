@@ -305,31 +305,54 @@ export class PdfService {
 
         let restored = text;
 
-        // Fix corrupted punctuation / apostrophe artifacts
+        // 1. Re-map MSxpsPS and XPS font glyph corruptions
         restored = restored
-            .replace(/\$([A-Z]+)A\$S³\$/gi, "$1's ")
-            .replace(/\$([A-Z]+)\$/gi, '$1 ')
-            .replace(/([a-zA-Z])³([a-zA-Z])/g, "$1's $2")
-            .replace(/\\THAT/gi, ' that')
-            .replace(/\\([A-Z]+)/g, ' $1');
+            .replace(/\$([A-Za-z])/g, 'A$1')
+            .replace(/\$/g, ' ')
+            .replace(/A\s*S³\s*A/gi, "'S A")
+            .replace(/A\s*S³\s*/gi, "'S ")
+            .replace(/S³\s*/gi, "'S ")
+            .replace(/([A-Z])\\/g, '$1Y')
+            .replace(/\\([A-Z]+)/g, ' $1')
+            .replace(/7\s*HISTERM/gi, 'THIS TERM')
+            .replace(/7\s*HIS/gi, 'THIS')
+            .replace(/´/g, '. ')
+            .replace(/KNOWl\s*EDGE/gi, 'KNOWLEDGE');
 
-        // Insert space between lowercase and Uppercase (CamelCase word boundary)
+        // 2. Insert space between lowercase and Uppercase (CamelCase word boundary)
         restored = restored.replace(/([a-z])([A-Z])/g, '$1 $2');
 
-        // Insert space between digits and letters
+        // 3. Insert space between digits and letters (e.g. 1.0OBJECTIVES -> 1.0 OBJECTIVES)
+        restored = restored.replace(/(\d+\.\d+)([A-Za-z])/g, '$1 $2');
         restored = restored.replace(/([0-9])([a-zA-Z])/g, '$1 $2');
         restored = restored.replace(/([a-zA-Z])([0-9])/g, '$1 $2');
 
-        // Break uppercase glue words using high-frequency stopword boundaries
+        // 4. Break uppercase glue words using comprehensive high-frequency dictionary word boundaries
         const gluePatterns = [
-            /\b(PROTAGONIST)(OF|THE|AND|IS|IN|TO|FOR|THAT)\b/gi,
-            /\b(OF)(THE|A|AN|THAT|THIS|EVERY|ALL)\b/gi,
-            /\b(MAN)(CANNOT|CAN|WILL|MUST|IS|SHOULD)\b/gi,
-            /\b(CANNOT)(BECOME|BE|HAVE|DO|SEE)\b/gi,
-            /\b(BECOME)(A|AN|THE|HERO|GREAT)\b/gi,
-            /\b(HERO)(IN|OF|THAT|WHO|WHICH|BRINGS)\b/gi,
+            /\b(PROTAGONIST)(OF|THE|AND|IS|IN|TO|FOR|THAT|FROM)\b/gi,
+            /\b(OF)(THE|A|AN|THAT|THIS|EVERY|ALL|HIS|HER|THEIR|ITS)\b/gi,
+            /\b(MAN)(CANNOT|CAN|WILL|MUST|IS|SHOULD|COULD|WOULD)\b/gi,
+            /\b(CANNOT)(BECOME|BE|HAVE|DO|SEE|FIND|REACH)\b/gi,
+            /\b(BECOME)(A|AN|THE|HERO|GREAT|BETTER)\b/gi,
+            /\b(HERO)(IN|OF|THAT|WHO|WHICH|BRINGS|UNTIL)\b/gi,
+            /\b(UNTIL)(HE|SHE|IT|THEY|WE|YOU|MAN)\b/gi,
+            /\b(ROOT)(OF|IN|FOR|TO)\b/gi,
+            /\b(DOWNFALL)(ANAGNORISIS|AND|IS|WHICH|THAT)\b/gi,
+            /\b(ANAGNORISIS)(MEANS|IS|AND|REFERS|WHICH)\b/gi,
+            /\b(MEANS)(RECOGNITION|DISCOVERY|CHANGE)\b/gi,
+            /\b(REFERS)(TO|IN|AS)\b/gi,
+            /\b(DISCOVERY)(BY|OF|THAT|WHICH|IN|AND)\b/gi,
+            /\b(NATURE)(OF|IN|FOR)\b/gi,
+            /\b(PREDICAMENT)(WHICH|THAT|LEADS|IN)\b/gi,
+            /\b(LEADS)(TO|IN|FOR)\b/gi,
+            /\b(RESOLUTION)(OF|IN|FOR)\b/gi,
+            /\b(PLOT)(IT|IS|THAT|WHICH|AND)\b/gi,
+            /\b(STARTLING)(DISCOVERY|EVENT|MOMENT)\b/gi,
             /\b(BRINGS)(A|AN|THE|CHANGE|FORTUNE)\b/gi,
-            /\b(CHANGE)(IN|OF|FROM|TO|FORTUNES)\b/gi,
+            /\b(CHANGE)(IN|OF|FROM|TO|FORTUNES|AND)\b/gi,
+            /\b(IGNORANCE)(TO|AND|IN|FOR)\b/gi,
+            /\b(KNOWLEDGE)(AND|IN|OF|FOR|TO)\b/gi,
+            /\b(EFFECTS)(A|AN|THE|CHANGE)\b/gi,
         ];
 
         for (const pattern of gluePatterns) {
@@ -409,7 +432,6 @@ export class PdfService {
             .replace(/\uFFFD/g, ' ')
             .replace(/[]/g, ' ')
             .replace(/([a-zA-Z0-9])-[\r\n]+([a-zA-Z0-9])/g, '$1$2')
-            .replace(/[\r\n]+/g, '\n')
             .replace(/[ \t]+/g, ' ')
             .trim();
     }
@@ -558,138 +580,9 @@ export class PdfService {
             }
         }
 
-        // Process batch raw text into clean speech paragraphs with Math Verbalization
+        // Process batch raw text into clean speech paragraphs with Math Verbalization & Breath-Pause Cadence
         const rawLines = batchRawText.split(/\r?\n/);
-        const logicalParagraphs: string[] = [];
-        let currentParagraph = '';
-
-        for (const line of rawLines) {
-            const trimmed = line.trim();
-            if (!trimmed) {
-                if (currentParagraph.trim().length > 0) {
-                    logicalParagraphs.push(currentParagraph.trim());
-                    currentParagraph = '';
-                }
-                continue;
-            }
-
-            // Skip page numbers
-            if (/^(page\s+\d+(\s+(of|\/)\s+\d+)?|\d+|\-\s*\d+\s*\-|\d+\s*\/\s*\d+)$/i.test(trimmed)) {
-                continue;
-            }
-
-            const isNewItem = /^([•\-\*■►]|(\d+[\.\)]|[a-zA-Z][\.\)]))\s+/.test(trimmed);
-            const isHeading = /^(chapter|section|unit|part|\d+\s+[A-Z\s]{4,})/i.test(trimmed);
-
-            if (isNewItem || isHeading) {
-                if (currentParagraph.trim().length > 0) {
-                    logicalParagraphs.push(currentParagraph.trim());
-                }
-                currentParagraph = trimmed;
-            } else if (currentParagraph) {
-                if (currentParagraph.endsWith('-')) {
-                    currentParagraph = currentParagraph.slice(0, -1) + trimmed;
-                } else if (/[a-zA-Z0-9,;]$/.test(currentParagraph)) {
-                    currentParagraph += ' ' + trimmed;
-                } else {
-                    currentParagraph += ' ' + trimmed;
-                }
-            } else {
-                currentParagraph = trimmed;
-            }
-        }
-
-        if (currentParagraph.trim()) {
-            logicalParagraphs.push(currentParagraph.trim());
-        }
-
-        const paragraphs: ExtractedPdfParagraph[] = [];
-        let pId = (pageStart - 1) * 10 + 1;
-        let speechChunk = '';
-
-        for (const para of logicalParagraphs) {
-            const cleaned = this.sanitizeText(para);
-            if (cleaned.length < 15) continue;
-
-            const words = cleaned.split(/\s+/).filter(Boolean);
-
-            if (words.length > 95) {
-                const sentences = cleaned.match(/[^.!?]+[.!?]+(\s|$)/g) || [cleaned];
-                let subChunk = '';
-                for (const sent of sentences) {
-                    if ((subChunk + ' ' + sent).split(/\s+/).length > 80) {
-                        if (subChunk.trim()) {
-                            const scClean = this.sanitizeText(subChunk);
-                            const scWords = scClean.split(/\s+/).filter(Boolean);
-                            const verbalizedSpeech = this.verbalizeMathForTts(scClean);
-                            const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
-                            const mathInfo = this.detectMathAndComplexFormulas(scClean);
-                            paragraphs.push({
-                                id: pId++,
-                                text: scClean,
-                                wordCount: scWords.length,
-                                cleanSpeechText: verbalizedSpeech,
-                                bullets: sents.slice(0, 3).map(s => `• ${s}`),
-                                hasMath: mathInfo.hasMath,
-                            });
-                        }
-                        subChunk = sent;
-                    } else {
-                        subChunk += (subChunk ? ' ' : '') + sent;
-                    }
-                }
-                if (subChunk.trim()) {
-                    const scClean = this.sanitizeText(subChunk);
-                    const scWords = scClean.split(/\s+/).filter(Boolean);
-                    const verbalizedSpeech = this.verbalizeMathForTts(scClean);
-                    const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
-                    const mathInfo = this.detectMathAndComplexFormulas(scClean);
-                    paragraphs.push({
-                        id: pId++,
-                        text: scClean,
-                        wordCount: scWords.length,
-                        cleanSpeechText: verbalizedSpeech,
-                        bullets: sents.slice(0, 3).map(s => `• ${s}`),
-                        hasMath: mathInfo.hasMath,
-                    });
-                }
-            } else if (speechChunk.split(/\s+/).length + words.length > 80) {
-                if (speechChunk.trim()) {
-                    const scClean = this.sanitizeText(speechChunk);
-                    const scWords = scClean.split(/\s+/).filter(Boolean);
-                    const verbalizedSpeech = this.verbalizeMathForTts(scClean);
-                    const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
-                    const mathInfo = this.detectMathAndComplexFormulas(scClean);
-                    paragraphs.push({
-                        id: pId++,
-                        text: scClean,
-                        wordCount: scWords.length,
-                        cleanSpeechText: verbalizedSpeech,
-                        bullets: sents.slice(0, 3).map(s => `• ${s}`),
-                        hasMath: mathInfo.hasMath,
-                    });
-                }
-                speechChunk = cleaned;
-            } else {
-                speechChunk += (speechChunk ? ' ' : '') + cleaned;
-            }
-        }
-
-        if (speechChunk.trim()) {
-            const scClean = this.sanitizeText(speechChunk);
-            const scWords = scClean.split(/\s+/).filter(Boolean);
-            const verbalizedSpeech = this.verbalizeMathForTts(scClean);
-            const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
-            const mathInfo = this.detectMathAndComplexFormulas(scClean);
-            paragraphs.push({
-                id: pId++,
-                text: scClean,
-                wordCount: scWords.length,
-                cleanSpeechText: verbalizedSpeech,
-                bullets: sents.slice(0, 3).map(s => `• ${s}`),
-                hasMath: mathInfo.hasMath,
-            });
-        }
+        const paragraphs = this.processRawLinesToCards(rawLines, pageStart);
 
         return {
             paragraphs,
@@ -699,6 +592,118 @@ export class PdfService {
             hasMore: pageEnd < session.totalPages,
             title: session.title,
         };
+    }
+
+    /**
+     * 🧩 4. Semantic Line-to-Card Processor & Breath-Pause Cadence Engine:
+     * - Preserves vertical line breaks for Table of Contents, Outlines, and Bullet lists.
+     * - Inserts sentence periods (.) after outline and heading items for natural 400ms TTS breath pauses.
+     * - Slices cards whenever a major section header (UNIT, CHAPTER, 1.0, 2.0, STRUCTURE) begins.
+     */
+    public static processRawLinesToCards(
+        rawLines: string[],
+        pageStart: number = 1
+    ): ExtractedPdfParagraph[] {
+        const paragraphs: ExtractedPdfParagraph[] = [];
+        let pId = (pageStart - 1) * 10 + 1;
+
+        let currentLines: string[] = [];
+        let currentType: 'heading' | 'outline' | 'bullets' | 'body' = 'body';
+
+        const flushBlock = () => {
+            if (currentLines.length === 0) return;
+
+            const isOutline = currentLines.some(l => /^(\d+(\.\d+)+)\s+/.test(l.trim()));
+            const hasBullets = currentLines.some(l => /^[•\-\*■►]/.test(l.trim()));
+
+            let displayText = '';
+            let speechText = '';
+            let bullets: string[] = [];
+
+            if (isOutline) {
+                displayText = currentLines.map(l => this.sanitizeText(l)).filter(Boolean).join('\n');
+                speechText = currentLines.map(l => {
+                    const clean = this.verbalizeMathForTts(this.sanitizeText(l));
+                    return /[.!?]$/.test(clean) ? clean : `${clean}.`;
+                }).join(' ');
+                bullets = currentLines.slice(0, 3).map(l => `• ${this.sanitizeText(l)}`);
+            } else if (hasBullets) {
+                displayText = currentLines.map(l => this.sanitizeText(l)).filter(Boolean).join('\n');
+                speechText = currentLines.map(l => {
+                    const clean = this.verbalizeMathForTts(this.sanitizeText(l));
+                    return /[.!?]$/.test(clean) ? clean : `${clean};`;
+                }).join(' ');
+                bullets = currentLines.filter(l => /^[•\-\*■►]/.test(l.trim())).slice(0, 4).map(l => this.sanitizeText(l));
+            } else {
+                const joined = currentLines.map(l => this.sanitizeText(l)).filter(Boolean).join(' ');
+                displayText = joined;
+                speechText = this.verbalizeMathForTts(joined);
+                const sents = joined.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
+                bullets = sents.slice(0, 3).map(s => `• ${s}`);
+            }
+
+            if (displayText.trim().length >= 8) {
+                const words = displayText.split(/\s+/).filter(Boolean);
+                const mathInfo = this.detectMathAndComplexFormulas(displayText);
+
+                paragraphs.push({
+                    id: pId++,
+                    text: displayText,
+                    wordCount: words.length,
+                    cleanSpeechText: speechText,
+                    bullets,
+                    hasMath: mathInfo.hasMath,
+                });
+            }
+
+            currentLines = [];
+        };
+
+        for (const line of rawLines) {
+            const trimmed = line.trim();
+            if (!trimmed) {
+                flushBlock();
+                continue;
+            }
+
+            // Skip page numbers/headers
+            if (/^(page\s+\d+(\s+(of|\/)\s+\d+)?|\d+|\-\s*\d+\s*\-|\d+\s*\/\s*\d+)$/i.test(trimmed)) {
+                continue;
+            }
+
+            const isMajorHeading = /^(unit|chapter|part|section)\s+\d+|^\d+\.0+\s+[A-Z\s]{3,}|^structure\b/i.test(trimmed);
+            const isOutlineItem = /^(\d+(\.\d+)+)\s+[A-Za-z]/.test(trimmed);
+            const isBullet = /^[•\-\*■►]\s+/.test(trimmed);
+
+            if (isMajorHeading) {
+                flushBlock();
+                currentLines.push(trimmed);
+                flushBlock();
+            } else if (isOutlineItem) {
+                if (currentType !== 'outline') {
+                    flushBlock();
+                    currentType = 'outline';
+                }
+                currentLines.push(trimmed);
+            } else if (isBullet) {
+                if (currentType !== 'bullets') {
+                    if (currentLines.length > 2) {
+                        flushBlock();
+                    }
+                    currentType = 'bullets';
+                }
+                currentLines.push(trimmed);
+            } else {
+                if (currentType === 'outline' && !isOutlineItem) {
+                    flushBlock();
+                    currentType = 'body';
+                }
+                currentLines.push(trimmed);
+            }
+        }
+
+        flushBlock();
+        return paragraphs;
     }
 
     /**
@@ -766,127 +771,7 @@ export class PdfService {
             const author = meta.Author ? meta.Author.trim() : null;
 
             const rawLines = rawText.split(/\r?\n/);
-            const logicalParagraphs: string[] = [];
-            let currentParagraph = '';
-
-            for (let i = 0; i < rawLines.length; i++) {
-                const line = rawLines[i].trim();
-                if (!line) {
-                    if (currentParagraph.trim().length > 0) {
-                        logicalParagraphs.push(currentParagraph.trim());
-                        currentParagraph = '';
-                    }
-                    continue;
-                }
-
-                if (/^(page\s+\d+(\s+(of|\/)\s+\d+)?|\d+|\-\s*\d+\s*\-|\d+\s*\/\s*\d+)$/i.test(line)) {
-                    continue;
-                }
-
-                const isNewItem = /^([•\-\*■►]|(\d+[\.\)]|[a-zA-Z][\.\)]))\s+/.test(line);
-                const isHeading = /^(chapter|section|unit|part|\d+\s+[A-Z\s]{4,})/i.test(line);
-
-                if (isNewItem || isHeading) {
-                    if (currentParagraph.trim().length > 0) {
-                        logicalParagraphs.push(currentParagraph.trim());
-                    }
-                    currentParagraph = line;
-                } else if (currentParagraph) {
-                    if (currentParagraph.endsWith('-')) {
-                        currentParagraph = currentParagraph.slice(0, -1) + line;
-                    } else if (/[a-zA-Z0-9,;]$/.test(currentParagraph)) {
-                        currentParagraph += ' ' + line;
-                    } else {
-                        currentParagraph += ' ' + line;
-                    }
-                } else {
-                    currentParagraph = line;
-                }
-            }
-
-            if (currentParagraph.trim()) {
-                logicalParagraphs.push(currentParagraph.trim());
-            }
-
-            const paragraphs: ExtractedPdfParagraph[] = [];
-            let pId = 1;
-            let speechChunk = '';
-
-            for (const para of logicalParagraphs) {
-                const cleaned = this.sanitizeText(para);
-                if (cleaned.length < 15) continue;
-
-                const words = cleaned.split(/\s+/).filter(Boolean);
-
-                if (words.length > 95) {
-                    const sentences = cleaned.match(/[^.!?]+[.!?]+(\s|$)/g) || [cleaned];
-                    let subChunk = '';
-                    for (const sent of sentences) {
-                        if ((subChunk + ' ' + sent).split(/\s+/).length > 80) {
-                            if (subChunk.trim()) {
-                                const scClean = this.sanitizeText(subChunk);
-                                const scWords = scClean.split(/\s+/).filter(Boolean);
-                                const verbalizedSpeech = this.verbalizeMathForTts(scClean);
-                                const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
-                                paragraphs.push({
-                                    id: pId++,
-                                    text: scClean,
-                                    wordCount: scWords.length,
-                                    cleanSpeechText: verbalizedSpeech,
-                                    bullets: sents.slice(0, 3).map(s => `• ${s}`),
-                                });
-                            }
-                            subChunk = sent;
-                        } else {
-                            subChunk += (subChunk ? ' ' : '') + sent;
-                        }
-                    }
-                    if (subChunk.trim()) {
-                        const scClean = this.sanitizeText(subChunk);
-                        const scWords = scClean.split(/\s+/).filter(Boolean);
-                        const verbalizedSpeech = this.verbalizeMathForTts(scClean);
-                        const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
-                        paragraphs.push({
-                            id: pId++,
-                            text: scClean,
-                            wordCount: scWords.length,
-                            cleanSpeechText: verbalizedSpeech,
-                            bullets: sents.slice(0, 3).map(s => `• ${s}`),
-                        });
-                    }
-                } else if (speechChunk.split(/\s+/).length + words.length > 80) {
-                    if (speechChunk.trim()) {
-                        const scClean = this.sanitizeText(speechChunk);
-                        const scWords = scClean.split(/\s+/).filter(Boolean);
-                        const verbalizedSpeech = this.verbalizeMathForTts(scClean);
-                        const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
-                        paragraphs.push({
-                            id: pId++,
-                            text: scClean,
-                            wordCount: scWords.length,
-                            cleanSpeechText: verbalizedSpeech,
-                            bullets: sents.slice(0, 3).map(s => `• ${s}`),
-                        });
-                    }
-                    speechChunk = cleaned;
-                } else {
-                    speechChunk += (speechChunk ? ' ' : '') + cleaned;
-                }
-            }
-
-            if (speechChunk.trim()) {
-                const scClean = this.sanitizeText(speechChunk);
-                const scWords = scClean.split(/\s+/).filter(Boolean);
-                const verbalizedSpeech = this.verbalizeMathForTts(scClean);
-                const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
-                paragraphs.push({
-                    id: pId++,
-                    text: scClean,
-                    wordCount: scWords.length,
-                    cleanSpeechText: verbalizedSpeech,
-                    bullets: sents.slice(0, 3).map(s => `• ${s}`),
-                });
-            }
+            const paragraphs = this.processRawLinesToCards(rawLines, 1);
 
             const totalWords = paragraphs.reduce((sum, p) => sum + p.wordCount, 0);
             console.log(`✅ [PdfService] Full extraction complete: ${paragraphs.length} sections (${totalWords} words, ${pageCount} pages).`);
