@@ -12,6 +12,9 @@ import { errorHandler } from './middlewares/errorHandler.js';
 import { apiRateLimiter } from './middlewares/rateLimiter.js';
 import { renderDatabaseAdmin } from './controllers/admin.controller.js';
 import { DashboardController } from './controllers/dashboardController.js';
+import { CmsDashboardController } from './controllers/cmsDashboard.controller.js';
+
+import { CmsSeedService } from './services/cmsSeedService.js';
 
 const app = express();
 
@@ -38,6 +41,8 @@ if (env.NODE_ENV !== 'test') {
 }
 
 // ─── Visual Dashboards & Admin UI ─────────────────────────────────────────────
+app.get('/cms', CmsDashboardController.renderPortal);
+app.get('/admin/cms', CmsDashboardController.renderPortal);
 app.get('/dashboard', DashboardController.renderDashboard);
 app.get('/admin/telemetry', DashboardController.renderDashboard);
 app.get('/admin/database', renderDatabaseAdmin);
@@ -57,6 +62,9 @@ app.use(errorHandler);
 // ─── Bootstrap Server ─────────────────────────────────────────────────────────
 async function startServer() {
   await connectDB();
+
+  // Initialize default CMS entities if empty
+  await CmsSeedService.seedDefaultsIfNeeded();
 
   // Start background RSS worker
   initIngestWorker();

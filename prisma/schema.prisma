@@ -7,29 +7,86 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// ==========================================
+// 1. ADMIN & SECURITY MODELS
+// ==========================================
+enum AdminRole {
+  SUPER_ADMIN
+  EDITOR
+  MODERATOR
+}
+
+model AdminUser {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  passwordHash String
+  name         String
+  role         AdminRole     @default(EDITOR)
+  isActive     Boolean       @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  auditLogs    CmsAuditLog[]
+}
+
+model CmsAuditLog {
+  id         String    @id @default(uuid())
+  adminId    String
+  admin      AdminUser @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  action     String    // e.g. "ARTICLE_CREATE", "PUSH_BROADCAST", "RSS_TRIGGER"
+  entityType String    // e.g. "Article", "Poll", "VisualStory"
+  entityId   String?
+  details    Json?     // Payload diff / metadata
+  ipAddress  String?
+  createdAt  DateTime  @default(now())
+}
+
+// ==========================================
+// 2. ARTICLE & CATEGORY ENHANCEMENTS
+// ==========================================
 model Article {
-  id          String   @id @default(uuid())
-  hash        String   @unique // MD5(url) for O(1) deduplication
-  title       String
-  summary     String   @db.Text
-  rawContent  String?  @db.Text
-  url         String   @db.Text
-  imageUrl    String?  @db.Text
-  category    String
-  country     String   @default("GLOBAL") // "IN", "US", "GB", "GLOBAL"
-  source      String
-  author      String?
-  publishedAt DateTime @default(now())
-  viewCount   Int      @default(0)
-  shareCount  Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String    @id @default(uuid())
+  hash         String    @unique // MD5(url) for O(1) deduplication
+  title        String
+  summary      String    @db.Text
+  rawContent   String?   @db.Text
+  url          String    @db.Text
+  imageUrl     String?   @db.Text
+  category     String
+  country      String    @default("GLOBAL") // "IN", "US", "GB", "GLOBAL"
+  source       String    @default("NewsFlow")
+  author       String?
+  status       String    @default("PUBLISHED") // "DRAFT", "PUBLISHED", "ARCHIVED"
+  isHero       Boolean   @default(false)
+  isPinned     Boolean   @default(false)
+  viewCount    Int       @default(0)
+  shareCount   Int       @default(0)
+  audioPlays   Int       @default(0)
+  translations Json?     // Stored { hi: { title, summary }, ta: {...} }
+  publishedAt  DateTime  @default(now())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   @@index([category, publishedAt(sort: Desc)])
   @@index([country, category, publishedAt(sort: Desc)])
   @@index([publishedAt(sort: Desc)])
+  @@index([status])
 }
 
+model CategoryTaxonomy {
+  id        String   @id @default(uuid())
+  slug      String   @unique
+  name      String
+  emoji     String   @default("📰")
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ==========================================
+// 3. VISUAL STORIES & POLLS
+// ==========================================
 model InsightStory {
   id         String   @id @default(uuid())
   title      String
@@ -42,6 +99,54 @@ model InsightStory {
   @@index([createdAt(sort: Desc)])
 }
 
+model VisualStory {
+  id         String       @id @default(uuid())
+  title      String
+  subtitle   String?
+  category   String
+  coverImage String
+  isActive   Boolean      @default(true)
+  slides     StorySlide[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  @@index([createdAt(sort: Desc)])
+}
+
+model StorySlide {
+  id          String      @id @default(uuid())
+  storyId     String
+  story       VisualStory @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  image       String
+  headline    String
+  subheadline String?
+  content     String      @db.Text
+  sortOrder   Int         @default(0)
+}
+
+model CommunityPoll {
+  id         String       @id @default(uuid())
+  question   String
+  category   String
+  topicTag   String?
+  authorName String       @default("NewsFlow Editorial")
+  isActive   Boolean      @default(true)
+  options    PollOption[]
+  createdAt  DateTime     @default(now())
+  expiresAt  DateTime?
+}
+
+model PollOption {
+  id     String        @id @default(uuid())
+  pollId String
+  poll   CommunityPoll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  text   String
+  votes  Int           @default(0)
+}
+
+// ==========================================
+// 4. TIMELINES & INGESTION
+// ==========================================
 model TimelineTopic {
   id          String          @id @default(uuid())
   title       String
@@ -67,6 +172,31 @@ model TimelineEvent {
   createdAt DateTime      @default(now())
 
   @@index([topicId, order])
+}
+
+model RssFeedSource {
+  id            String    @id @default(uuid())
+  name          String
+  url           String    @unique
+  category      String
+  country       String    @default("IN")
+  isActive      Boolean   @default(true)
+  fetchInterval Int       @default(15) // Minutes
+  lastFetchedAt DateTime?
+  lastStatus    String?   // "SUCCESS", "ERROR"
+  createdAt     DateTime  @default(now())
+}
+
+model PushBroadcastLog {
+  id          String    @id @default(uuid())
+  title       String
+  body        String
+  category    String?   // null means all
+  articleId   String?
+  sentCount   Int       @default(0)
+  openCount   Int       @default(0)
+  scheduledAt DateTime?
+  sentAt      DateTime  @default(now())
 }
 
 model DeviceSubscription {
