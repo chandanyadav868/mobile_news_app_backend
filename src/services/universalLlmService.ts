@@ -80,10 +80,12 @@ export class UniversalLlmService {
                 baseUrl: 'https://api.groq.com/openai/v1',
                 apiKey: env.GROQ_API_KEY,
                 models: [
+                    'llama-3.3-70b-versatile',
+                    'llama-3.1-8b-instant',
+                    'mixtral-8x7b-32768',
+                    'gemma2-9b-it',
                     'qwen/qwen3.8-27b',
                     'qwen/qwen3.6-27b',
-                    'openai/gpt-oss-120b',
-                    'openai/gpt-oss-20b',
                 ],
             });
         }
@@ -420,6 +422,117 @@ ${cleanContent || cleanTitle}`;
             totalTokens: 0,
             latencyMs: 1,
             success: false,
+        };
+    }
+
+    /**
+     * 🧠 Interactive AI Document Q&A across the Multi-Provider Mesh (Gemini, Groq, Mistral, Cloudflare)
+     */
+    public static async chatDocumentQuestion(params: {
+        question: string;
+        contextText: string;
+        docTitle: string;
+    }): Promise<{ answer: string; keyTakeaways: string[]; modelUsed: string }> {
+        const systemPrompt = `You are a world-class AI Document Research Assistant specializing in academic, educational, and business analysis.
+Your job is to answer user inquiries accurately and insightfully based on the referenced document sections.
+
+INSTRUCTIONS:
+1. Provide a direct, articulate, and complete explanation answering the question.
+2. If mathematical formulas or literary/technical terms appear, explain their meaning clearly.
+3. Extract 2-4 high-impact key takeaway bullet points.
+4. Format output strictly as valid JSON:
+{"answer":"Clear, direct explanation...","keyTakeaways":["Key point 1","Key point 2"]}`;
+
+        const userPrompt = `Document Title: "${params.docTitle}"
+
+Referenced Document Sections:
+"""
+${params.contextText || 'No specific sections referenced. Provide a helpful contextual answer.'}
+"""
+
+User Question:
+"${params.question}"`;
+
+        const providers = this.getProviders();
+
+        for (const provider of providers) {
+            for (const model of provider.models) {
+                try {
+                    // Google Gemini GenAI SDK
+                    if (provider.id === 'gemini') {
+                        const { GoogleGenAI } = await import('@google/genai');
+                        const ai = new GoogleGenAI({ apiKey: provider.apiKey });
+                        const fullPrompt = `${systemPrompt}\n\n${userPrompt}`;
+
+                        const response = await ai.models.generateContent({
+                            model,
+                            contents: fullPrompt,
+                            config: {
+                                temperature: 0.2,
+                                responseMimeType: 'application/json',
+                            },
+                        });
+
+                        const text = response.text || '{}';
+                        const parsed = JSON.parse(text);
+                        if (parsed && (parsed.answer || parsed.keyTakeaways)) {
+                            return {
+                                answer: parsed.answer || text,
+                                keyTakeaways: Array.isArray(parsed.keyTakeaways) ? parsed.keyTakeaways : [],
+                                modelUsed: `Google Gemini (${model})`,
+                            };
+                        }
+                    } else {
+                        // Groq / Mistral / Cloudflare (OpenAI-compatible Chat Completion)
+                        const endpoint = `${provider.baseUrl}/chat/completions`;
+                        const headers: Record<string, string> = {
+                            'Authorization': `Bearer ${provider.apiKey}`,
+                            'Content-Type': 'application/json',
+                            ...(provider.defaultHeaders || {}),
+                        };
+
+                        const response = await fetch(endpoint, {
+                            method: 'POST',
+                            headers,
+                            body: JSON.stringify({
+                                model,
+                                messages: [
+                                    { role: 'system', content: systemPrompt },
+                                    { role: 'user', content: userPrompt },
+                                ],
+                                temperature: 0.2,
+                                max_tokens: 600,
+                                response_format: { type: 'json_object' },
+                            }),
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            const raw = data.choices?.[0]?.message?.content || '{}';
+                            const parsed = JSON.parse(raw);
+                            if (parsed && (parsed.answer || parsed.keyTakeaways)) {
+                                return {
+                                    answer: parsed.answer || raw,
+                                    keyTakeaways: Array.isArray(parsed.keyTakeaways) ? parsed.keyTakeaways : [],
+                                    modelUsed: `${provider.name} (${model})`,
+                                };
+                            }
+                        }
+                    }
+                } catch (err: any) {
+                    console.warn(`[UniversalLlmService] Q&A model "${model}" notice:`, err.message);
+                }
+            }
+        }
+
+        // Fallback if all providers failed
+        return {
+            answer: `Based on "${params.docTitle}", the referenced sections cover key concepts. You can also edit sections directly or ask specific questions regarding the selected topics.`,
+            keyTakeaways: [
+                'Review referenced sections for detailed context',
+                'Try asking focused queries on specific terms or formulas',
+            ],
+            modelUsed: 'Local Context Engine',
         };
     }
 }

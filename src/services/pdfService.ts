@@ -11,6 +11,8 @@ export interface ExtractedPdfParagraph {
     wordCount: number;
     cleanSpeechText: string;
     bullets: string[];
+    hasMath?: boolean;
+    requiresOcr?: boolean;
 }
 
 export interface ExtractedPdfDocument {
@@ -76,7 +78,37 @@ export class PdfService {
             .replace(/\uFFFD/g, ' ')
             .replace(/[]/g, ' ')
 
-            // 2. Common Fractions
+            // 2. Greek Mathematical Symbols
+            .replace(/\\alpha|\bα\b/g, 'alpha')
+            .replace(/\\beta|\bβ\b/g, 'beta')
+            .replace(/\\gamma|\bγ\b/g, 'gamma')
+            .replace(/\\delta|\bδ\b/g, 'delta')
+            .replace(/\\epsilon|\bε\b/g, 'epsilon')
+            .replace(/\\theta|\bθ\b/g, 'theta')
+            .replace(/\\lambda|\bλ\b/g, 'lambda')
+            .replace(/\\mu|\bμ\b/g, 'mu')
+            .replace(/\\pi|\bπ\b/g, 'pi')
+            .replace(/\\sigma|\bσ\b/g, 'sigma')
+            .replace(/\\phi|\bφ\b/g, 'phi')
+            .replace(/\\omega|\bω\b/g, 'omega')
+            .replace(/\\Delta|\bΔ\b/g, 'Delta')
+            .replace(/\\Sigma|\bΣ\b/g, 'Sigma')
+            .replace(/\\Omega|\bΩ\b/g, 'Omega')
+            .replace(/\\infty|\b∞\b/g, 'infinity')
+
+            // 3. LaTeX Fraction and Roots
+            .replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '$1 over $2')
+            .replace(/\\sqrt\[3\]\{([^}]+)\}/g, 'cube root of $1')
+            .replace(/\\sqrt\{([^}]+)\}/g, 'square root of $1')
+            .replace(/√\s*([a-zA-Z0-9_]+)/g, 'square root of $1')
+
+            // 4. Integrals & Summations
+            .replace(/\\int_\{([^}]+)\}\^\{([^}]+)\}/g, 'integral from $1 to $2 of')
+            .replace(/\\int|\b∫\b/g, 'integral of')
+            .replace(/\\sum_\{([^}]+)\}\^\{([^}]+)\}/g, 'summation from $1 to $2 of')
+            .replace(/\\sum|\b∑\b/g, 'summation of')
+
+            // 5. Common Fractions
             .replace(/\b1\/2\b|½/g, 'one half')
             .replace(/\b1\/3\b|⅓/g, 'one third')
             .replace(/\b2\/3\b|⅔/g, 'two thirds')
@@ -91,29 +123,64 @@ export class PdfService {
             .replace(/\b5\/8\b|⅝/g, 'five eighths')
             .replace(/\b7\/8\b|⅞/g, 'seven eighths')
 
-            // 3. Probability & Functions notation
+            // 6. Probability & Functions notation
             .replace(/\bP\s*\(\s*([A-Za-z0-9_]+)\s*\)/g, 'Probability of $1')
             .replace(/\bP\s*\(\s*([A-Za-z0-9_]+)\s*\|\s*([A-Za-z0-9_]+)\s*\)/g, 'Probability of $1 given $2')
 
-            // 4. Powers & Exponents
+            // 7. Powers & Exponents
             .replace(/\b([a-zA-Z0-9]+)\^2\b|([a-zA-Z0-9]+)²/g, '$1 squared')
             .replace(/\b([a-zA-Z0-9]+)\^3\b|([a-zA-Z0-9]+)³/g, '$1 cubed')
             .replace(/\b([a-zA-Z0-9]+)\^([0-9]+)\b/g, '$1 to the power of $2')
 
-            // 5. Square roots & Math Operators
-            .replace(/√\s*([a-zA-Z0-9_]+)|\\sqrt\{([^}]+)\}/g, 'square root of $1$2')
+            // 8. Operators
             .replace(/([a-zA-Z0-9]+)\s*[\*×]\s*([a-zA-Z0-9]+)/g, '$1 times $2')
             .replace(/([a-zA-Z0-9]+)\s*[\/÷]\s*([a-zA-Z0-9]+)/g, '$1 divided by $2')
             .replace(/\b(\d+)%/g, '$1 percent')
-            .replace(/≠/g, 'is not equal to')
-            .replace(/≤/g, 'less than or equal to')
-            .replace(/≥/g, 'greater than or equal to')
-            .replace(/≈/g, 'approximately equal to')
-            .replace(/±/g, 'plus or minus ')
+            .replace(/≠|\\ne/g, 'is not equal to')
+            .replace(/≤|\\le/g, 'less than or equal to')
+            .replace(/≥|\\ge/g, 'greater than or equal to')
+            .replace(/≈|\\approx/g, 'approximately equal to')
+            .replace(/±|\\pm/g, 'plus or minus ')
 
             // Collapse multiple spaces
             .replace(/[ \t]+/g, ' ')
             .trim();
+    }
+
+    /**
+     * 📐 2. Math Formula & Equation Detector:
+     * Analyzes if text contains mathematical formulas, equations, or LaTeX syntax
+     * to tag cards and suggest deep-dive explanations in AI Q&A Studio.
+     */
+    public static detectMathAndComplexFormulas(text: string): { hasMath: boolean; formulaCount: number; symbolsFound: string[] } {
+        if (!text || text.length < 5) return { hasMath: false, formulaCount: 0, symbolsFound: [] };
+
+        const mathPatterns = [
+            /\\(frac|sqrt|int|sum|prod|alpha|beta|gamma|delta|sigma|mu|pi|theta|lambda|omega|infty)/i,
+            /[αβγδσμπθλω∑∫√≠≤≥≈±×÷]/,
+            /\b([a-zA-Z0-9_]+)\^([0-9a-zA-Z_]+)\b/,
+            /\b\d+\/\d+\b/,
+            /\b[A-Za-z]\s*=\s*[^.!?\n]{3,}\b/,
+            /\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)/,
+            /\$\$[\s\S]*?\$\$/,
+        ];
+
+        const symbolsFound: string[] = [];
+        let count = 0;
+
+        for (const pattern of mathPatterns) {
+            const matches = text.match(pattern);
+            if (matches) {
+                count += matches.length;
+                symbolsFound.push(matches[0]);
+            }
+        }
+
+        return {
+            hasMath: count > 0,
+            formulaCount: count,
+            symbolsFound,
+        };
     }
 
     /**
@@ -556,12 +623,14 @@ export class PdfService {
                             const scWords = scClean.split(/\s+/).filter(Boolean);
                             const verbalizedSpeech = this.verbalizeMathForTts(scClean);
                             const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
+                            const mathInfo = this.detectMathAndComplexFormulas(scClean);
                             paragraphs.push({
                                 id: pId++,
                                 text: scClean,
                                 wordCount: scWords.length,
                                 cleanSpeechText: verbalizedSpeech,
                                 bullets: sents.slice(0, 3).map(s => `• ${s}`),
+                                hasMath: mathInfo.hasMath,
                             });
                         }
                         subChunk = sent;
@@ -574,12 +643,14 @@ export class PdfService {
                     const scWords = scClean.split(/\s+/).filter(Boolean);
                     const verbalizedSpeech = this.verbalizeMathForTts(scClean);
                     const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
+                    const mathInfo = this.detectMathAndComplexFormulas(scClean);
                     paragraphs.push({
                         id: pId++,
                         text: scClean,
                         wordCount: scWords.length,
                         cleanSpeechText: verbalizedSpeech,
                         bullets: sents.slice(0, 3).map(s => `• ${s}`),
+                        hasMath: mathInfo.hasMath,
                     });
                 }
             } else if (speechChunk.split(/\s+/).length + words.length > 80) {
@@ -588,12 +659,14 @@ export class PdfService {
                     const scWords = scClean.split(/\s+/).filter(Boolean);
                     const verbalizedSpeech = this.verbalizeMathForTts(scClean);
                     const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
+                    const mathInfo = this.detectMathAndComplexFormulas(scClean);
                     paragraphs.push({
                         id: pId++,
                         text: scClean,
                         wordCount: scWords.length,
                         cleanSpeechText: verbalizedSpeech,
                         bullets: sents.slice(0, 3).map(s => `• ${s}`),
+                        hasMath: mathInfo.hasMath,
                     });
                 }
                 speechChunk = cleaned;
@@ -607,12 +680,14 @@ export class PdfService {
             const scWords = scClean.split(/\s+/).filter(Boolean);
             const verbalizedSpeech = this.verbalizeMathForTts(scClean);
             const sents = scClean.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
+            const mathInfo = this.detectMathAndComplexFormulas(scClean);
             paragraphs.push({
                 id: pId++,
                 text: scClean,
                 wordCount: scWords.length,
                 cleanSpeechText: verbalizedSpeech,
                 bullets: sents.slice(0, 3).map(s => `• ${s}`),
+                hasMath: mathInfo.hasMath,
             });
         }
 
@@ -863,59 +938,15 @@ export class PdfService {
             ? selectedSections.map(s => `[Section #${s.id}]:\n${s.text}`).join('\n\n')
             : 'No specific sections selected. Please answer based on general context.';
 
-        const prompt = `You are a world-class AI Document Research Assistant specializing in academic, educational, and business analysis.
-
-Document: "${docTitle}"
-
-Selected Reference Sections:
-"""
-${contextText}
-"""
-
-User Question:
-"${question}"
-
-Instructions:
-1. Provide a direct, highly articulate, and insightful explanation answering the user's question based on the selected reference sections.
-2. If mathematical formulas or literary/technical terms appear, explain their significance clearly.
-3. Include 2-4 bullet points highlighting Key Takeaways.
-4. Format your output strictly in valid JSON format:
-{
-  "answer": "Clear, direct explanation...",
-  "keyTakeaways": ["Key point 1", "Key point 2"]
-}`;
-
-        const apiKey = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY || '';
-        const ai = new GoogleGenAI({ apiKey });
-        const models = ['gemini-2.5-flash', 'gemini-3-flash-preview', 'gemini-3.5-flash'];
-
-        for (const model of models) {
-            try {
-                const response = await ai.models.generateContent({
-                    model,
-                    contents: prompt,
-                    config: {
-                        temperature: 0.2,
-                        responseMimeType: 'application/json',
-                    },
-                });
-
-                const text = response.text || '{}';
-                const parsed = JSON.parse(text);
-                if (parsed && parsed.answer) {
-                    return {
-                        answer: parsed.answer,
-                        keyTakeaways: Array.isArray(parsed.keyTakeaways) ? parsed.keyTakeaways : [],
-                    };
-                }
-            } catch (err: any) {
-                console.warn(`[PdfService] Q&A Model ${model} notice:`, err.message);
-            }
-        }
+        const qaResult = await UniversalLlmService.chatDocumentQuestion({
+            question,
+            contextText,
+            docTitle,
+        });
 
         return {
-            answer: 'Could not generate an answer at this time. Please try asking again.',
-            keyTakeaways: [],
+            answer: qaResult.answer,
+            keyTakeaways: qaResult.keyTakeaways,
         };
     }
 }

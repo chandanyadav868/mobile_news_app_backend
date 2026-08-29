@@ -467,15 +467,26 @@ export async function ingestAllFeeds(): Promise<{
           modelUsed = 'RSS-Direct (0 tokens)';
           TelemetryService.incrementFunnel('directSaved', 1);
         } else {
-          // 🟢 Multi-Model Load-Balancing: Cap Gemini 3 Flash to 4 articles per cycle, then distribute across Gemini 2.5, Mistral, and Cloudflare
+          // 🟢 Multi-Provider Load-Balancing: Distribute across Gemini, Groq, Mistral, and Cloudflare
           let preferredModel: string | undefined = undefined;
-          if (i < 4) {
+          let preferredProvider: string | undefined = undefined;
+          if (i < 3) {
+            preferredProvider = 'gemini';
             preferredModel = 'gemini-3-flash-preview';
-          } else if (i < 9) {
+          } else if (i < 8) {
+            preferredProvider = 'groq';
+            preferredModel = 'llama-3.3-70b-versatile';
+          } else if (i < 13) {
+            preferredProvider = 'gemini';
             preferredModel = 'gemini-2.5-flash';
-          } else if (i < 16) {
+          } else if (i < 18) {
+            preferredProvider = 'groq';
+            preferredModel = 'llama-3.1-8b-instant';
+          } else if (i < 23) {
+            preferredProvider = 'mistral';
             preferredModel = 'mistral-small-latest';
           } else {
+            preferredProvider = 'cloudflare';
             preferredModel = '@cf/meta/llama-3.3-70b-instruct';
           }
 
@@ -483,6 +494,7 @@ export async function ingestAllFeeds(): Promise<{
             title: finalTitle,
             content: fullBody,
             category: art.category,
+            preferredProvider,
             preferredModel,
           });
           headline = aiResult.headline || finalTitle;
