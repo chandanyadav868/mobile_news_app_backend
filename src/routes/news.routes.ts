@@ -8,11 +8,20 @@ import {
   getRecentLogs,
   translateNewsArticle,
   getNewsDeepDive,
+  getCategories,
+  getArticleById,
+  createManualArticle,
+  updateArticle,
 } from '../controllers/news.controller.js';
 
 const router = Router();
 
 router.get('/feed', getFeed);
+router.get('/categories', getCategories);
+router.get('/article/:id', getArticleById);
+router.post('/manual', createManualArticle);
+router.put('/article/:id', updateArticle);
+
 router.get('/check-new', checkNewArticles);
 router.get('/category/:category', getCategoryNews);
 router.post('/refresh', triggerManualIngest);

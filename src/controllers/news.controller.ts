@@ -76,10 +76,34 @@ export async function getFeed(req: Request, res: Response) {
 
     categoryEntries.sort((a, b) => b.newestTime - a.newestTime);
 
-    // Pick top 8 latest categories for a richer feed experience
-    const topCategories = categoryEntries.slice(0, 8);
+    // Pick top categories (or guarantee all user-subscribed categories)
+    let selectedCategoryEntries = categoryEntries.slice(0, 8);
 
-    const categoryClusters = topCategories.map(({ cat, items }) => ({
+    const subscribedParam = req.query.subscribedCategories as string;
+    if (subscribedParam) {
+      const subscribedList = subscribedParam.split(',').map((s) => s.trim()).filter(Boolean);
+      for (const subCat of subscribedList) {
+        if (!selectedCategoryEntries.some((e) => e.cat.toLowerCase() === subCat.toLowerCase())) {
+          // Fetch latest 5 from DB / Redis for this missing subscribed category
+          const missingCatArticles = await prisma.article.findMany({
+            where: {
+              category: { equals: subCat, mode: 'insensitive' },
+            },
+            orderBy: { publishedAt: 'desc' },
+            take: 5,
+          });
+          if (missingCatArticles.length > 0) {
+            selectedCategoryEntries.push({
+              cat: missingCatArticles[0].category,
+              items: missingCatArticles,
+              newestTime: new Date(missingCatArticles[0].publishedAt).getTime(),
+            });
+          }
+        }
+      }
+    }
+
+    const categoryClusters = selectedCategoryEntries.map(({ cat, items }) => ({
       id: `cluster-${cat}`,
       categoryTitle: cat,
       leadNews: items[0],
@@ -339,6 +363,147 @@ export async function getNewsDeepDive(req: Request, res: Response) {
     return res.json({ success: true, data: result });
   } catch (error: any) {
     console.error('Error in getNewsDeepDive:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+/**
+ * GET /api/v1/news/categories
+ * Returns distinct active news categories with labels, emojis, and article counts
+ */
+export async function getCategories(_req: Request, res: Response) {
+  try {
+    const rawCategories = await prisma.article.groupBy({
+      by: ['category'],
+      _count: { id: true },
+      orderBy: { _count: { id: 'desc' } },
+    });
+
+    const categoryEmojis: Record<string, string> = {
+      Technology: '💻',
+      Business: '📈',
+      Science: '🚀',
+      Sports: '🏏',
+      Entertainment: '🎬',
+      Health: '🩺',
+      Politics: '🏛️',
+      'Top Stories': '🔥',
+      World: '🌍',
+      Food: '🍔',
+      Travel: '✈️',
+      Environment: '🌱',
+      General: '📰',
+    };
+
+    const categories = rawCategories.map((c) => ({
+      id: c.category,
+      label: c.category,
+      emoji: categoryEmojis[c.category] || '📰',
+      count: c._count.id,
+    }));
+
+    return res.json({ success: true, data: categories });
+  } catch (error: any) {
+    console.error('Error in getCategories:', error);
+    return res.status(500).json({ success: false, error: 'Failed to fetch categories' });
+  }
+}
+
+/**
+ * GET /api/v1/news/article/:id
+ * Fetches a single article by unique ID
+ */
+export async function getArticleById(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    const article = await prisma.article.findUnique({
+      where: { id },
+    });
+
+    if (!article) {
+      return res.status(404).json({ success: false, error: 'Article not found' });
+    }
+
+    return res.json({ success: true, data: article });
+  } catch (error: any) {
+    console.error('Error in getArticleById:', error);
+    return res.status(500).json({ success: false, error: 'Failed to fetch article' });
+  }
+}
+
+/**
+ * POST /api/v1/news/manual
+ * Creates a user-authored or manual news story
+ */
+export async function createManualArticle(req: Request, res: Response) {
+  try {
+    const { title, summary, source, category, url, imageUrl, country } = req.body;
+    if (!title || !summary) {
+      return res.status(400).json({ success: false, error: 'Title and description are required' });
+    }
+
+    const crypto = await import('crypto');
+    const articleUrl = url && url.trim() ? url.trim() : `https://newsflow.app/story/${Date.now()}`;
+    const hash = crypto.createHash('md5').update(articleUrl + Date.now()).digest('hex');
+
+    const article = await prisma.article.create({
+      data: {
+        hash,
+        title: title.trim(),
+        summary: summary.trim(),
+        source: source && source.trim() ? source.trim() : 'NewsFlow Editor',
+        category: category && category.trim() ? category.trim() : 'Top Stories',
+        url: articleUrl,
+        imageUrl: imageUrl && imageUrl.trim() ? imageUrl.trim() : null,
+        country: country || 'GLOBAL',
+        publishedAt: new Date(),
+      },
+    });
+
+    // Invalidate caches
+    await setCache(`news:feed:IN`, null, 1);
+    await setCache(`news:feed:GLOBAL`, null, 1);
+
+    return res.json({ success: true, data: article });
+  } catch (error: any) {
+    console.error('Error in createManualArticle:', error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+/**
+ * PUT /api/v1/news/article/:id
+ * Updates an existing news story
+ */
+export async function updateArticle(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    const { title, summary, source, category, url, imageUrl } = req.body;
+
+    const existing = await prisma.article.findUnique({ where: { id } });
+    if (!existing) {
+      return res.status(404).json({ success: false, error: 'Article not found' });
+    }
+
+    const updated = await prisma.article.update({
+      where: { id },
+      data: {
+        ...(title ? { title: title.trim() } : {}),
+        ...(summary ? { summary: summary.trim() } : {}),
+        ...(source ? { source: source.trim() } : {}),
+        ...(category ? { category: category.trim() } : {}),
+        ...(url !== undefined ? { url: url.trim() || `https://newsflow.app/story/${existing.id}` } : {}),
+        ...(imageUrl !== undefined ? { imageUrl: imageUrl.trim() || null } : {}),
+      },
+    });
+
+    // Invalidate feed caches
+    await setCache(`news:feed:IN`, null, 1);
+    await setCache(`news:feed:GLOBAL`, null, 1);
+
+    return res.json({ success: true, data: updated });
+  } catch (error: any) {
+    console.error('Error in updateArticle:', error);
     return res.status(500).json({ success: false, error: error.message });
   }
 }

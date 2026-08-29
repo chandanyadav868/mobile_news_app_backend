@@ -133,17 +133,17 @@ export class UniversalLlmService {
         }
 
         const systemPrompt = `You are a premier broadcast news anchor and audio journalist for NewsFlow.
-Transform the raw news text into a dynamic, compelling, audio-first 60-word news story designed specifically to be spoken aloud by an AI voice anchor.
+Transform the raw news text into a dynamic, compelling, rich 110 to 140-word news story (2-3 paragraphs) designed to be read effortlessly and spoken aloud by an AI voice anchor.
 
-BROADCAST VOCAL RULES:
+BROADCAST VOCAL & EDITORIAL RULES:
 1. CADENCE & TONE: Write with charismatic, energetic broadcast rhythm. Hook the listener in the first 5 words with active, immediate verbs.
 2. NATURAL HUMAN PHRASING: Strictly avoid robotic phrasing like "In a recent development", "It is important to note", "As per reports", or "Furthermore". Use direct, lively, conversational journalism.
 3. SPOKEN PHONETICS: Write exclusively in clean words and natural punctuation (commas and periods for breath pauses). Never include brackets, slashes, URLs, asterisks, or markdown symbols.
-4. BREVITY: Keep the story strictly between 50 and 60 spoken words.
+4. FULL STORY COVERAGE: Provide complete, engaging context across 110 to 140 words (2-3 paragraphs) explaining the core event, why it matters, key figures/quotes, and upcoming impact.
 5. 3 CRISP BULLETS: Extract 3 distinct high-impact fact takeaways.
 
 Return strict JSON only without markdown:
-{"headline":"Ultra-punchy spoken headline (under 10 words)","story":"Dynamic, charismatic 60-word broadcast story with natural speech rhythm and emotional hook.","bullets":["Impact fact 1","Impact fact 2","Impact fact 3"]}`;
+{"headline":"Ultra-punchy spoken headline (under 10 words)","story":"Dynamic, comprehensive 120-word broadcast story (2-3 paragraphs) with natural speech rhythm, full context, and emotional hook.","bullets":["Impact fact 1","Impact fact 2","Impact fact 3"]}`;
 
         const userPrompt = `Category: ${params.category || 'General'}
 Headline: ${cleanTitle}
@@ -159,7 +159,7 @@ ${cleanContent || cleanTitle}`;
                     type: 'object',
                     properties: {
                         headline: { type: 'string', description: 'Punchy headline (max 10 words)' },
-                        story: { type: 'string', description: '60-word news story' },
+                        story: { type: 'string', description: 'Comprehensive 110-140 word news story across 2-3 paragraphs' },
                         bullets: { type: 'array', items: { type: 'string' }, description: '3 key takeaway bullets' },
                     },
                     required: ['headline', 'story', 'bullets'],
@@ -274,7 +274,7 @@ ${cleanContent || cleanTitle}`;
                                 { role: 'user', content: userPrompt },
                             ],
                             temperature: 0.1,
-                            max_tokens: 350,
+                            max_tokens: 600,
                             response_format: jsonSchemaFormat,
                         }),
                     });
@@ -291,7 +291,7 @@ ${cleanContent || cleanTitle}`;
                                     { role: 'user', content: userPrompt },
                                 ],
                                 temperature: 0.1,
-                                max_tokens: 350,
+                                max_tokens: 600,
                                 response_format: { type: 'json_object' },
                             }),
                         });
@@ -309,7 +309,7 @@ ${cleanContent || cleanTitle}`;
                                     { role: 'user', content: userPrompt },
                                 ],
                                 temperature: 0.1,
-                                max_tokens: 350,
+                                max_tokens: 600,
                             }),
                         });
                     }
