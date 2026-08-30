@@ -36,9 +36,10 @@ app.use(compression());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-if (env.NODE_ENV !== 'test') {
-  app.use(morgan('dev'));
-}
+// Morgan HTTP request logging commented out to keep terminal focused on audio telemetry
+// if (env.NODE_ENV !== 'test') {
+//   app.use(morgan('dev'));
+// }
 
 // ─── Visual Dashboards & Admin UI ─────────────────────────────────────────────
 app.get('/cms', CmsDashboardController.renderPortal);
