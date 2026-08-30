@@ -125,7 +125,7 @@ export class GeminiLiveSpeechService {
                             try { session.close(); } catch {}
                         }
                         resolve();
-                    }, 4000);
+                    }, 30000); // Allow up to 30s for complete story audio streaming
 
                     try {
                         session = await ai.live.connect({
