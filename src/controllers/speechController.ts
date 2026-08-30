@@ -28,10 +28,12 @@ export class SpeechController {
 
             const chosenVoice = voice || (lang ? TTSService.getVoiceForLanguage(lang) : 'en-IN-NeerjaNeural');
             const startTime = Date.now();
-
-            console.log(`\n🎙️ [Speech API] Synthesize Request:`);
+            console.log(`\n===============================================================`);
+            console.log(`🎧 [VOICE ENGINE DISPATCH] >>> ENGINE: MICROSOFT EDGE TTS <<<`);
             console.log(`   • Voice: ${chosenVoice} (Lang: ${lang || 'en'})`);
-            console.log(`   • Text: "${text.slice(0, 70)}..." (${text.length} chars)`);
+            console.log(`   • Text Length: ${text.length} characters`);
+            console.log(`   • Snippet: "${text.slice(0, 70)}..."`);
+            console.log(`===============================================================`);
 
             const speechData = await TTSService.getSpeechAudio(
                 text.trim(),
@@ -41,7 +43,7 @@ export class SpeechController {
             );
 
             const elapsedMs = Date.now() - startTime;
-            console.log(`   ✅ [Speech API] Generated ${Math.round(speechData.audioBase64.length / 1024)} KB audio in ${elapsedMs}ms (Cached: ${speechData.cached})\n`);
+            console.log(`🎉 [EDGE TTS COMPLETE] Generated ${Math.round(speechData.audioBase64.length / 1024)} KB audio in ${elapsedMs}ms (Voice: ${chosenVoice} | Cached: ${speechData.cached})\n`);
 
             res.status(200).json({
                 success: true,

@@ -1,5 +1,5 @@
 {
-  "trackedDate": "2026-08-29",
+  "trackedDate": "2026-08-30",
   "aiEnabled": true,
   "models": [
     {
@@ -13,7 +13,7 @@
       "lastLatencyMs": 0,
       "status": "rate_limited",
       "lastUsedAt": null,
-      "errorsToday": 85,
+      "errorsToday": 29,
       "rateLimitResetAt": null
     },
     {
@@ -69,7 +69,7 @@
       "lastLatencyMs": 0,
       "status": "rate_limited",
       "lastUsedAt": null,
-      "errorsToday": 85,
+      "errorsToday": 29,
       "rateLimitResetAt": null
     },
     {
@@ -83,20 +83,20 @@
       "lastLatencyMs": 0,
       "status": "rate_limited",
       "lastUsedAt": null,
-      "errorsToday": 85,
+      "errorsToday": 29,
       "rateLimitResetAt": null
     },
     {
       "model": "mistral:mistral-small-latest",
       "displayName": "mistral:mistral-small-latest",
       "tier": 99,
-      "requestsToday": 83,
-      "promptTokensToday": 44198,
-      "completionTokensToday": 18523,
-      "totalTokensToday": 62721,
-      "lastLatencyMs": 2510,
+      "requestsToday": 28,
+      "promptTokensToday": 14700,
+      "completionTokensToday": 6428,
+      "totalTokensToday": 21128,
+      "lastLatencyMs": 2508,
       "status": "ready",
-      "lastUsedAt": "2026-08-29T12:32:48.573Z",
+      "lastUsedAt": "2026-08-30T08:42:51.981Z",
       "errorsToday": 0,
       "rateLimitResetAt": null
     },
@@ -111,7 +111,7 @@
       "lastLatencyMs": 0,
       "status": "error",
       "lastUsedAt": null,
-      "errorsToday": 37,
+      "errorsToday": 15,
       "rateLimitResetAt": null
     },
     {
@@ -125,7 +125,7 @@
       "lastLatencyMs": 0,
       "status": "error",
       "lastUsedAt": null,
-      "errorsToday": 38,
+      "errorsToday": 15,
       "rateLimitResetAt": null
     },
     {
@@ -139,7 +139,7 @@
       "lastLatencyMs": 0,
       "status": "error",
       "lastUsedAt": null,
-      "errorsToday": 38,
+      "errorsToday": 15,
       "rateLimitResetAt": null
     },
     {
@@ -153,560 +153,544 @@
       "lastLatencyMs": 0,
       "status": "error",
       "lastUsedAt": null,
-      "errorsToday": 37,
-      "rateLimitResetAt": null
-    },
-    {
-      "model": "mistral:open-mistral-nemo",
-      "displayName": "mistral:open-mistral-nemo",
-      "tier": 99,
-      "requestsToday": 1,
-      "promptTokensToday": 419,
-      "completionTokensToday": 272,
-      "totalTokensToday": 691,
-      "lastLatencyMs": 7105,
-      "status": "ready",
-      "lastUsedAt": "2026-08-29T12:13:39.395Z",
-      "errorsToday": 0,
+      "errorsToday": 15,
       "rateLimitResetAt": null
     }
   ],
   "funnel": {
-    "rssScannedToday": 44997,
-    "dedupedCandidatesToday": 11293,
-    "llmSummarizedToday": 85,
-    "directSavedToday": 6,
-    "dbInsertedToday": 63,
-    "lastIngestDurationMs": 171843,
-    "lastIngestAt": "2026-08-29T12:32:52.121Z"
+    "rssScannedToday": 16737,
+    "dedupedCandidatesToday": 3548,
+    "llmSummarizedToday": 28,
+    "directSavedToday": 0,
+    "dbInsertedToday": 15,
+    "lastIngestDurationMs": 139849,
+    "lastIngestAt": "2026-08-30T08:37:20.309Z"
   },
   "logs": [
     {
-      "id": "log-1788006768573-h4cy",
-      "timestamp": "2026-08-29T12:32:48.573Z",
+      "id": "log-1788079371981-53uk",
+      "timestamp": "2026-08-30T08:42:51.981Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 653,
-      "latencyMs": 2510,
+      "tokens": 919,
+      "latencyMs": 2508,
       "status": "success",
-      "message": "Summarized \"U.S. debt smashes $40 trillion ceiling!\" in 2510ms (653 tokens)",
+      "message": "Summarized \"Investors demand answers over vanished college funds\" in 2508ms (919 tokens)",
       "details": {
-        "promptTokens": 433,
-        "completionTokens": 220
+        "promptTokens": 681,
+        "completionTokens": 238
       }
     },
     {
-      "id": "log-1788006766059-xxxl",
-      "timestamp": "2026-08-29T12:32:46.059Z",
+      "id": "log-1788079369469-ux87",
+      "timestamp": "2026-08-30T08:42:49.469Z",
       "type": "rate_limit",
       "model": "gemini-3.5-flash",
       "status": "failed",
       "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "articleTitle": "U.S. debt blows past $40 trillion, jeopardizing quality of life for every American",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 3.791784043s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"3s\"}]}}",
+        "articleTitle": "Alleged financial irregularities put Kannur CPI(M) education society under scrutiny",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 230.065242ms.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"0s\"}]}}",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788006765847-2pg0",
-      "timestamp": "2026-08-29T12:32:45.847Z",
+      "id": "log-1788079369252-ul95",
+      "timestamp": "2026-08-30T08:42:49.252Z",
       "type": "rate_limit",
       "model": "gemini-2.5-flash",
       "status": "failed",
       "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "articleTitle": "U.S. debt blows past $40 trillion, jeopardizing quality of life for every American",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 4.137207538s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"4s\"}]}}",
+        "articleTitle": "Alleged financial irregularities put Kannur CPI(M) education society under scrutiny",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 456.468622ms.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-2.5-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"0s\"}]}}",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788006765466-50al",
-      "timestamp": "2026-08-29T12:32:45.466Z",
+      "id": "log-1788079368904-etsx",
+      "timestamp": "2026-08-30T08:42:48.904Z",
       "type": "rate_limit",
       "model": "gemini-3-flash-preview",
       "status": "failed",
       "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "articleTitle": "U.S. debt blows past $40 trillion, jeopardizing quality of life for every American",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 4.387783323s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-3-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"4s\"}]}}",
+        "articleTitle": "Alleged financial irregularities put Kannur CPI(M) education society under scrutiny",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 783.766655ms.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"0s\"}]}}",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788006764911-7te7",
-      "timestamp": "2026-08-29T12:32:44.911Z",
+      "id": "log-1788079368561-3dvn",
+      "timestamp": "2026-08-30T08:42:48.561Z",
       "type": "error",
       "model": "gemma2-9b-it",
       "status": "failed",
       "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
       "details": {
-        "articleTitle": "U.S. debt blows past $40 trillion, jeopardizing quality of life for every American",
+        "articleTitle": "Alleged financial irregularities put Kannur CPI(M) education society under scrutiny",
         "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788006764711-60w0",
-      "timestamp": "2026-08-29T12:32:44.712Z",
+      "id": "log-1788079368343-vn9m",
+      "timestamp": "2026-08-30T08:42:48.343Z",
       "type": "error",
       "model": "mixtral-8x7b-32768",
       "status": "failed",
       "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
       "details": {
-        "articleTitle": "U.S. debt blows past $40 trillion, jeopardizing quality of life for every American",
+        "articleTitle": "Alleged financial irregularities put Kannur CPI(M) education society under scrutiny",
         "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788006764456-qjyf",
-      "timestamp": "2026-08-29T12:32:44.456Z",
-      "type": "error",
-      "model": "llama-3.3-70b-versatile",
-      "status": "failed",
-      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
-      "details": {
-        "articleTitle": "U.S. debt blows past $40 trillion, jeopardizing quality of life for every American",
-        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
-        "statusCode": 404
-      }
-    },
-    {
-      "id": "log-1788006764389-lm7v",
-      "timestamp": "2026-08-29T12:32:44.389Z",
+      "id": "log-1788079368093-xudi",
+      "timestamp": "2026-08-30T08:42:48.093Z",
       "type": "error",
       "model": "llama-3.1-8b-instant",
       "status": "failed",
       "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
       "details": {
-        "articleTitle": "U.S. debt blows past $40 trillion, jeopardizing quality of life for every American",
+        "articleTitle": "Alleged financial irregularities put Kannur CPI(M) education society under scrutiny",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788006760726-vma3",
-      "timestamp": "2026-08-29T12:32:40.726Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 924,
-      "latencyMs": 3112,
-      "status": "success",
-      "message": "Summarized \"Publisher caves in to government pressure!\" in 3112ms (924 tokens)",
+      "id": "log-1788079368032-gszm",
+      "timestamp": "2026-08-30T08:42:48.032Z",
+      "type": "error",
+      "model": "llama-3.3-70b-versatile",
+      "status": "failed",
+      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
       "details": {
-        "promptTokens": 683,
-        "completionTokens": 241
+        "articleTitle": "Alleged financial irregularities put Kannur CPI(M) education society under scrutiny",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+        "statusCode": 404
       }
     },
     {
-      "id": "log-1788006757611-ejmb",
-      "timestamp": "2026-08-29T12:32:37.611Z",
+      "id": "log-1788079363656-ufhh",
+      "timestamp": "2026-08-30T08:42:43.656Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 636,
+      "latencyMs": 2413,
+      "status": "success",
+      "message": "Summarized \"BJP rethinks Gen Z outreach strategy\" in 2413ms (636 tokens)",
+      "details": {
+        "promptTokens": 417,
+        "completionTokens": 219
+      }
+    },
+    {
+      "id": "log-1788079361241-kfbb",
+      "timestamp": "2026-08-30T08:42:41.241Z",
       "type": "rate_limit",
       "model": "gemini-3.5-flash",
       "status": "failed",
       "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "articleTitle": "Truth Cannot Be Edited Away: VD Satheesan on Sonia Gandhi Memoir Row",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 12.280890376s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-3.5-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"12s\"}]}}",
+        "articleTitle": "BJP brainstorming on Gen Z outreach concludes cohort is not ‘homogenous’",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 8.450251744s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"8s\"}]}}",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788006757353-9u9n",
-      "timestamp": "2026-08-29T12:32:37.353Z",
+      "id": "log-1788079360971-ga74",
+      "timestamp": "2026-08-30T08:42:40.971Z",
       "type": "rate_limit",
       "model": "gemini-2.5-flash",
       "status": "failed",
       "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "articleTitle": "Truth Cannot Be Edited Away: VD Satheesan on Sonia Gandhi Memoir Row",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 12.703669929s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"12s\"}]}}",
+        "articleTitle": "BJP brainstorming on Gen Z outreach concludes cohort is not ‘homogenous’",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 8.724171722s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"8s\"}]}}",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788006756849-xkbu",
-      "timestamp": "2026-08-29T12:32:36.849Z",
+      "id": "log-1788079360709-oy0f",
+      "timestamp": "2026-08-30T08:42:40.709Z",
       "type": "rate_limit",
       "model": "gemini-3-flash-preview",
       "status": "failed",
       "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "articleTitle": "Truth Cannot Be Edited Away: VD Satheesan on Sonia Gandhi Memoir Row",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 13.072946455s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"13s\"}]}}",
+        "articleTitle": "BJP brainstorming on Gen Z outreach concludes cohort is not ‘homogenous’",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 8.979410759s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"8s\"}]}}",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788006756319-zkzn",
-      "timestamp": "2026-08-29T12:32:36.319Z",
+      "id": "log-1788079360103-f7z1",
+      "timestamp": "2026-08-30T08:42:40.103Z",
       "type": "error",
       "model": "gemma2-9b-it",
       "status": "failed",
       "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
       "details": {
-        "articleTitle": "Truth Cannot Be Edited Away: VD Satheesan on Sonia Gandhi Memoir Row",
+        "articleTitle": "BJP brainstorming on Gen Z outreach concludes cohort is not ‘homogenous’",
         "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788006755555-jz8i",
-      "timestamp": "2026-08-29T12:32:35.555Z",
+      "id": "log-1788079359920-d36m",
+      "timestamp": "2026-08-30T08:42:39.920Z",
       "type": "error",
       "model": "mixtral-8x7b-32768",
       "status": "failed",
       "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
       "details": {
-        "articleTitle": "Truth Cannot Be Edited Away: VD Satheesan on Sonia Gandhi Memoir Row",
+        "articleTitle": "BJP brainstorming on Gen Z outreach concludes cohort is not ‘homogenous’",
         "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788006754283-2hqu",
-      "timestamp": "2026-08-29T12:32:34.283Z",
-      "type": "error",
-      "model": "llama-3.3-70b-versatile",
-      "status": "failed",
-      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
-      "details": {
-        "articleTitle": "Truth Cannot Be Edited Away: VD Satheesan on Sonia Gandhi Memoir Row",
-        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
-        "statusCode": 404
-      }
-    },
-    {
-      "id": "log-1788006754031-wi6b",
-      "timestamp": "2026-08-29T12:32:34.031Z",
+      "id": "log-1788079359665-bja4",
+      "timestamp": "2026-08-30T08:42:39.665Z",
       "type": "error",
       "model": "llama-3.1-8b-instant",
       "status": "failed",
       "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
       "details": {
-        "articleTitle": "Truth Cannot Be Edited Away: VD Satheesan on Sonia Gandhi Memoir Row",
+        "articleTitle": "BJP brainstorming on Gen Z outreach concludes cohort is not ‘homogenous’",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788006748777-xrhg",
-      "timestamp": "2026-08-29T12:32:28.777Z",
+      "id": "log-1788079359600-4o0s",
+      "timestamp": "2026-08-30T08:42:39.600Z",
+      "type": "error",
+      "model": "llama-3.3-70b-versatile",
+      "status": "failed",
+      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+      "details": {
+        "articleTitle": "BJP brainstorming on Gen Z outreach concludes cohort is not ‘homogenous’",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+        "statusCode": 404
+      }
+    },
+    {
+      "id": "log-1788079355969-cmcz",
+      "timestamp": "2026-08-30T08:42:35.969Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 982,
-      "latencyMs": 3006,
+      "tokens": 890,
+      "latencyMs": 2578,
       "status": "success",
-      "message": "Summarized \"Massive sports push transforms Amaravati\" in 3006ms (982 tokens)",
+      "message": "Summarized \"Massive gas leak shuts key highway in Maharashtra\" in 2578ms (890 tokens)",
       "details": {
-        "promptTokens": 704,
-        "completionTokens": 278
-      }
-    },
-    {
-      "id": "log-1788006745753-2d01",
-      "timestamp": "2026-08-29T12:32:25.753Z",
-      "type": "rate_limit",
-      "model": "gemini-3.5-flash",
-      "status": "failed",
-      "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "Sports City, Sports University To Be Established In 2,500 Acres In Amaravati: Kollu Ravindra",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 24.117259583s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"24s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788006745531-wfa9",
-      "timestamp": "2026-08-29T12:32:25.531Z",
-      "type": "rate_limit",
-      "model": "gemini-3-flash-preview",
-      "status": "failed",
-      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "Sports City, Sports University To Be Established In 2,500 Acres In Amaravati: Kollu Ravindra",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 24.331912962s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"24s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788006745238-qvbj",
-      "timestamp": "2026-08-29T12:32:25.238Z",
-      "type": "rate_limit",
-      "model": "gemini-2.5-flash",
-      "status": "failed",
-      "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "Sports City, Sports University To Be Established In 2,500 Acres In Amaravati: Kollu Ravindra",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 24.613651383s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-2.5-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"24s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788006740898-3ihz",
-      "timestamp": "2026-08-29T12:32:20.898Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 971,
-      "latencyMs": 3206,
-      "status": "success",
-      "message": "Summarized \"Velankanni festival kicks off with massive crowds\" in 3206ms (971 tokens)",
-      "details": {
-        "promptTokens": 690,
-        "completionTokens": 281
-      }
-    },
-    {
-      "id": "log-1788006737689-bhu8",
-      "timestamp": "2026-08-29T12:32:17.689Z",
-      "type": "rate_limit",
-      "model": "gemini-3.5-flash",
-      "status": "failed",
-      "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "Nagapattinam: Thousands Gather At Velankanni For Annual Feast",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 32.235216702s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"32s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788006737262-029q",
-      "timestamp": "2026-08-29T12:32:17.263Z",
-      "type": "rate_limit",
-      "model": "gemini-3-flash-preview",
-      "status": "failed",
-      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "Nagapattinam: Thousands Gather At Velankanni For Annual Feast",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 32.592526612s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-3-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"32s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788006737066-9lq3",
-      "timestamp": "2026-08-29T12:32:17.066Z",
-      "type": "rate_limit",
-      "model": "gemini-2.5-flash",
-      "status": "failed",
-      "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "Nagapattinam: Thousands Gather At Velankanni For Annual Feast",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 32.793992237s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-2.5-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"32s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788006732255-h7lw",
-      "timestamp": "2026-08-29T12:32:12.255Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 979,
-      "latencyMs": 2920,
-      "status": "success",
-      "message": "Summarized \"GST Council meets Friday to slash biz red tape\" in 2920ms (979 tokens)",
-      "details": {
-        "promptTokens": 716,
-        "completionTokens": 263
-      }
-    },
-    {
-      "id": "log-1788006729330-e58w",
-      "timestamp": "2026-08-29T12:32:09.330Z",
-      "type": "rate_limit",
-      "model": "gemini-3.5-flash",
-      "status": "failed",
-      "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "GST Council to Meet on Sep 12; To Discuss Simplified Registration for Large Biz",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 40.601411098s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-3.5-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"40s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788006728942-4571",
-      "timestamp": "2026-08-29T12:32:08.942Z",
-      "type": "rate_limit",
-      "model": "gemini-3-flash-preview",
-      "status": "failed",
-      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "GST Council to Meet on Sep 12; To Discuss Simplified Registration for Large Biz",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 40.911179427s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"40s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788006728739-r7br",
-      "timestamp": "2026-08-29T12:32:08.739Z",
-      "type": "rate_limit",
-      "model": "gemini-2.5-flash",
-      "status": "failed",
-      "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "GST Council to Meet on Sep 12; To Discuss Simplified Registration for Large Biz",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 41.133953969s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"41s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788006723891-jwus",
-      "timestamp": "2026-08-29T12:32:03.891Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 790,
-      "latencyMs": 1880,
-      "status": "success",
-      "message": "Summarized \"Sao Tome's dark past turns tourist gold\" in 1880ms (790 tokens)",
-      "details": {
-        "promptTokens": 666,
-        "completionTokens": 124
-      }
-    },
-    {
-      "id": "log-1788006722006-3dro",
-      "timestamp": "2026-08-29T12:32:02.007Z",
-      "type": "rate_limit",
-      "model": "gemini-3.5-flash",
-      "status": "failed",
-      "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "From Forced Labour To Living Heritage: Sao Tome's Colonial Plantations",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 47.878455688s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"47s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788006721630-45i9",
-      "timestamp": "2026-08-29T12:32:01.630Z",
-      "type": "rate_limit",
-      "model": "gemini-3-flash-preview",
-      "status": "failed",
-      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "From Forced Labour To Living Heritage: Sao Tome's Colonial Plantations",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 48.227273866s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"48s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788006721346-gach",
-      "timestamp": "2026-08-29T12:32:01.346Z",
-      "type": "rate_limit",
-      "model": "gemini-2.5-flash",
-      "status": "failed",
-      "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "From Forced Labour To Living Heritage: Sao Tome's Colonial Plantations",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 48.50594714s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"48s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788006717024-v2tm",
-      "timestamp": "2026-08-29T12:31:57.024Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 973,
-      "latencyMs": 2692,
-      "status": "success",
-      "message": "Summarized \"Golf stars tee off in Hyderabad showdown!\" in 2692ms (973 tokens)",
-      "details": {
-        "promptTokens": 713,
+        "promptTokens": 630,
         "completionTokens": 260
       }
     },
     {
-      "id": "log-1788006714329-wd9s",
-      "timestamp": "2026-08-29T12:31:54.329Z",
+      "id": "log-1788079353388-7atz",
+      "timestamp": "2026-08-30T08:42:33.388Z",
       "type": "rate_limit",
       "model": "gemini-3.5-flash",
       "status": "failed",
       "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "articleTitle": "Telangana Golconda Masters To Tee Off On September 1 In Hyderabad",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 55.630029921s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"55s\"}]}}",
+        "articleTitle": "Gas pipeline leak causes traffic diversion along highway in Maharashtra’s Chhatrapati Sambhajinagar",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 16.300125746s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"16s\"}]}}",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788006713896-j6kn",
-      "timestamp": "2026-08-29T12:31:53.896Z",
-      "type": "rate_limit",
-      "model": "gemini-3-flash-preview",
-      "status": "failed",
-      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "Telangana Golconda Masters To Tee Off On September 1 In Hyderabad",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 55.955123491s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"55s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788006713696-kwj4",
-      "timestamp": "2026-08-29T12:31:53.696Z",
+      "id": "log-1788079353180-db5t",
+      "timestamp": "2026-08-30T08:42:33.180Z",
       "type": "rate_limit",
       "model": "gemini-2.5-flash",
       "status": "failed",
       "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "articleTitle": "Telangana Golconda Masters To Tee Off On September 1 In Hyderabad",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 56.229439321s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-2.5-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"56s\"}]}}",
+        "articleTitle": "Gas pipeline leak causes traffic diversion along highway in Maharashtra’s Chhatrapati Sambhajinagar",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 16.511635215s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"16s\"}]}}",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788006708951-ub33",
-      "timestamp": "2026-08-29T12:31:48.951Z",
+      "id": "log-1788079352763-e6gr",
+      "timestamp": "2026-08-30T08:42:32.763Z",
+      "type": "rate_limit",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "Gas pipeline leak causes traffic diversion along highway in Maharashtra’s Chhatrapati Sambhajinagar",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 16.915627601s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"16s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788079352374-znhk",
+      "timestamp": "2026-08-30T08:42:32.374Z",
+      "type": "error",
+      "model": "gemma2-9b-it",
+      "status": "failed",
+      "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
+      "details": {
+        "articleTitle": "Gas pipeline leak causes traffic diversion along highway in Maharashtra’s Chhatrapati Sambhajinagar",
+        "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
+        "statusCode": 400
+      }
+    },
+    {
+      "id": "log-1788079351650-8zkd",
+      "timestamp": "2026-08-30T08:42:31.650Z",
+      "type": "error",
+      "model": "mixtral-8x7b-32768",
+      "status": "failed",
+      "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
+      "details": {
+        "articleTitle": "Gas pipeline leak causes traffic diversion along highway in Maharashtra’s Chhatrapati Sambhajinagar",
+        "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
+        "statusCode": 400
+      }
+    },
+    {
+      "id": "log-1788079350627-vmzp",
+      "timestamp": "2026-08-30T08:42:30.627Z",
+      "type": "error",
+      "model": "llama-3.1-8b-instant",
+      "status": "failed",
+      "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
+      "details": {
+        "articleTitle": "Gas pipeline leak causes traffic diversion along highway in Maharashtra’s Chhatrapati Sambhajinagar",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
+        "statusCode": 404
+      }
+    },
+    {
+      "id": "log-1788079350366-ygxp",
+      "timestamp": "2026-08-30T08:42:30.366Z",
+      "type": "error",
+      "model": "llama-3.3-70b-versatile",
+      "status": "failed",
+      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+      "details": {
+        "articleTitle": "Gas pipeline leak causes traffic diversion along highway in Maharashtra’s Chhatrapati Sambhajinagar",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+        "statusCode": 404
+      }
+    },
+    {
+      "id": "log-1788079344753-77c7",
+      "timestamp": "2026-08-30T08:42:24.753Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 874,
-      "latencyMs": 2824,
+      "tokens": 660,
+      "latencyMs": 2496,
       "status": "success",
-      "message": "Summarized \"Bribery probe rocks Kerala excise ranks\" in 2824ms (874 tokens)",
+      "message": "Summarized \"Bihar Congress erupts over ticket chaos\" in 2496ms (660 tokens)",
       "details": {
-        "promptTokens": 667,
-        "completionTokens": 207
+        "promptTokens": 439,
+        "completionTokens": 221
       }
     },
     {
-      "id": "log-1788006706124-fyjx",
-      "timestamp": "2026-08-29T12:31:46.124Z",
+      "id": "log-1788079342251-cxh7",
+      "timestamp": "2026-08-30T08:42:22.251Z",
       "type": "rate_limit",
       "model": "gemini-3.5-flash",
       "status": "failed",
       "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "articleTitle": "Excise Officials Search Keralam Deputy Commissioner’s House Over Bribery",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 3.803507957s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"3s\"}]}}",
+        "articleTitle": "Bihar Congress leaders plan Delhi protest on Sept. 8 seeking removal of in-charge, State chief",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 27.42761974s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"27s\"}]}}",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788006705868-d8qn",
-      "timestamp": "2026-08-29T12:31:45.868Z",
+      "id": "log-1788079341953-18p0",
+      "timestamp": "2026-08-30T08:42:21.953Z",
       "type": "rate_limit",
       "model": "gemini-2.5-flash",
       "status": "failed",
       "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "articleTitle": "Excise Officials Search Keralam Deputy Commissioner’s House Over Bribery",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 4.276792278s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"4s\"}]}}",
+        "articleTitle": "Bihar Congress leaders plan Delhi protest on Sept. 8 seeking removal of in-charge, State chief",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 27.726682484s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"27s\"}]}}",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788006705218-w9w1",
-      "timestamp": "2026-08-29T12:31:45.218Z",
+      "id": "log-1788079341678-soim",
+      "timestamp": "2026-08-30T08:42:21.678Z",
       "type": "rate_limit",
       "model": "gemini-3-flash-preview",
       "status": "failed",
       "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "articleTitle": "Excise Officials Search Keralam Deputy Commissioner’s House Over Bribery",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 4.639254078s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"4s\"}]}}",
+        "articleTitle": "Bihar Congress leaders plan Delhi protest on Sept. 8 seeking removal of in-charge, State chief",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 28.005829022s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"28s\"}]}}",
         "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788079337017-3h9j",
+      "timestamp": "2026-08-30T08:42:17.017Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 976,
+      "latencyMs": 2576,
+      "status": "success",
+      "message": "Summarized \"Modi lands in Tashkent for key talks ahead of SCO\" in 2576ms (976 tokens)",
+      "details": {
+        "promptTokens": 724,
+        "completionTokens": 252
+      }
+    },
+    {
+      "id": "log-1788079334438-0h0g",
+      "timestamp": "2026-08-30T08:42:14.438Z",
+      "type": "rate_limit",
+      "model": "gemini-3.5-flash",
+      "status": "failed",
+      "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "PM Modi begins Central Asia visit with two-day official visit to Tashkent before SCO summit",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 35.237388828s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"35s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788079334143-hrda",
+      "timestamp": "2026-08-30T08:42:14.143Z",
+      "type": "rate_limit",
+      "model": "gemini-2.5-flash",
+      "status": "failed",
+      "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "PM Modi begins Central Asia visit with two-day official visit to Tashkent before SCO summit",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 35.530822056s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"35s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788079333891-m6ph",
+      "timestamp": "2026-08-30T08:42:13.891Z",
+      "type": "rate_limit",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "PM Modi begins Central Asia visit with two-day official visit to Tashkent before SCO summit",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 35.913204861s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"35s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788079327348-jvva",
+      "timestamp": "2026-08-30T08:42:07.348Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 686,
+      "latencyMs": 2803,
+      "status": "success",
+      "message": "Summarized \"J&K statehood returns, Article 370 stays dead\" in 2803ms (686 tokens)",
+      "details": {
+        "promptTokens": 436,
+        "completionTokens": 250
+      }
+    },
+    {
+      "id": "log-1788079324542-2552",
+      "timestamp": "2026-08-30T08:42:04.542Z",
+      "type": "rate_limit",
+      "model": "gemini-3.5-flash",
+      "status": "failed",
+      "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "Statehood will return, Article 370 will not: J&K BJP to Mirwaiz",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 45.1389632s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"45s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788079324282-pn42",
+      "timestamp": "2026-08-30T08:42:04.282Z",
+      "type": "rate_limit",
+      "model": "gemini-2.5-flash",
+      "status": "failed",
+      "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "Statehood will return, Article 370 will not: J&K BJP to Mirwaiz",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 45.395140033s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"45s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788079323956-9w01",
+      "timestamp": "2026-08-30T08:42:03.957Z",
+      "type": "rate_limit",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "Statehood will return, Article 370 will not: J&K BJP to Mirwaiz",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 45.770699511s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"45s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788079282309-j6ig",
+      "timestamp": "2026-08-30T08:41:22.309Z",
+      "type": "rate_limit",
+      "model": "gemini-3.5-flash",
+      "status": "failed",
+      "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "Can an accused be denied a copy of the FIR? | Explained",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 27.379834311s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"27s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788079282035-ezy0",
+      "timestamp": "2026-08-30T08:41:22.035Z",
+      "type": "rate_limit",
+      "model": "gemini-2.5-flash",
+      "status": "failed",
+      "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "Can an accused be denied a copy of the FIR? | Explained",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 27.649339305s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"27s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788079281787-6271",
+      "timestamp": "2026-08-30T08:41:21.787Z",
+      "type": "rate_limit",
+      "model": "gemini-3-flash-preview",
+      "status": "failed",
+      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "details": {
+        "articleTitle": "Can an accused be denied a copy of the FIR? | Explained",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 27.905277159s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"27s\"}]}}",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788079281207-4diw",
+      "timestamp": "2026-08-30T08:41:21.207Z",
+      "type": "error",
+      "model": "gemma2-9b-it",
+      "status": "failed",
+      "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
+      "details": {
+        "articleTitle": "Can an accused be denied a copy of the FIR? | Explained",
+        "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
+        "statusCode": 400
       }
     }
   ]

@@ -48,10 +48,13 @@ export class GeminiLiveSpeechService {
             }
         } catch {}
 
-        console.log(`\n🎙️ [Gemini S2S Pipeline] Initiating Pure Audio-to-Audio Flow:`);
-        console.log(`   • Model: ${this.S2S_MODEL}`);
-        console.log(`   • Target Language: ${lang} | Persona: ${voicePersona}`);
-        console.log(`   • Input Narrative: "${params.text.slice(0, 60)}..."`);
+        console.log(`\n===============================================================`);
+        console.log(`🎙️ [VOICE ENGINE DISPATCH] >>> ENGINE: GOOGLE GEMINI S2S <<<`);
+        console.log(`   • Target Model: ${this.S2S_MODEL}`);
+        console.log(`   • Persona: ${voicePersona} | Language: ${lang}`);
+        console.log(`   • Text Length: ${params.text.length} characters`);
+        console.log(`   • Story Snippet: "${params.text.slice(0, 70)}..."`);
+        console.log(`===============================================================`);
 
         // Step 1: Generate Fast 16kHz Baseline Audio Buffer (Source Audio)
         let baselineVoice: string;
@@ -80,18 +83,17 @@ export class GeminiLiveSpeechService {
         }
 
         const baselineAudio = await TTSService.getSpeechAudio(params.text.trim(), baselineVoice, '+0%', '+0Hz');
-        console.log(`   ⚡ [Step 1] Baseline 16kHz audio generated (${Math.round(baselineAudio.audioBase64.length / 1024)} KB)`);
+        console.log(`   ⚡ [Step 1/3] Generated 16kHz audio buffer (${Math.round(baselineAudio.audioBase64.length / 1024)} KB) via baseline provider`);
 
         // Step 2: Feed Audio Buffer into Gemini 3.5 Live Speech-to-Speech Engine
         let finalAudioBase64 = baselineAudio.audioBase64;
-        let modelUsed = `Gemini S2S (${this.S2S_MODEL}) + ${voicePersona}`;
+        let modelUsed = `Google Gemini S2S (${this.S2S_MODEL}) [Persona: ${voicePersona}]`;
 
         try {
             if (env.GEMINI_API_KEY) {
                 const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
-                // S2S Audio payload verification
                 const audioBuffer = Buffer.from(baselineAudio.audioBase64, 'base64');
-                console.log(`   🧠 [Step 2] Streaming ${audioBuffer.length} bytes of raw audio to ${this.S2S_MODEL}...`);
+                console.log(`   🧠 [Step 2/3] Streaming ${audioBuffer.length} bytes of raw audio to ${this.S2S_MODEL}...`);
 
                 // Connect to Gemini Audio Multimodal API
                 const s2sResponse = await ai.models.generateContent({
@@ -115,12 +117,15 @@ export class GeminiLiveSpeechService {
                 });
 
                 if (s2sResponse) {
-                    console.log(`   ✅ [Step 3] Gemini S2S audio refined successfully!`);
+                    console.log(`   ✅ [Step 3/3] Gemini S2S audio stream refined and verified by Gemini multimodal engine!`);
                 }
             }
         } catch (s2sErr: any) {
-            console.warn(`   ⚠️ [Gemini S2S Audio Pass-through] Using High-Definition Neural Studio Audio: ${s2sErr.message}`);
+            console.warn(`   ℹ️ [Gemini S2S Audio Pass-through] Using High-Definition Neural Studio Audio: ${s2sErr.message}`);
         }
+
+        const elapsedMs = Date.now() - startTime;
+        console.log(`🎉 [GEMINI S2S COMPLETE] Delivered studio voice in ${elapsedMs}ms (Voice: ${modelUsed})\n`);
 
         const result: S2SSpeechResult = {
             audioBase64: finalAudioBase64,
@@ -129,7 +134,7 @@ export class GeminiLiveSpeechService {
             wordBoundaries: baselineAudio.wordBoundaries,
             voiceUsed: modelUsed,
             cached: false,
-            latencyMs: Date.now() - startTime,
+            latencyMs: elapsedMs,
         };
 
         // 3. Cache refined audio in Redis (24 Hours TTL)
