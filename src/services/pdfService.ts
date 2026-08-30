@@ -662,7 +662,14 @@ export class PdfService {
         for (const line of rawLines) {
             const trimmed = line.trim();
             if (!trimmed) {
-                flushBlock();
+                // Only flush if the preceding block ended on a complete sentence or list item
+                if (currentLines.length > 0) {
+                    const lastLine = currentLines[currentLines.length - 1].trim();
+                    const hasTerminalPunctuation = /[.!?:]$/.test(lastLine);
+                    if (hasTerminalPunctuation || currentType !== 'body') {
+                        flushBlock();
+                    }
+                }
                 continue;
             }
 

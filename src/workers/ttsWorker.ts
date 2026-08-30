@@ -40,7 +40,7 @@ export async function synthesizeSpeech(
         sentenceBoundaryEnabled: true,
     });
 
-    // Clean and normalize text, limiting oversized text chunks to 1200 characters to prevent Edge-TTS socket disconnect
+    // Clean and normalize text, limiting oversized text chunks to 4000 characters to prevent Edge-TTS socket disconnect
     let cleanText = text
         .replace(/<[^>]*>/g, ' ')
         .replace(/[^\x20-\x7E\u0900-\u097F\u00A0-\u024F.,!?'"-\s]/g, ' ')
@@ -48,8 +48,8 @@ export async function synthesizeSpeech(
         .replace(/\s+/g, ' ')
         .trim();
 
-    if (cleanText.length > 1200) {
-        cleanText = cleanText.slice(0, 1200);
+    if (cleanText.length > 4000) {
+        cleanText = cleanText.slice(0, 4000);
     }
 
     const words = cleanText.split(/\s+/).filter(Boolean);
