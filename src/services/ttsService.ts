@@ -93,21 +93,14 @@ export class TTSService {
             };
         }
 
-        // 2. Synthesize using Worker Thread / Direct async fallback
+        // 2. Synthesize using Direct High-Performance Async Engine
         let result: { audioBase64: string; durationMs: number; wordBoundaries: WordBoundary[] };
 
         try {
-            // Attempt Worker Thread dispatch
-            result = await this.runInWorkerThread({
-                jobId: cacheKey,
-                text,
-                voice,
-                rate,
-                pitch,
-            });
-        } catch (workerErr) {
-            console.warn('[TTSService] Worker thread bypassed, running directly in async fallback:', (workerErr as any)?.message || workerErr);
             result = await synthesizeSpeech(text, voice, rate, pitch);
+        } catch (err: any) {
+            console.error('[TTSService] Speech synthesis error:', err?.message || err);
+            throw err;
         }
 
         // 3. Store in LRU Cache

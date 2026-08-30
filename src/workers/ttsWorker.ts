@@ -97,18 +97,55 @@ export async function synthesizeSpeech(
     }
 
     await new Promise<void>((resolve, reject) => {
+        let isResolved = false;
+        let inactivityTimer: any = null;
+
+        const finish = () => {
+            if (!isResolved) {
+                isResolved = true;
+                if (inactivityTimer) clearTimeout(inactivityTimer);
+                resolve();
+            }
+        };
+
+        const resetInactivity = () => {
+            if (inactivityTimer) clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                if (chunks.length > 0) {
+                    finish();
+                }
+            }, 600);
+        };
+
         stream.audioStream.on('data', (chunk: Buffer) => {
             chunks.push(chunk);
+            resetInactivity();
         });
-        stream.audioStream.on('end', () => resolve());
+
+        stream.audioStream.on('end', () => finish());
+        stream.audioStream.on('close', () => finish());
+        stream.audioStream.on('finish', () => finish());
+
         stream.audioStream.on('error', (err: any) => {
             if (chunks.length > 0 || (err?.message && err.message.includes('Stream closed'))) {
-                console.warn('[TTSWorker] Stream ended with notice, recovered audio chunks:', chunks.length);
-                resolve();
+                finish();
             } else {
-                reject(err);
+                if (!isResolved) {
+                    isResolved = true;
+                    if (inactivityTimer) clearTimeout(inactivityTimer);
+                    reject(err);
+                }
             }
         });
+
+        // Hard safety timeout: If chunks have arrived, resolve cleanly in 4s max
+        setTimeout(() => {
+            if (chunks.length > 0) finish();
+            else if (!isResolved) {
+                isResolved = true;
+                reject(new Error('TTS audio stream timed out'));
+            }
+        }, 4000);
     });
 
     const audioBuffer = Buffer.concat(chunks);
