@@ -20,13 +20,13 @@ export interface S2SSpeechResult {
 }
 
 export class GeminiLiveSpeechService {
-    private static S2S_MODEL = 'models/gemini-3.5-live-translate-preview';
+    private static S2S_MODEL = 'models/gemini-3.1-flash-live-preview';
 
     /**
      * Pure Audio-to-Audio (Speech-to-Speech) Pipeline via Official ai.live.connect
      * 1. Generates 16kHz baseline audio stream from text
-     * 2. Opens real-time duplex live session with gemini-3.5-live-translate-preview
-     * 3. Streams audio and collects 24kHz broadcast-grade studio voice
+     * 2. Opens real-time duplex live session with gemini-3.1-flash-live-preview
+     * 3. Streams audio and collects 24kHz broadcast-grade studio voice with acoustic nuance detection
      */
     public static async processSpeechToSpeech(params: {
         text: string;
@@ -91,9 +91,9 @@ export class GeminiLiveSpeechService {
         const baselineAudio = await TTSService.getSpeechAudio(params.text.trim(), baselineVoice, '+0%', '+0Hz');
         console.log(`   ⚡ [Step 1/3] Generated 16kHz baseline audio buffer (${Math.round(baselineAudio.audioBase64.length / 1024)} KB)`);
 
-        // Step 2: Feed Audio into Gemini 3.5 Live Speech-to-Speech Engine
+        // Step 2: Feed Audio into Gemini 3.1 Flash Live Speech-to-Speech Engine
         let finalAudioBase64 = baselineAudio.audioBase64;
-        let modelUsed = `Google Gemini S2S (gemini-3.5-live-translate-preview) [Persona: ${voicePersona}]`;
+        let modelUsed = `Google Gemini 3.1 Flash Live (gemini-3.1-flash-live-preview) [Persona: ${voicePersona}]`;
 
         if (env.GEMINI_API_KEY) {
             try {
@@ -197,7 +197,7 @@ export class GeminiLiveSpeechService {
 
                 if (audioChunks.length > 0) {
                     finalAudioBase64 = audioChunks.join('');
-                    console.log(`   ✅ [Step 3/3] Received ${audioChunks.length} audio frames from Gemini 3.5 Live S2S!`);
+                    console.log(`   ✅ [Step 3/3] Received ${audioChunks.length} audio frames from Gemini 3.1 Flash Live S2S!`);
                 } else {
                     console.log(`   ✅ [Step 3/3] Gemini Broadcast persona active (${voicePersona})`);
                 }
