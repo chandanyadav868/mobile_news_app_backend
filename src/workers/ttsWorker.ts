@@ -98,28 +98,16 @@ export async function synthesizeSpeech(
 
     await new Promise<void>((resolve, reject) => {
         let isResolved = false;
-        let inactivityTimer: any = null;
 
         const finish = () => {
             if (!isResolved) {
                 isResolved = true;
-                if (inactivityTimer) clearTimeout(inactivityTimer);
                 resolve();
             }
         };
 
-        const resetInactivity = () => {
-            if (inactivityTimer) clearTimeout(inactivityTimer);
-            inactivityTimer = setTimeout(() => {
-                if (chunks.length > 0) {
-                    finish();
-                }
-            }, 600);
-        };
-
         stream.audioStream.on('data', (chunk: Buffer) => {
             chunks.push(chunk);
-            resetInactivity();
         });
 
         stream.audioStream.on('end', () => finish());
@@ -132,20 +120,20 @@ export async function synthesizeSpeech(
             } else {
                 if (!isResolved) {
                     isResolved = true;
-                    if (inactivityTimer) clearTimeout(inactivityTimer);
                     reject(err);
                 }
             }
         });
 
-        // Hard safety timeout: If chunks have arrived, resolve cleanly in 4s max
+        // Generous safety timeout (30 seconds) for very long stories
         setTimeout(() => {
-            if (chunks.length > 0) finish();
-            else if (!isResolved) {
+            if (chunks.length > 0) {
+                finish();
+            } else if (!isResolved) {
                 isResolved = true;
                 reject(new Error('TTS audio stream timed out'));
             }
-        }, 4000);
+        }, 30000);
     });
 
     const audioBuffer = Buffer.concat(chunks);
