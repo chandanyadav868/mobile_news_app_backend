@@ -245,7 +245,8 @@ ${cleanContent || cleanTitle}`;
                             if (params.exactOnly) {
                                 throw new Error(`[${model}] ${geminiErr.message || 'Gemini API call failed'}`);
                             }
-                            console.warn(`⚠️ [Google Gemini] Model "${model}" failed: ${geminiErr.message}. Rotating to next tier...`);
+                            // Silent model rotation without terminal clutter
+                            // console.warn(`⚠️ [Google Gemini] Model "${model}" failed: ${geminiErr.message}. Rotating to next tier...`);
                             TelemetryService.recordModelError({
                                 model,
                                 error: geminiErr.message || 'Gemini API call failed',
@@ -320,7 +321,7 @@ ${cleanContent || cleanTitle}`;
                         if (params.exactOnly) {
                             throw new Error(`[${model}] 429 Rate Limit on ${provider.name}. Quota exhausted.`);
                         }
-                        console.warn(`⚠️ [${provider.name}] Rate limit (429) on model "${model}". Rotating to next model/provider...`);
+                        // console.warn(`⚠️ [${provider.name}] Rate limit (429) on model "${model}". Rotating to next model/provider...`);
                         TelemetryService.recordRateLimit(model, 30);
                         TelemetryService.recordModelError({
                             model,
@@ -336,7 +337,7 @@ ${cleanContent || cleanTitle}`;
                         if (params.exactOnly) {
                             throw new Error(`[${model}] ${response.status} Error: ${errText.slice(0, 150)}`);
                         }
-                        console.warn(`⚠️ [${provider.name}] Model "${model}" failed (${response.status}): ${errText.slice(0, 120)}`);
+                        // console.warn(`⚠️ [${provider.name}] Model "${model}" failed (${response.status}): ${errText.slice(0, 120)}`);
                         TelemetryService.recordModelError({
                             model,
                             error: errText.slice(0, 120),
@@ -395,7 +396,7 @@ ${cleanContent || cleanTitle}`;
                     };
                 } catch (err: any) {
                     lastError = err;
-                    console.warn(`❌ [${provider.name}] Exception with model "${model}":`, err.message);
+                    // console.warn(`❌ [${provider.name}] Exception with model "${model}":`, err.message);
                     if (params.exactOnly) {
                         throw err;
                     }
@@ -404,7 +405,7 @@ ${cleanContent || cleanTitle}`;
         }
 
         // Final Safety Net: Deterministic Lead-3 Extractive Fallback (0 Tokens)
-        console.warn('⚠️ [UniversalLlmService] All AI providers exhausted. Utilizing deterministic extractive fallback.');
+        // console.warn('⚠️ [UniversalLlmService] All AI providers exhausted. Utilizing deterministic extractive fallback.');
         TelemetryService.recordError('ai_request', `All providers exhausted. Using extractive fallback. Error: ${lastError?.message}`);
 
         const sentences = cleanContent.split(/[.!?]+/).map((s) => s.trim()).filter((s) => s.length > 15);

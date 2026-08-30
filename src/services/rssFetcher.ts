@@ -293,7 +293,7 @@ export async function fetchSingleFeed(
 
     return articles;
   } catch (error: any) {
-    console.warn(`[RSS Ingest Warning] Failed to fetch ${feedUrl}: ${error.message}`);
+    // console.warn(`[RSS Ingest Warning] Failed to fetch ${feedUrl}: ${error.message}`);
     return [];
   }
 }
