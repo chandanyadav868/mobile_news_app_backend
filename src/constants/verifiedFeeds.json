@@ -314,5 +314,107 @@
       "country": "IN",
       "category": "Politics"
     }
+  ],
+  "WWE": [
+    {
+      "title": "Wrestling Inc. - WWE News & Spoilers",
+      "url": "https://wrestlinginc.com/feed/",
+      "country": "GLOBAL",
+      "category": "WWE"
+    },
+    {
+      "title": "PWMania - Dedicated WWE & PPV Feed",
+      "url": "https://pwmania.com/news/wwe/feed",
+      "country": "GLOBAL",
+      "category": "WWE"
+    },
+    {
+      "title": "The Sportster - WWE Category",
+      "url": "https://www.thesportster.com/feed/category/wwe/",
+      "country": "GLOBAL",
+      "category": "WWE"
+    },
+    {
+      "title": "The Sun - WWE & Wrestling Desk",
+      "url": "https://www.thesun.co.uk/sport/wwe/feed/",
+      "country": "GLOBAL",
+      "category": "WWE"
+    },
+    {
+      "title": "Google News - WWE & SmackDown Real-Time Stream",
+      "url": "https://news.google.com/rss/search?q=WWE+Wrestling+SmackDown+Raw&hl=en-IN&gl=IN&ceid=IN:en",
+      "country": "IN",
+      "category": "WWE"
+    }
+  ],
+  "Cricket": [
+    {
+      "title": "ESPNcricinfo - Live Match Stories & Headlines",
+      "url": "https://www.espncricinfo.com/rss/content/story/feeds/6.xml",
+      "country": "GLOBAL",
+      "category": "Cricket"
+    },
+    {
+      "title": "The Hindu - Cricket Desk",
+      "url": "https://www.thehindu.com/sport/cricket/feeder/default.rss",
+      "country": "IN",
+      "category": "Cricket"
+    },
+    {
+      "title": "The Indian Express - Cricket News",
+      "url": "https://indianexpress.com/section/sports/cricket/feed/",
+      "country": "IN",
+      "category": "Cricket"
+    },
+    {
+      "title": "NDTV Sports - Cricket Headlines",
+      "url": "https://feeds.feedburner.com/ndtvsports-cricket",
+      "country": "IN",
+      "category": "Cricket"
+    },
+    {
+      "title": "Google News - Cricket & IPL Stream",
+      "url": "https://news.google.com/rss/search?q=Cricket+IPL+BCCI+Team+India&hl=en-IN&gl=IN&ceid=IN:en",
+      "country": "IN",
+      "category": "Cricket"
+    }
+  ],
+  "Hindi News": [
+    {
+      "title": "Amar Ujala - Breaking News (ताज़ा समाचार)",
+      "url": "https://www.amarujala.com/rss/breaking-news.xml",
+      "country": "IN",
+      "category": "Hindi News"
+    },
+    {
+      "title": "Amar Ujala - Editor's Pick (एडिटर्स चॉइस)",
+      "url": "https://www.amarujala.com/rss/editors-pick.xml",
+      "country": "IN",
+      "category": "Hindi News"
+    },
+    {
+      "title": "BBC Hindi - National & World (बीबीसी हिंदी)",
+      "url": "http://feeds.bbci.co.uk/hindi/rss.xml",
+      "country": "IN",
+      "category": "Hindi News"
+    },
+    {
+      "title": "NDTV Khabar - Top Headlines (एनडीटीवी ख़बर)",
+      "url": "https://feeds.feedburner.com/ndtvkhabar-latest",
+      "country": "IN",
+      "category": "Hindi News"
+    },
+    {
+      "title": "Google News Hindi - Top Stories (मुख्य समाचार)",
+      "url": "https://news.google.com/rss?hl=hi&gl=IN&ceid=IN:hi",
+      "country": "IN",
+      "category": "Hindi News"
+    },
+    {
+      "title": "Google News Hindi - National (देश समाचार)",
+      "url": "https://news.google.com/rss/headlines/section/topic/NATION?hl=hi&gl=IN&ceid=IN:hi",
+      "country": "IN",
+      "category": "Hindi News"
+    }
   ]
 }
