@@ -266,12 +266,41 @@ export async function checkNewArticles(req: Request, res: Response) {
           OR: [{ country: { equals: countryCode } }, { country: { equals: 'GLOBAL' } }],
         };
 
-    const newCount = await prisma.article.count({ where: whereClause });
+    const [newCount, latestArticle] = await Promise.all([
+      prisma.article.count({ where: whereClause }),
+      prisma.article.findFirst({
+        where: whereClause,
+        orderBy: { publishedAt: 'desc' },
+        select: {
+          id: true,
+          title: true,
+          summary: true,
+          imageUrl: true,
+          category: true,
+          source: true,
+          url: true,
+          publishedAt: true,
+        },
+      }),
+    ]);
 
     return res.json({
       success: true,
       hasNew: newCount > 0,
       count: newCount,
+      latestArticle: latestArticle
+        ? {
+            id: latestArticle.id,
+            title: latestArticle.title,
+            summary: latestArticle.summary,
+            image: latestArticle.imageUrl,
+            imageUrl: latestArticle.imageUrl,
+            category: latestArticle.category,
+            source: latestArticle.source,
+            link: latestArticle.url,
+            pubDate: latestArticle.publishedAt.toISOString(),
+          }
+        : null,
       checkedAt: new Date().toISOString(),
     });
   } catch (error: any) {
