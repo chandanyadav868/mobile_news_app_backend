@@ -13,7 +13,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-newsflow_user} -d ${POSTGRES_DB:-newsflow_db}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-newsflow_user} -d ${POSTGRES_DB:-newsflow_db}" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -25,11 +25,11 @@ services:
     image: redis:7-alpine
     container_name: newsflow-redis
     restart: always
-    command: ["redis-server", "--appendonly", "yes"]
+    command: [ "redis-server", "--appendonly", "yes" ]
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -49,7 +49,6 @@ services:
       redis:
         condition: service_healthy
     environment:
-      NODE_ENV: production
       PORT: 4000
       DATABASE_URL: postgresql://${POSTGRES_USER:-newsflow_user}:${POSTGRES_PASSWORD:-newsflow_secret_password}@postgres:5432/${POSTGRES_DB:-newsflow_db}?schema=public
       REDIS_URL: redis://redis:6379
@@ -68,7 +67,7 @@ services:
       dockerfile: Dockerfile
     container_name: newsflow-studio
     restart: always
-    command: ["npx", "prisma", "studio", "--port", "5555", "--browser", "none"]
+    command: [ "npx", "prisma", "studio", "--port", "5555", "--browser", "none" ]
     depends_on:
       postgres:
         condition: service_healthy
