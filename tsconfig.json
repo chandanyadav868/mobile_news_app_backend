@@ -4,7 +4,11 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "lib": [
-      "ES2022"
+      "ES2022",
+      "DOM"
+    ],
+    "types": [
+      "node"
     ],
     "outDir": "./dist",
     "rootDir": "./src",
@@ -15,12 +19,10 @@
     "resolveJsonModule": true
   },
   "include": [
-    "src/**/*",
-    "prisma/**/*"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist"
-  ],
-  "extends": "expo/tsconfig.base"
+  ]
 }

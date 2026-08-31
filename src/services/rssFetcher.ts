@@ -380,8 +380,8 @@ export async function ingestAllFeeds(): Promise<{
       select: { hash: true },
     });
 
-    const existingHashSet = new Set(existingArticles.map((a) => a.hash));
-    const newArticles = uniqueArticles.filter((a) => !existingHashSet.has(a.hash));
+    const existingHashSet = new Set(existingArticles.map((a: { hash: string }) => a.hash));
+    const newArticles = uniqueArticles.filter((a: ParsedArticle) => !existingHashSet.has(a.hash));
 
     const scanMsg = `⚡ [Deduplication] Filtered ${allCandidateArticles.length} raw RSS items ➔ ${uniqueArticles.length} fresh candidate stories (cutoff: ${cutoffDate.toLocaleTimeString()}). Found ${newArticles.length} brand-new stories to enrich.`;
     console.log(`🔍 [Ingest Pipeline] ${scanMsg}`);
