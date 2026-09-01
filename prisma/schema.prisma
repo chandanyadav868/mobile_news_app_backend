@@ -210,3 +210,23 @@ model DeviceSubscription {
 
   @@index([country])
 }
+
+// ==========================================
+// 5. PUBLIC BETA TESTERS & WAITLIST
+// ==========================================
+model BetaTester {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  name         String?
+  deviceType   String    @default("ANDROID") // "ANDROID", "IOS", "BOTH"
+  notes        String?   @db.Text
+  status       String    @default("PENDING") // "PENDING", "INVITED", "INSTALLED"
+  inviteSentAt DateTime?
+  inviteCount  Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([status])
+  @@index([email])
+}
+

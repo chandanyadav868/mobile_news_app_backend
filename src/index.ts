@@ -13,6 +13,7 @@ import { apiRateLimiter } from './middlewares/rateLimiter.js';
 import { renderDatabaseAdmin } from './controllers/admin.controller.js';
 import { DashboardController } from './controllers/dashboardController.js';
 import { CmsDashboardController } from './controllers/cmsDashboard.controller.js';
+import { BetaController } from './controllers/betaController.js';
 
 import { CmsSeedService } from './services/cmsSeedService.js';
 
@@ -36,15 +37,22 @@ app.use(compression());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Morgan HTTP request logging commented out to keep terminal focused on audio telemetry
-// if (env.NODE_ENV !== 'test') {
-//   app.use(morgan('dev'));
-// }
+// ─── Public Beta Tester Registration Landing Page ────────────────────────────
+app.get('/join-beta', BetaController.renderPublicLanding);
+app.get('/beta-testers', BetaController.renderPublicLanding);
+app.post('/api/beta/register', BetaController.registerTester);
+app.get('/api/beta/list', BetaController.getTesters);
+app.get('/api/beta/template', BetaController.getTemplate);
+app.post('/api/beta/template', BetaController.updateTemplate);
+app.post('/api/beta/preview', BetaController.renderLivePreview);
+app.post('/api/beta/send-invite', BetaController.sendInvitation);
+app.delete('/api/beta/:id', BetaController.deleteTester);
 
 // ─── Visual Dashboards & Admin UI ─────────────────────────────────────────────
 app.get('/cms', CmsDashboardController.renderPortal);
 app.get('/admin/cms', CmsDashboardController.renderPortal);
 app.get('/dashboard', DashboardController.renderDashboard);
+app.get('/dashboard/testers', DashboardController.renderDashboard);
 app.get('/admin/telemetry', DashboardController.renderDashboard);
 app.get('/admin/database', renderDatabaseAdmin);
 

@@ -8,6 +8,7 @@ import speechRoutes from './speech.routes.js';
 import pdfRoutes from './pdf.routes.js';
 import cmsRoutes from './cms.routes.js';
 import { DashboardController } from '../controllers/dashboardController.js';
+import { BetaController } from '../controllers/betaController.js';
 
 const router = Router();
 
@@ -19,6 +20,15 @@ router.use('/pdf', pdfRoutes);
 router.use('/insights', insightsRoutes);
 router.use('/timelines', timelinesRoutes);
 router.use('/notifications', notificationRoutes);
+
+// ─── Public Beta & Email Campaign Endpoints ──────────────────────────────────
+router.post('/beta/register', BetaController.registerTester);
+router.get('/beta/list', BetaController.getTesters);
+router.get('/beta/template', BetaController.getTemplate);
+router.post('/beta/template', BetaController.updateTemplate);
+router.post('/beta/preview', BetaController.renderLivePreview);
+router.post('/beta/send-invite', BetaController.sendInvitation);
+router.delete('/beta/:id', BetaController.deleteTester);
 
 // ─── Live Telemetry, SSE Stream & Mission Control Endpoints ──────────────────
 router.get('/dashboard/stats', DashboardController.getStats);
