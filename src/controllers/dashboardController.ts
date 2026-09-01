@@ -910,6 +910,12 @@ export class DashboardController {
                 <button class="btn-action" onclick="resetTelemetryFleet()" style="border-color: rgba(239, 68, 68, 0.35); color: #F87171;">
                     <span>🔄 Reset AI Fleet</span>
                 </button>
+                <a href="/campaigns" class="btn-action" style="color: #60A5FA; border-color: rgba(59, 130, 246, 0.4); text-decoration: none;">
+                    <span>👥 Beta Testers Studio ↗</span>
+                </a>
+                <a href="/join-beta" target="_blank" class="btn-action" style="color: #FBBF24; border-color: rgba(245, 158, 11, 0.4); text-decoration: none;">
+                    <span>🌐 Public Signup ↗</span>
+                </a>
                 <button id="ai-toggle-btn" class="ai-toggle-btn" onclick="toggleAiSwitch()">
                     <span class="status-dot"></span>
                     <span id="ai-toggle-label">🟢 AI Summarizer: ACTIVE</span>
@@ -917,21 +923,6 @@ export class DashboardController {
             </div>
         </header>
 
-        <!-- Navigation Tabs Bar -->
-        <div class="nav-tabs-bar">
-            <button class="tab-btn active" id="tab-btn-telemetry" onclick="switchDashboardTab('telemetry')">
-                📊 Ingestion & LLM Telemetry
-            </button>
-            <button class="tab-btn" id="tab-btn-testers" onclick="switchDashboardTab('testers')">
-                👥 Beta Testers & Email Studio <span class="tab-badge" id="nav-tester-badge">0</span>
-            </button>
-            <a href="/join-beta" target="_blank" class="tab-link-btn">
-                🌐 Public Signup Form ↗
-            </a>
-        </div>
-
-        <!-- View 1: Ingestion & Telemetry -->
-        <div id="view-telemetry">
         <!-- Metrics Grid -->
         <div class="metrics-grid">
             <!-- CPU Utilization -->
@@ -1109,173 +1100,6 @@ export class DashboardController {
                 </div>
             </div>
         </div>
-        </div> <!-- End view-telemetry -->
-
-        <!-- View 2: Beta Testers & Email Campaign Studio -->
-        <div id="view-testers" style="display: none;">
-            <!-- Metrics Row -->
-            <div class="metrics-grid">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Total Waitlist Testers</span>
-                        <span class="card-badge" style="background: rgba(59, 130, 246, 0.15); color: #60A5FA;">Live</span>
-                    </div>
-                    <div class="val-large" id="tester-total-count" style="color: #60A5FA;">0</div>
-                    <div class="val-sub">Registered public users</div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Android Testers</span>
-                        <span class="card-badge" style="background: rgba(16, 185, 129, 0.15); color: #34D399;">🤖 Play Store</span>
-                    </div>
-                    <div class="val-large" id="tester-android-count" style="color: #34D399;">0</div>
-                    <div class="val-sub">Android & Dual devices</div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">iOS Testers</span>
-                        <span class="card-badge" style="background: rgba(245, 158, 11, 0.15); color: #FBBF24;">🍎 TestFlight</span>
-                    </div>
-                    <div class="val-large" id="tester-ios-count" style="color: #FBBF24;">0</div>
-                    <div class="val-sub">Apple TestFlight users</div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Pending Invitations</span>
-                        <span class="card-badge" style="background: rgba(239, 68, 68, 0.15); color: #F87171;">Action Required</span>
-                    </div>
-                    <div class="val-large" id="tester-pending-count" style="color: #F87171;">0</div>
-                    <div class="val-sub">Uninvited subscribers</div>
-                </div>
-            </div>
-
-            <!-- Email Campaign Editor & Real-Time Live Preview -->
-            <div class="split-grid" style="margin-top: 24px;">
-                <!-- Left: Email Template Editor -->
-                <div class="studio-card">
-                    <div class="section-header">
-                        <h2 class="section-title">✉️ Email Campaign & Story Editor</h2>
-                        <span class="val-sub">Customizes the invitation email and app links</span>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Email Subject Line</label>
-                        <input type="text" id="tpl-subject" oninput="updateLivePreview()" placeholder="e.g. 🚀 You're Invited: Exclusive NewsFlow VIP Beta Access!">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Headline Title</label>
-                        <input type="text" id="tpl-headline" oninput="updateLivePreview()" placeholder="Welcome to the Future of 60-Word Breaking News">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Hero Banner Image URL</label>
-                        <input type="text" id="tpl-hero-img" oninput="updateLivePreview()" placeholder="https://images.unsplash.com/...">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Introductory Message</label>
-                        <textarea id="tpl-intro" rows="2" oninput="updateLivePreview()" placeholder="Thank you for signing up..."></textarea>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Featured Story Card Title</label>
-                        <input type="text" id="tpl-story-title" oninput="updateLivePreview()" placeholder="⚡ Ultra-Fast 60-Word Shorts, Neural AI Audio & Offline Timelines">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Featured Story Summary</label>
-                        <textarea id="tpl-story-summary" rows="3" oninput="updateLivePreview()" placeholder="NewsFlow delivers bite-sized verified global news..."></textarea>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Android Play Store / Testing Link</label>
-                        <input type="text" id="tpl-android-url" oninput="updateLivePreview()" placeholder="https://play.google.com/apps/testing/...">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Apple TestFlight Link</label>
-                        <input type="text" id="tpl-ios-url" oninput="updateLivePreview()" placeholder="https://testflight.apple.com/join/...">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Direct APK Download Link</label>
-                        <input type="text" id="tpl-apk-url" oninput="updateLivePreview()" placeholder="https://github.com/newsflow/releases/download/...">
-                    </div>
-
-                    <div class="input-group">
-                        <label>VIP Access Code</label>
-                        <input type="text" id="tpl-code" oninput="updateLivePreview()" placeholder="VIP-NEWS-2026">
-                    </div>
-
-                    <div style="display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap;">
-                        <button class="btn-primary" onclick="saveEmailTemplate()" style="flex: 1;">💾 Save Template</button>
-                        <button class="btn-action" onclick="resetEmailTemplateDefault()">🔄 Reset Default</button>
-                        <button class="btn-action btn-ingest" onclick="sendInviteToAllPending()" style="background: linear-gradient(135deg, #10B981, #059669); border-color: #10B981;">🚀 Send to All Pending</button>
-                    </div>
-                </div>
-
-                <!-- Right: Real-Time Interactive Live Preview -->
-                <div class="studio-card" style="display: flex; flex-direction: column;">
-                    <div class="preview-header-controls">
-                        <div>
-                            <h2 class="section-title" style="margin-bottom: 2px;">👁️ Real-Time Email Preview</h2>
-                            <span class="val-sub">Updates live as you edit content</span>
-                        </div>
-                        <div style="display: flex; gap: 6px;">
-                            <button class="device-toggle-btn active" id="btn-view-mobile" onclick="setPreviewDevice('mobile')">📱 Mobile (380px)</button>
-                            <button class="device-toggle-btn" id="btn-view-desktop" onclick="setPreviewDevice('desktop')">💻 Desktop (100%)</button>
-                        </div>
-                    </div>
-
-                    <div class="preview-iframe-wrapper" id="preview-wrapper" style="max-width: 380px;">
-                        <iframe id="email-preview-iframe" class="preview-iframe"></iframe>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Registered Beta Testers Registry Table -->
-            <div class="studio-card" style="margin-top: 24px;">
-                <div class="section-header" style="flex-wrap: wrap; gap: 12px;">
-                    <div>
-                        <h2 class="section-title">👥 Registered Public Beta Testers</h2>
-                        <span class="val-sub">Manage subscribers and send direct invitations</span>
-                    </div>
-                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                        <input type="text" id="tester-search" oninput="filterTestersTable()" placeholder="🔍 Search by name or email..." style="width: 220px; padding: 6px 12px; font-size: 13px;">
-                        <select id="tester-filter" onchange="filterTestersTable()" style="padding: 6px 12px; font-size: 13px; width: 140px;">
-                            <option value="ALL">All Statuses</option>
-                            <option value="PENDING">Pending Only</option>
-                            <option value="INVITED">Invited Only</option>
-                            <option value="ANDROID">Android Only</option>
-                            <option value="IOS">iOS Only</option>
-                        </select>
-                        <button class="btn-action" onclick="loadTestersList()">🔄 Refresh</button>
-                    </div>
-                </div>
-
-                <div style="overflow-x: auto;">
-                    <table class="testers-table">
-                        <thead>
-                            <tr>
-                                <th>Tester Name & Email</th>
-                                <th>Platform</th>
-                                <th>Favorite Topics</th>
-                                <th>Status</th>
-                                <th>Registered</th>
-                                <th>Invited At</th>
-                                <th style="text-align: right;">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="testers-table-body">
-                            <tr>
-                                <td colspan="7" style="text-align: center; color: var(--text-sub); padding: 24px;">Loading subscribers...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
     </div>
 
     <script>
@@ -1291,52 +1115,46 @@ export class DashboardController {
             const h = Math.floor((seconds % (3600*24)) / 3600);
             const m = Math.floor((seconds % 3600) / 60);
             const s = Math.floor(seconds % 60);
-            if (d > 0) return \`\${d}d \${h}h \${m}m\`;
-            if (h > 0) return \`\${h}h \${m}m \${s}s\`;
-            return \`\${m}m \${s}s\`;
+            if (d > 0) return d + 'd ' + h + 'h ' + m + 'm';
+            if (h > 0) return h + 'h ' + m + 'm ' + s + 's';
+            return m + 'm ' + s + 's';
         }
 
         async function toggleAiSwitch() {
             try {
-                const res = await fetch('/api/v1/dashboard/toggle-ai', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ enabled: !currentAiEnabled })
-                });
+                const res = await fetch('/api/v1/dashboard/toggle-ai', { method: 'POST' });
                 const json = await res.json();
                 if (json.success) {
                     currentAiEnabled = json.aiEnabled;
                     updateAiButtonUi(currentAiEnabled);
                 }
-            } catch (err) {
-                alert('Failed to toggle AI state: ' + err.message);
+            } catch (e) {
+                alert('Failed to toggle AI: ' + e.message);
             }
         }
 
-        async function toggleModel(modelName) {
+        async function toggleModelSwitch(modelName) {
             try {
                 const res = await fetch('/api/v1/dashboard/toggle-model', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ model: modelName })
+                    body: JSON.stringify({ model: modelName }),
                 });
                 const json = await res.json();
-                if (!json.success) {
-                    alert('Failed to toggle model: ' + json.error);
-                }
+                if (!json.success) alert('Failed: ' + json.error);
             } catch (e) {
-                alert('Toggle error: ' + e.message);
+                alert('Error toggling model: ' + e.message);
             }
         }
 
         async function triggerIngest() {
             const btn = document.getElementById('btn-trigger-ingest');
             btn.disabled = true;
-            btn.innerHTML = '<span>⏳ Ingesting Feeds...</span>';
+            btn.innerHTML = '<span>⏳ Ingesting...</span>';
             try {
                 const res = await fetch('/api/v1/dashboard/trigger-ingest', { method: 'POST' });
                 const json = await res.json();
-                alert(json.message || 'Ingest started');
+                alert(json.message || 'Ingest job triggered successfully');
             } catch (e) {
                 alert('Failed to trigger ingest: ' + e.message);
             } finally {
@@ -1346,6 +1164,7 @@ export class DashboardController {
         }
 
         async function flushCache() {
+            if (!confirm('Flush Redis cache across all categories?')) return;
             try {
                 const res = await fetch('/api/v1/dashboard/clear-cache', { method: 'POST' });
                 const json = await res.json();
@@ -1379,7 +1198,6 @@ export class DashboardController {
         }
 
         function renderTelemetryData(d) {
-            // AI Toggle state
             currentAiEnabled = d.aiEnabled;
             updateAiButtonUi(currentAiEnabled);
 
@@ -1390,93 +1208,96 @@ export class DashboardController {
             document.getElementById('cpu-bar').style.width = Math.min(100, d.system.cpu.loadPercent) + '%';
 
             // RAM
-            document.getElementById('ram-used').textContent = formatBytes(d.system.memory.usedMB);
-            document.getElementById('ram-total').textContent = \`Total: \${formatBytes(d.system.memory.totalMB)} • Heap: \${d.system.memory.processHeapUsedMB} MB\`;
+            document.getElementById('ram-used').textContent = formatBytes(d.system.memory.usedMb);
+            document.getElementById('ram-total').textContent = 'Total: ' + formatBytes(d.system.memory.totalMb) + ' • Heap: ' + formatBytes(d.system.memory.processHeapMb);
             document.getElementById('ram-badge').textContent = d.system.memory.usedPercent + '% Used';
-            document.getElementById('ram-bar').style.width = d.system.memory.usedPercent + '%';
+            document.getElementById('ram-bar').style.width = Math.min(100, d.system.memory.usedPercent) + '%';
 
-            // Daily 2M Quota
-            document.getElementById('total-tokens').textContent = d.ai.totalTokensToday.toLocaleString();
-            document.getElementById('quota-details').textContent = \`\${d.ai.totalTokensToday.toLocaleString()} / 2,000,000 Daily Tokens (\${d.ai.dailyQuotaUsedPercent}%)\`;
-            document.getElementById('quota-badge').textContent = \`\${d.ai.dailyQuotaUsedPercent}% Used\`;
-            document.getElementById('quota-bar').style.width = Math.min(100, d.ai.dailyQuotaUsedPercent) + '%';
+            // Quota
+            document.getElementById('total-tokens').textContent = (d.quota.tokensToday || 0).toLocaleString();
+            document.getElementById('quota-details').textContent = (d.quota.tokensToday || 0).toLocaleString() + ' / 2,000,000 Daily Tokens';
+            document.getElementById('quota-badge').textContent = d.quota.percentUsed + '% Used';
+            document.getElementById('quota-bar').style.width = Math.min(100, d.quota.percentUsed) + '%';
 
-            // Funnel Metrics
-            if (d.funnel) {
-                document.getElementById('funnel-scanned').textContent = (d.funnel.rssScannedToday || 0).toLocaleString();
-                document.getElementById('funnel-deduped').textContent = (d.funnel.dedupedCandidatesToday || 0).toLocaleString();
-                document.getElementById('funnel-llm').textContent = (d.funnel.llmSummarizedToday || 0).toLocaleString();
-                document.getElementById('funnel-direct').textContent = (d.funnel.directSavedToday || 0).toLocaleString();
-                document.getElementById('funnel-db').textContent = (d.funnel.dbInsertedToday || 0).toLocaleString();
-
-                if (d.funnel.lastIngestAt) {
-                    const durSec = ((d.funnel.lastIngestDurationMs || 0) / 1000).toFixed(1);
-                    document.getElementById('funnel-timing').textContent = \`Last Batch: \${durSec}s at \${new Date(d.funnel.lastIngestAt).toLocaleTimeString()}\`;
-                }
-            }
-
-            // BullMQ Queue Ingestion Metrics
-            if (d.queue) {
-                const isIngesting = d.queue.isIngesting;
-                const badge = document.getElementById('queue-status-badge');
-                badge.textContent = isIngesting ? 'INGESTING LIVE' : 'IDLE';
-                badge.style.background = isIngesting ? 'rgba(16, 185, 129, 0.15)' : 'rgba(59, 130, 246, 0.15)';
-                badge.style.color = isIngesting ? '#34D399' : '#60A5FA';
-
-                document.getElementById('queue-pending').textContent = \`\${d.queue.pendingArticles || 0} Pending\`;
-                document.getElementById('queue-details').textContent = \`Active: \${d.queue.activeJobs || 0} • Completed: \${d.queue.completedToday || 0}\`;
-                document.getElementById('queue-bar').style.width = isIngesting ? '80%' : '0%';
+            // Ingest Queue
+            document.getElementById('queue-pending').textContent = (d.queue.waiting + d.queue.delayed) + ' Pending';
+            document.getElementById('queue-details').textContent = 'Active: ' + d.queue.active + ' • Completed: ' + d.queue.completed;
+            const qBadge = document.getElementById('queue-status-badge');
+            if (d.queue.active > 0) {
+                qBadge.textContent = 'RUNNING';
+                qBadge.style.background = 'rgba(16, 185, 129, 0.15)';
+                qBadge.style.color = '#34D399';
+            } else {
+                qBadge.textContent = 'IDLE';
+                qBadge.style.background = 'rgba(59, 130, 246, 0.15)';
+                qBadge.style.color = '#60A5FA';
             }
 
             // Uptime
-            document.getElementById('uptime-val').textContent = formatUptime(d.system.server.processUptimeSeconds);
-            document.getElementById('node-env').textContent = \`\${d.system.server.platform} (\${d.system.server.arch}) • \${d.system.server.nodeVersion}\`;
+            document.getElementById('uptime-val').textContent = formatUptime(d.system.uptime);
 
-            // Models List
+            // Ingestion Funnel
+            document.getElementById('funnel-scanned').textContent = d.funnel.rssScannedToday || 0;
+            document.getElementById('funnel-deduped').textContent = d.funnel.dedupedCandidatesToday || 0;
+            document.getElementById('funnel-llm').textContent = d.funnel.llmSummarizedToday || 0;
+            document.getElementById('funnel-direct').textContent = d.funnel.directSavedToday || 0;
+            document.getElementById('funnel-db').textContent = d.funnel.dbInsertedToday || 0;
+
+            // Model Accounting Cards
             const modelsContainer = document.getElementById('models-container');
-            modelsContainer.innerHTML = d.ai.models.map(m => {
-                const isPaused = m.status === 'rate_limited' || m.status === 'error';
-                const statusColor = isPaused ? '#F59E0B' : '#10B981';
-                const statusLabel = isPaused ? 'PAUSED / OFF' : 'ACTIVE (READY)';
-                const btnLabel = isPaused ? '▶️ Click to Enable' : '⏸️ Click to Pause';
-                const btnClass = isPaused ? 'disabled' : '';
-                return \`
-                    <div class="model-card">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span class="model-name">\${m.displayName}</span>
-                            <span style="font-size: 10px; font-weight: 800; color: \${statusColor};">\${statusLabel}</span>
-                        </div>
-                        <div class="model-stats-row">
-                            <span>Requests Today</span>
-                            <span class="model-stats-val">\${m.requestsToday}</span>
-                        </div>
-                        <div class="model-stats-row">
-                            <span>Tokens Used</span>
-                            <span class="model-stats-val">\${m.totalTokensToday.toLocaleString()}</span>
-                        </div>
-                        <div class="model-stats-row">
-                            <span>Avg Latency</span>
-                            <span class="model-stats-val">\${m.lastLatencyMs}ms</span>
-                        </div>
-                        <button class="model-toggle-btn \${btnClass}" onclick="toggleModel('\${m.model}')">
-                            \${btnLabel}
-                        </button>
-                    </div>
-                \`;
-            }).join('');
+            if (d.models && d.models.length > 0) {
+                modelsContainer.innerHTML = d.models.map(m => {
+                    const isPaused = m.status === 'disabled';
+                    const isCooldown = m.status === 'cooldown';
+                    const isReady = m.status === 'ready';
+
+                    let statusBadgeClass = isPaused ? 'card-badge-paused' : isCooldown ? 'card-badge-cooldown' : 'card-badge-ready';
+                    let statusLabel = isPaused ? '⏸️ PAUSED' : isCooldown ? '⏳ RATE-LIMITED' : '🟢 ACTIVE';
+
+                    const tierLabel = m.tier === 1 ? '⚡ Primary Groq LPU' : '🇪🇺 Mistral AI Serverless';
+                    const reqCount = m.requestsToday || 0;
+                    const tokCount = (m.totalTokensToday || 0).toLocaleString();
+                    const lat = m.lastLatencyMs ? m.lastLatencyMs + 'ms' : '--';
+
+                    return '<div class="model-item ' + (isPaused ? 'model-disabled' : '') + '">' +
+                        '<div class="model-top">' +
+                            '<span class="model-name">' + m.displayName + '</span>' +
+                            '<span class="model-badge ' + statusBadgeClass + '">' + statusLabel + '</span>' +
+                        '</div>' +
+                        '<div class="model-tier">' + tierLabel + ' • ' + m.model + '</div>' +
+                        '<div class="model-stats">' +
+                            '<div class="model-stat-col">' +
+                                '<span class="stat-lbl">Reqs Today</span>' +
+                                '<span class="stat-val">' + reqCount + '</span>' +
+                            '</div>' +
+                            '<div class="model-stat-col">' +
+                                '<span class="stat-lbl">Tokens</span>' +
+                                '<span class="stat-val">' + tokCount + '</span>' +
+                            '</div>' +
+                            '<div class="model-stat-col">' +
+                                '<span class="stat-lbl">Latency</span>' +
+                                '<span class="stat-val">' + lat + '</span>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="model-controls">' +
+                            '<button class="btn-model-toggle ' + (isPaused ? 'enable' : 'disable') + '" onclick="toggleModelSwitch(\'' + m.model + '\')">' +
+                                (isPaused ? '▶️ Enable in Rotation' : '⏸️ Disable (Zero Cost)') +
+                            '</button>' +
+                        '</div>' +
+                    '</div>';
+                }).join('');
+            }
 
             // Recent Logs
             const logsContainer = document.getElementById('logs-container');
-            if (d.recentLogs.length > 0) {
+            if (d.recentLogs && d.recentLogs.length > 0) {
                 logsContainer.innerHTML = d.recentLogs.map(l => {
                     const icon = l.status === 'success' ? '🟢' : l.status === 'rotated' ? '🔄' : '🔴';
                     const time = new Date(l.timestamp).toLocaleTimeString();
-                    return \`
-                        <div class="log-item">
-                            <span class="log-msg">\${icon} \${l.message}</span>
-                            <span class="log-time">\${time}</span>
-                        </div>
-                    \`;
+                    return '<div class="log-item">' +
+                        '<span class="log-msg">' + icon + ' ' + l.message + '</span>' +
+                        '<span class="log-time">' + time + '</span>' +
+                    '</div>';
                 }).join('');
             }
         }
@@ -1494,7 +1315,6 @@ export class DashboardController {
                     }
                 };
                 eventSource.onerror = () => {
-                    // Fallback to fetch on connection hiccup
                     fetchFallback();
                 };
             } catch {
@@ -1531,7 +1351,7 @@ export class DashboardController {
                     const data = json.data;
                     document.getElementById('res-headline').innerHTML = '<span style="color: #38BDF8;">' + data.headline + '</span>';
                     document.getElementById('res-story').textContent = data.crispyStory;
-                    document.getElementById('res-bullets').innerHTML = data.bulletPoints.map(b => \`<div class="output-bullet">• \${b}</div>\`).join('');
+                    document.getElementById('res-bullets').innerHTML = data.bulletPoints.map(b => '<div class="output-bullet">• ' + b + '</div>').join('');
                     document.getElementById('res-model').textContent = 'Model: ' + data.modelUsed;
                     document.getElementById('res-tokens').textContent = 'Tokens: ' + data.totalTokens;
                     document.getElementById('res-latency').textContent = 'Latency: ' + data.latencyMs + 'ms';
@@ -1559,279 +1379,8 @@ export class DashboardController {
             }
         }
 
-        // ─── Beta Testers & Email Campaign Studio Scripts ───
-        let allTestersData = [];
-        let previewDebounceTimer = null;
-
-        function switchDashboardTab(tab) {
-            const btnTelemetry = document.getElementById('tab-btn-telemetry');
-            const btnTesters = document.getElementById('tab-btn-testers');
-            const viewTelemetry = document.getElementById('view-telemetry');
-            const viewTesters = document.getElementById('view-testers');
-
-            if (tab === 'testers') {
-                btnTelemetry.classList.remove('active');
-                btnTesters.classList.add('active');
-                viewTelemetry.style.display = 'none';
-                viewTesters.style.display = 'block';
-                loadTestersList();
-                loadEmailTemplate();
-            } else {
-                btnTesters.classList.remove('active');
-                btnTelemetry.classList.add('active');
-                viewTesters.style.display = 'none';
-                viewTelemetry.style.display = 'block';
-            }
-        }
-
-        async function loadTestersList() {
-            try {
-                const res = await fetch('/api/beta/list');
-                const json = await res.json();
-                if (json.success) {
-                    allTestersData = json.testers || [];
-                    renderTestersMetrics(json.metrics);
-                    renderTestersTable(allTestersData);
-                }
-            } catch (err) {
-                console.warn('Failed to load testers list:', err);
-            }
-        }
-
-        function renderTestersMetrics(m) {
-            if (!m) return;
-            document.getElementById('tester-total-count').textContent = m.total || 0;
-            document.getElementById('nav-tester-badge').textContent = m.total || 0;
-            document.getElementById('tester-android-count').textContent = (m.android || 0) + (m.both || 0);
-            document.getElementById('tester-ios-count').textContent = (m.ios || 0) + (m.both || 0);
-            document.getElementById('tester-pending-count').textContent = m.pending || 0;
-        }
-
-        function renderTestersTable(list) {
-            const tbody = document.getElementById('testers-table-body');
-            if (!list || list.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-sub); padding: 32px;">No registered beta testers found yet. Distribute <a href="/join-beta" target="_blank" style="color: #60A5FA;">/join-beta</a> to start collecting signups!</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = list.map(t => {
-                const deviceIcon = t.deviceType === 'IOS' ? '🍎 iOS' : t.deviceType === 'BOTH' ? '📱 Both' : '🤖 Android';
-                const statusClass = t.status === 'INVITED' ? 'invited' : 'pending';
-                const statusText = t.status === 'INVITED' ? '✅ INVITED' : '⏳ PENDING';
-                const regDate = new Date(t.createdAt).toLocaleDateString();
-                const inviteDate = t.inviteSentAt ? new Date(t.inviteSentAt).toLocaleDateString() : 'Never';
-
-                return '<tr>' +
-                    '<td><strong style="color: #FFFFFF;">' + (t.name || 'Anonymous User') + '</strong><br>' +
-                    '<span style="font-family: monospace; font-size: 12px; color: #94A3B8;">' + t.email + '</span></td>' +
-                    '<td><span class="device-pill">' + deviceIcon + '</span></td>' +
-                    '<td style="color: var(--text-sub); font-size: 12px;">' + (t.notes || 'General News') + '</td>' +
-                    '<td><span class="status-badge ' + statusClass + '">' + statusText + '</span></td>' +
-                    '<td style="color: var(--text-sub); font-size: 12px;">' + regDate + '</td>' +
-                    '<td style="color: var(--text-sub); font-size: 12px;">' + inviteDate + '</td>' +
-                    '<td style="text-align: right;">' +
-                        '<div style="display: inline-flex; gap: 6px;">' +
-                            '<button class="btn-table-action" onclick="sendInviteSingle(\'' + t.email + '\', this)"><span>✉️ Send Invite</span></button>' +
-                            '<button class="btn-table-action" style="color: #F87171; border-color: rgba(239, 68, 68, 0.3);" onclick="deleteTesterRecord(\'' + t.id + '\')"><span>🗑️</span></button>' +
-                        '</div>' +
-                    '</td>' +
-                '</tr>';
-            }).join('');
-        }
-
-        function filterTestersTable() {
-            const query = document.getElementById('tester-search').value.toLowerCase().trim();
-            const filter = document.getElementById('tester-filter').value;
-
-            const filtered = allTestersData.filter(t => {
-                const matchQuery = !query || (t.name && t.name.toLowerCase().includes(query)) || t.email.toLowerCase().includes(query);
-                if (!matchQuery) return false;
-
-                if (filter === 'PENDING') return t.status === 'PENDING';
-                if (filter === 'INVITED') return t.status === 'INVITED';
-                if (filter === 'ANDROID') return t.deviceType === 'ANDROID' || t.deviceType === 'BOTH';
-                if (filter === 'IOS') return t.deviceType === 'IOS' || t.deviceType === 'BOTH';
-                return true;
-            });
-
-            renderTestersTable(filtered);
-        }
-
-        async function loadEmailTemplate() {
-            try {
-                const res = await fetch('/api/beta/template');
-                const json = await res.json();
-                if (json.success && json.template) {
-                    const t = json.template;
-                    document.getElementById('tpl-subject').value = t.subject || '';
-                    document.getElementById('tpl-headline').value = t.headline || '';
-                    document.getElementById('tpl-hero-img').value = t.heroImageUrl || '';
-                    document.getElementById('tpl-intro').value = t.introMessage || '';
-                    document.getElementById('tpl-story-title').value = t.storyTitle || '';
-                    document.getElementById('tpl-story-summary').value = t.storySummary || '';
-                    document.getElementById('tpl-android-url').value = t.androidUrl || '';
-                    document.getElementById('tpl-ios-url').value = t.iosUrl || '';
-                    document.getElementById('tpl-apk-url').value = t.apkDirectUrl || '';
-                    document.getElementById('tpl-code').value = t.invitationCode || '';
-                    updateLivePreview();
-                }
-            } catch (err) {
-                console.warn('Failed to load email template:', err);
-            }
-        }
-
-        function getFormTemplatePayload() {
-            return {
-                subject: document.getElementById('tpl-subject').value,
-                headline: document.getElementById('tpl-headline').value,
-                heroImageUrl: document.getElementById('tpl-hero-img').value,
-                introMessage: document.getElementById('tpl-intro').value,
-                storyTitle: document.getElementById('tpl-story-title').value,
-                storySummary: document.getElementById('tpl-story-summary').value,
-                androidUrl: document.getElementById('tpl-android-url').value,
-                iosUrl: document.getElementById('tpl-ios-url').value,
-                apkDirectUrl: document.getElementById('tpl-apk-url').value,
-                invitationCode: document.getElementById('tpl-code').value,
-            };
-        }
-
-        function updateLivePreview() {
-            if (previewDebounceTimer) clearTimeout(previewDebounceTimer);
-            previewDebounceTimer = setTimeout(async () => {
-                const payload = getFormTemplatePayload();
-                try {
-                    const res = await fetch('/api/beta/preview', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload),
-                    });
-                    const html = await res.text();
-                    const iframe = document.getElementById('email-preview-iframe');
-                    if (iframe) iframe.srcdoc = html;
-                } catch (e) {
-                    console.warn('Preview render error:', e);
-                }
-            }, 100);
-        }
-
-        function setPreviewDevice(mode) {
-            const wrapper = document.getElementById('preview-wrapper');
-            const btnMob = document.getElementById('btn-view-mobile');
-            const btnDesk = document.getElementById('btn-view-desktop');
-
-            if (mode === 'desktop') {
-                wrapper.style.maxWidth = '100%';
-                btnDesk.classList.add('active');
-                btnMob.classList.remove('active');
-            } else {
-                wrapper.style.maxWidth = '380px';
-                btnMob.classList.add('active');
-                btnDesk.classList.remove('active');
-            }
-        }
-
-        async function saveEmailTemplate() {
-            const payload = getFormTemplatePayload();
-            try {
-                const res = await fetch('/api/beta/template', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
-                });
-                const json = await res.json();
-                if (json.success) {
-                    alert('✅ Email template saved successfully!');
-                }
-            } catch (e) {
-                alert('Error saving template: ' + e.message);
-            }
-        }
-
-        async function resetEmailTemplateDefault() {
-            if (!confirm('Reset template to default NewsFlow design?')) return;
-            try {
-                const res = await fetch('/api/beta/template', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({}),
-                });
-                loadEmailTemplate();
-            } catch (e) {
-                alert('Error resetting template: ' + e.message);
-            }
-        }
-
-        async function sendInviteSingle(email, btn) {
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<span>⏳ Sending...</span>';
-            btn.disabled = true;
-
-            try {
-                const customTemplate = getFormTemplatePayload();
-                const res = await fetch('/api/beta/send-invite', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, customTemplate }),
-                });
-                const json = await res.json();
-                if (json.success) {
-                    btn.innerHTML = '<span>✅ Sent</span>';
-                    btn.style.color = '#34D399';
-                    loadTestersList();
-                } else {
-                    alert('Failed to send email: ' + (json.error || 'Unknown error'));
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }
-            } catch (e) {
-                alert('Error: ' + e.message);
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        }
-
-        async function sendInviteToAllPending() {
-            const pendingCount = allTestersData.filter(t => t.status === 'PENDING').length;
-            if (pendingCount === 0) {
-                alert('All subscribers have already received invitations!');
-                return;
-            }
-
-            if (!confirm('🚀 Send customized invitation emails to ALL ' + pendingCount + ' pending beta testers now?')) return;
-
-            try {
-                const customTemplate = getFormTemplatePayload();
-                const res = await fetch('/api/beta/send-invite', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ allPending: true, customTemplate }),
-                });
-                const json = await res.json();
-                alert(json.message || 'Invitations dispatched!');
-                loadTestersList();
-            } catch (e) {
-                alert('Failed to dispatch batch invitations: ' + e.message);
-            }
-        }
-
-        async function deleteTesterRecord(id) {
-            if (!confirm('Remove this beta tester from waitlist?')) return;
-            try {
-                await fetch('/api/beta/' + id, { method: 'DELETE' });
-                loadTestersList();
-            } catch (e) {
-                alert('Delete error: ' + e.message);
-            }
-        }
-
-        // Auto-check URL for /dashboard/testers route
-        if (window.location.pathname.includes('/testers')) {
-            switchDashboardTab('testers');
-        }
-
-        // Initialize Live SSE Stream & Beta Testers
+        // Initialize Live SSE Stream
         startEventSourceStream();
-        loadTestersList();
     </script>
 </body>
 </html>`;

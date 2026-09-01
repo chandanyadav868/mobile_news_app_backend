@@ -37,9 +37,13 @@ app.use(compression());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// ─── Public Beta Tester Registration Landing Page ────────────────────────────
+// ─── Public Beta Tester Registration & Campaign Studio Routes ────────────────
 app.get('/join-beta', BetaController.renderPublicLanding);
 app.get('/beta-testers', BetaController.renderPublicLanding);
+app.get('/campaigns', BetaController.renderCampaignStudio);
+app.get('/testers', BetaController.renderCampaignStudio);
+app.get('/email-studio', BetaController.renderCampaignStudio);
+app.get('/dashboard/testers', BetaController.renderCampaignStudio);
 app.post('/api/beta/register', BetaController.registerTester);
 app.get('/api/beta/list', BetaController.getTesters);
 app.get('/api/beta/template', BetaController.getTemplate);
@@ -52,7 +56,6 @@ app.delete('/api/beta/:id', BetaController.deleteTester);
 app.get('/cms', CmsDashboardController.renderPortal);
 app.get('/admin/cms', CmsDashboardController.renderPortal);
 app.get('/dashboard', DashboardController.renderDashboard);
-app.get('/dashboard/testers', DashboardController.renderDashboard);
 app.get('/admin/telemetry', DashboardController.renderDashboard);
 app.get('/admin/database', renderDatabaseAdmin);
 
