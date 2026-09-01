@@ -25,9 +25,9 @@
       "completionTokensToday": 0,
       "totalTokensToday": 0,
       "lastLatencyMs": 0,
-      "status": "error",
+      "status": "ready",
       "lastUsedAt": null,
-      "errorsToday": 1,
+      "errorsToday": 0,
       "rateLimitResetAt": null
     },
     {
@@ -90,13 +90,13 @@
       "model": "mistral:mistral-small-latest",
       "displayName": "mistral:mistral-small-latest",
       "tier": 99,
-      "requestsToday": 8,
-      "promptTokensToday": 5387,
-      "completionTokensToday": 2103,
-      "totalTokensToday": 7490,
-      "lastLatencyMs": 2917,
+      "requestsToday": 10,
+      "promptTokensToday": 6613,
+      "completionTokensToday": 2362,
+      "totalTokensToday": 8975,
+      "lastLatencyMs": 2165,
       "status": "ready",
-      "lastUsedAt": "2026-09-01T12:09:35.664Z",
+      "lastUsedAt": "2026-09-01T12:55:25.183Z",
       "errorsToday": 0,
       "rateLimitResetAt": null
     },
@@ -104,554 +104,555 @@
       "model": "mistral:open-mistral-nemo",
       "displayName": "mistral:open-mistral-nemo",
       "tier": 99,
-      "requestsToday": 3,
-      "promptTokensToday": 1955,
-      "completionTokensToday": 916,
-      "totalTokensToday": 2871,
-      "lastLatencyMs": 3220,
+      "requestsToday": 2,
+      "promptTokensToday": 1319,
+      "completionTokensToday": 612,
+      "totalTokensToday": 1931,
+      "lastLatencyMs": 7564,
       "status": "ready",
-      "lastUsedAt": "2026-09-01T12:09:16.791Z",
+      "lastUsedAt": "2026-09-01T12:54:50.661Z",
       "errorsToday": 0,
       "rateLimitResetAt": null
     }
   ],
   "funnel": {
-    "rssScannedToday": 257916,
-    "dedupedCandidatesToday": 28350,
-    "llmSummarizedToday": 577,
-    "directSavedToday": 44,
-    "dbInsertedToday": 408,
-    "lastIngestDurationMs": 145544,
-    "lastIngestAt": "2026-09-01T12:02:25.590Z"
+    "rssScannedToday": 315244,
+    "dedupedCandidatesToday": 32995,
+    "llmSummarizedToday": 685,
+    "directSavedToday": 75,
+    "dbInsertedToday": 543,
+    "lastIngestDurationMs": 181147,
+    "lastIngestAt": "2026-09-01T12:55:38.422Z"
   },
   "logs": [
     {
-      "id": "log-1788264575664-dhkx",
-      "timestamp": "2026-09-01T12:09:35.664Z",
+      "id": "log-1788267325183-eete",
+      "timestamp": "2026-09-01T12:55:25.183Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 889,
-      "latencyMs": 2917,
+      "tokens": 856,
+      "latencyMs": 2165,
       "status": "success",
-      "message": "Summarized \"Congress shifts Colachel MLA to front row\" in 2917ms (889 tokens)",
+      "message": "Summarized \"Alcaraz fires up US Open with flawless start\" in 2165ms (856 tokens)",
       "details": {
-        "promptTokens": 638,
-        "completionTokens": 251
+        "promptTokens": 697,
+        "completionTokens": 159
       }
     },
     {
-      "id": "log-1788264572741-tkfl",
-      "timestamp": "2026-09-01T12:09:32.741Z",
+      "id": "log-1788267323012-qm7g",
+      "timestamp": "2026-09-01T12:55:23.012Z",
       "type": "error",
       "model": "gemma2-9b-it",
       "status": "failed",
       "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
       "details": {
-        "articleTitle": "Colachel MLA Tharahai Cuthbert New Seat Sparks Attention in Assembly",
+        "articleTitle": "Alcaraz, Sabalenka Open US Open With Wins",
         "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788264572494-gkav",
-      "timestamp": "2026-09-01T12:09:32.494Z",
+      "id": "log-1788267322705-59c9",
+      "timestamp": "2026-09-01T12:55:22.705Z",
       "type": "error",
       "model": "mixtral-8x7b-32768",
       "status": "failed",
       "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
       "details": {
-        "articleTitle": "Colachel MLA Tharahai Cuthbert New Seat Sparks Attention in Assembly",
+        "articleTitle": "Alcaraz, Sabalenka Open US Open With Wins",
         "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788264572182-2q79",
-      "timestamp": "2026-09-01T12:09:32.182Z",
-      "type": "error",
-      "model": "llama-3.1-8b-instant",
-      "status": "failed",
-      "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
-      "details": {
-        "articleTitle": "Colachel MLA Tharahai Cuthbert New Seat Sparks Attention in Assembly",
-        "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
-        "statusCode": 404
-      }
-    },
-    {
-      "id": "log-1788264572098-uglg",
-      "timestamp": "2026-09-01T12:09:32.098Z",
+      "id": "log-1788267322305-ux9w",
+      "timestamp": "2026-09-01T12:55:22.305Z",
       "type": "error",
       "model": "llama-3.3-70b-versatile",
       "status": "failed",
       "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
       "details": {
-        "articleTitle": "Colachel MLA Tharahai Cuthbert New Seat Sparks Attention in Assembly",
+        "articleTitle": "Alcaraz, Sabalenka Open US Open With Wins",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788264567272-gnny",
-      "timestamp": "2026-09-01T12:09:27.272Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 969,
-      "latencyMs": 5456,
-      "status": "success",
-      "message": "Summarized \"Academician Sangamithra joins varsity syndicate\" in 5456ms (969 tokens)",
+      "id": "log-1788267322147-lr37",
+      "timestamp": "2026-09-01T12:55:22.147Z",
+      "type": "error",
+      "model": "llama-3.1-8b-instant",
+      "status": "failed",
+      "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
       "details": {
-        "promptTokens": 704,
-        "completionTokens": 265
+        "articleTitle": "Alcaraz, Sabalenka Open US Open With Wins",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
+        "statusCode": 404
       }
     },
     {
-      "id": "log-1788264561811-f3pr",
-      "timestamp": "2026-09-01T12:09:21.811Z",
+      "id": "log-1788267317892-oflr",
+      "timestamp": "2026-09-01T12:55:17.892Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 915,
+      "latencyMs": 6744,
+      "status": "success",
+      "message": "Summarized \"Captain jailed after Cyprus ferry horror\" in 6744ms (915 tokens)",
+      "details": {
+        "promptTokens": 678,
+        "completionTokens": 237
+      }
+    },
+    {
+      "id": "log-1788267302224-87aw",
+      "timestamp": "2026-09-01T12:55:02.224Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 873,
+      "latencyMs": 5359,
+      "status": "success",
+      "message": "Summarized \"Deadly flood slams Grand Canyon, more storms loom\" in 5359ms (873 tokens)",
+      "details": {
+        "promptTokens": 646,
+        "completionTokens": 227
+      }
+    },
+    {
+      "id": "log-1788267296862-p46j",
+      "timestamp": "2026-09-01T12:54:56.862Z",
       "type": "error",
       "model": "gemma2-9b-it",
       "status": "failed",
       "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
       "details": {
-        "articleTitle": "Governor R.V. Arlekar Nominates Senior Academician to Bharathiar Varsity Syndicate",
+        "articleTitle": "More Storms Possible After Grand Canyon Flood Kills Two",
         "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788264561513-m2pm",
-      "timestamp": "2026-09-01T12:09:21.513Z",
+      "id": "log-1788267296344-rcf3",
+      "timestamp": "2026-09-01T12:54:56.344Z",
       "type": "error",
       "model": "llama-3.1-8b-instant",
       "status": "failed",
       "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
       "details": {
-        "articleTitle": "Governor R.V. Arlekar Nominates Senior Academician to Bharathiar Varsity Syndicate",
+        "articleTitle": "More Storms Possible After Grand Canyon Flood Kills Two",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788264561407-mc07",
-      "timestamp": "2026-09-01T12:09:21.407Z",
+      "id": "log-1788267296160-3cg8",
+      "timestamp": "2026-09-01T12:54:56.160Z",
       "type": "error",
       "model": "llama-3.3-70b-versatile",
       "status": "failed",
       "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
       "details": {
-        "articleTitle": "Governor R.V. Arlekar Nominates Senior Academician to Bharathiar Varsity Syndicate",
+        "articleTitle": "More Storms Possible After Grand Canyon Flood Kills Two",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788264561320-fxrw",
-      "timestamp": "2026-09-01T12:09:21.320Z",
+      "id": "log-1788267295886-bs3a",
+      "timestamp": "2026-09-01T12:54:55.886Z",
       "type": "error",
       "model": "mixtral-8x7b-32768",
       "status": "failed",
       "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
       "details": {
-        "articleTitle": "Governor R.V. Arlekar Nominates Senior Academician to Bharathiar Varsity Syndicate",
+        "articleTitle": "More Storms Possible After Grand Canyon Flood Kills Two",
         "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788264556791-ng2h",
-      "timestamp": "2026-09-01T12:09:16.791Z",
+      "id": "log-1788267290661-w27e",
+      "timestamp": "2026-09-01T12:54:50.661Z",
       "type": "ai_request",
       "model": "mistral:open-mistral-nemo",
-      "tokens": 822,
-      "latencyMs": 3220,
+      "tokens": 1032,
+      "latencyMs": 7564,
       "status": "success",
-      "message": "Summarized \"Telangana braces for heat, humidity, and scattered storms\" in 3220ms (822 tokens)",
+      "message": "Summarized \"Vaiko Slams Vijay, Locks In Gandhi as 2029 PM\" in 7564ms (1032 tokens)",
       "details": {
-        "promptTokens": 544,
-        "completionTokens": 278
+        "promptTokens": 707,
+        "completionTokens": 325
       }
     },
     {
-      "id": "log-1788264549509-odj5",
-      "timestamp": "2026-09-01T12:09:09.509Z",
+      "id": "log-1788267278941-lsja",
+      "timestamp": "2026-09-01T12:54:38.941Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 906,
-      "latencyMs": 3481,
+      "tokens": 870,
+      "latencyMs": 3440,
       "status": "success",
-      "message": "Summarized \"Vijay extends free bus travel for differently-abled\" in 3481ms (906 tokens)",
+      "message": "Summarized \"Messi’s wife shares tearful farewell\" in 3440ms (870 tokens)",
       "details": {
-        "promptTokens": 633,
-        "completionTokens": 273
+        "promptTokens": 659,
+        "completionTokens": 211
       }
     },
     {
-      "id": "log-1788264546023-bjea",
-      "timestamp": "2026-09-01T12:09:06.023Z",
+      "id": "log-1788267275498-vzl1",
+      "timestamp": "2026-09-01T12:54:35.498Z",
       "type": "error",
       "model": "gemma2-9b-it",
       "status": "failed",
       "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
       "details": {
-        "articleTitle": "CM Vijay Announces Extension of Free Bus Travel for Differently-abled",
+        "articleTitle": "Messi's Wife Pens Emotional Retirement Note",
         "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788264545691-ubgl",
-      "timestamp": "2026-09-01T12:09:05.691Z",
+      "id": "log-1788267274311-pfir",
+      "timestamp": "2026-09-01T12:54:34.311Z",
       "type": "error",
       "model": "mixtral-8x7b-32768",
       "status": "failed",
       "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
       "details": {
-        "articleTitle": "CM Vijay Announces Extension of Free Bus Travel for Differently-abled",
+        "articleTitle": "Messi's Wife Pens Emotional Retirement Note",
         "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788264545081-lrvv",
-      "timestamp": "2026-09-01T12:09:05.081Z",
+      "id": "log-1788267271593-q3g3",
+      "timestamp": "2026-09-01T12:54:31.593Z",
       "type": "error",
       "model": "llama-3.3-70b-versatile",
       "status": "failed",
       "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
       "details": {
-        "articleTitle": "CM Vijay Announces Extension of Free Bus Travel for Differently-abled",
+        "articleTitle": "Messi's Wife Pens Emotional Retirement Note",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788264544971-qmvq",
-      "timestamp": "2026-09-01T12:09:04.971Z",
+      "id": "log-1788267271224-yurn",
+      "timestamp": "2026-09-01T12:54:31.224Z",
       "type": "error",
       "model": "llama-3.1-8b-instant",
       "status": "failed",
       "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
       "details": {
-        "articleTitle": "CM Vijay Announces Extension of Free Bus Travel for Differently-abled",
+        "articleTitle": "Messi's Wife Pens Emotional Retirement Note",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788264540630-8o2t",
-      "timestamp": "2026-09-01T12:09:00.630Z",
+      "id": "log-1788267266952-ge4k",
+      "timestamp": "2026-09-01T12:54:26.952Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 910,
-      "latencyMs": 2832,
+      "tokens": 930,
+      "latencyMs": 3912,
       "status": "success",
-      "message": "Summarized \"Messi hangs up boots on Argentina career\" in 2832ms (910 tokens)",
+      "message": "Summarized \"Alliance saved as Vijay gets PM buzz\" in 3912ms (930 tokens)",
       "details": {
-        "promptTokens": 657,
+        "promptTokens": 677,
         "completionTokens": 253
       }
     },
     {
-      "id": "log-1788264533590-8x6j",
-      "timestamp": "2026-09-01T12:08:53.590Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 896,
-      "latencyMs": 2980,
-      "status": "success",
-      "message": "Summarized \"Trump welcomes Xi to Washington in September\" in 2980ms (896 tokens)",
-      "details": {
-        "promptTokens": 661,
-        "completionTokens": 235
-      }
-    },
-    {
-      "id": "log-1788264530604-vzvd",
-      "timestamp": "2026-09-01T12:08:50.604Z",
-      "type": "error",
-      "model": "gemma2-9b-it",
-      "status": "failed",
-      "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
-      "details": {
-        "articleTitle": "Trump 'Looking Forward' to Hosting Xi Jinping in September",
-        "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
-        "statusCode": 400
-      }
-    },
-    {
-      "id": "log-1788264530212-lkl6",
-      "timestamp": "2026-09-01T12:08:50.212Z",
-      "type": "error",
-      "model": "mixtral-8x7b-32768",
-      "status": "failed",
-      "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
-      "details": {
-        "articleTitle": "Trump 'Looking Forward' to Hosting Xi Jinping in September",
-        "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
-        "statusCode": 400
-      }
-    },
-    {
-      "id": "log-1788264529863-2hur",
-      "timestamp": "2026-09-01T12:08:49.863Z",
-      "type": "error",
-      "model": "llama-3.1-8b-instant",
-      "status": "failed",
-      "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
-      "details": {
-        "articleTitle": "Trump 'Looking Forward' to Hosting Xi Jinping in September",
-        "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
-        "statusCode": 404
-      }
-    },
-    {
-      "id": "log-1788264529772-iiyu",
-      "timestamp": "2026-09-01T12:08:49.772Z",
-      "type": "error",
-      "model": "llama-3.3-70b-versatile",
-      "status": "failed",
-      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
-      "details": {
-        "articleTitle": "Trump 'Looking Forward' to Hosting Xi Jinping in September",
-        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
-        "statusCode": 404
-      }
-    },
-    {
-      "id": "log-1788264525261-cf81",
-      "timestamp": "2026-09-01T12:08:45.261Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 986,
-      "latencyMs": 3613,
-      "status": "success",
-      "message": "Summarized \"Nepal’s glacial flood disaster toll jumps past 900\" in 3613ms (986 tokens)",
-      "details": {
-        "promptTokens": 698,
-        "completionTokens": 288
-      }
-    },
-    {
-      "id": "log-1788264521641-yi6h",
-      "timestamp": "2026-09-01T12:08:41.641Z",
-      "type": "error",
-      "model": "gemma2-9b-it",
-      "status": "failed",
-      "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
-      "details": {
-        "articleTitle": "Nepal Toll Surges as Rescuers Struggle Through Unimaginable Disaster",
-        "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
-        "statusCode": 400
-      }
-    },
-    {
-      "id": "log-1788264521294-sqs5",
-      "timestamp": "2026-09-01T12:08:41.294Z",
-      "type": "error",
-      "model": "llama-3.1-8b-instant",
-      "status": "failed",
-      "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
-      "details": {
-        "articleTitle": "Nepal Toll Surges as Rescuers Struggle Through Unimaginable Disaster",
-        "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
-        "statusCode": 404
-      }
-    },
-    {
-      "id": "log-1788264521159-f5yl",
-      "timestamp": "2026-09-01T12:08:41.159Z",
-      "type": "error",
-      "model": "llama-3.3-70b-versatile",
-      "status": "failed",
-      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
-      "details": {
-        "articleTitle": "Nepal Toll Surges as Rescuers Struggle Through Unimaginable Disaster",
-        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
-        "statusCode": 404
-      }
-    },
-    {
-      "id": "log-1788264521068-xkb0",
-      "timestamp": "2026-09-01T12:08:41.068Z",
-      "type": "error",
-      "model": "mixtral-8x7b-32768",
-      "status": "failed",
-      "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
-      "details": {
-        "articleTitle": "Nepal Toll Surges as Rescuers Struggle Through Unimaginable Disaster",
-        "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
-        "statusCode": 400
-      }
-    },
-    {
-      "id": "log-1788264515705-lg67",
-      "timestamp": "2026-09-01T12:08:35.705Z",
-      "type": "ai_request",
-      "model": "mistral:open-mistral-nemo",
-      "tokens": 1006,
-      "latencyMs": 3280,
-      "status": "success",
-      "message": "Summarized \"Messi bids farewell after legendary 21-year run\" in 3280ms (1006 tokens)",
-      "details": {
-        "promptTokens": 737,
-        "completionTokens": 269
-      }
-    },
-    {
-      "id": "log-1788264508075-hq1w",
-      "timestamp": "2026-09-01T12:08:28.075Z",
-      "type": "ai_request",
-      "model": "mistral:open-mistral-nemo",
-      "tokens": 1043,
-      "latencyMs": 4169,
-      "status": "success",
-      "message": "Summarized \"Saka fires Arsenal past Villa in title showdown\" in 4169ms (1043 tokens)",
-      "details": {
-        "promptTokens": 674,
-        "completionTokens": 369
-      }
-    },
-    {
-      "id": "log-1788264503899-bl4e",
-      "timestamp": "2026-09-01T12:08:23.899Z",
-      "type": "error",
-      "model": "mistral-small-latest",
-      "status": "failed",
-      "message": "⚠️ [mistral-small-latest] (503) {\"object\":\"error\",\"message\":\"Service temporarily unavailable due to high load, please retry.\",\"type\":\"internal_server_er",
-      "details": {
-        "articleTitle": "Saka Strikes as Flawless Arsenal Punish Troubled Villa",
-        "fullError": "{\"object\":\"error\",\"message\":\"Service temporarily unavailable due to high load, please retry.\",\"type\":\"internal_server_er",
-        "statusCode": 503
-      }
-    },
-    {
-      "id": "log-1788264503377-gxnp",
-      "timestamp": "2026-09-01T12:08:23.377Z",
-      "type": "error",
-      "model": "gemma2-9b-it",
-      "status": "failed",
-      "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
-      "details": {
-        "articleTitle": "Saka Strikes as Flawless Arsenal Punish Troubled Villa",
-        "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
-        "statusCode": 400
-      }
-    },
-    {
-      "id": "log-1788264503128-bqul",
-      "timestamp": "2026-09-01T12:08:23.128Z",
-      "type": "error",
-      "model": "mixtral-8x7b-32768",
-      "status": "failed",
-      "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
-      "details": {
-        "articleTitle": "Saka Strikes as Flawless Arsenal Punish Troubled Villa",
-        "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
-        "statusCode": 400
-      }
-    },
-    {
-      "id": "log-1788264502754-68bf",
-      "timestamp": "2026-09-01T12:08:22.754Z",
-      "type": "error",
-      "model": "llama-3.3-70b-versatile",
-      "status": "failed",
-      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
-      "details": {
-        "articleTitle": "Saka Strikes as Flawless Arsenal Punish Troubled Villa",
-        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
-        "statusCode": 404
-      }
-    },
-    {
-      "id": "log-1788264502668-vepn",
-      "timestamp": "2026-09-01T12:08:22.668Z",
-      "type": "error",
-      "model": "llama-3.1-8b-instant",
-      "status": "failed",
-      "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
-      "details": {
-        "articleTitle": "Saka Strikes as Flawless Arsenal Punish Troubled Villa",
-        "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
-        "statusCode": 404
-      }
-    },
-    {
-      "id": "log-1788264498403-on8m",
-      "timestamp": "2026-09-01T12:08:18.403Z",
+      "id": "log-1788267256647-mkz2",
+      "timestamp": "2026-09-01T12:54:16.647Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
       "tokens": 985,
-      "latencyMs": 3719,
+      "latencyMs": 5203,
       "status": "success",
-      "message": "Summarized \"Krishna’s birthday lights up Hyderabad!\" in 3719ms (985 tokens)",
+      "message": "Summarized \"Police crack down on crypto MLM scam ring\" in 5203ms (985 tokens)",
       "details": {
-        "promptTokens": 712,
-        "completionTokens": 273
+        "promptTokens": 698,
+        "completionTokens": 287
       }
     },
     {
-      "id": "log-1788264490162-hcsw",
-      "timestamp": "2026-09-01T12:08:10.162Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 949,
-      "latencyMs": 3911,
-      "status": "success",
-      "message": "Summarized \"Roommate beaten to death over trivial fight\" in 3911ms (949 tokens)",
-      "details": {
-        "promptTokens": 684,
-        "completionTokens": 265
-      }
-    },
-    {
-      "id": "log-1788264486231-b4um",
-      "timestamp": "2026-09-01T12:08:06.231Z",
+      "id": "log-1788267251441-vo24",
+      "timestamp": "2026-09-01T12:54:11.441Z",
       "type": "error",
       "model": "gemma2-9b-it",
       "status": "failed",
       "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
       "details": {
-        "articleTitle": "Man Arrested For Beating Roommate To Death In Najafgarh",
+        "articleTitle": "DGP Transfers MLM Cryptocurrency Trading Fraud Probe to EOW",
         "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788264485942-o7vs",
-      "timestamp": "2026-09-01T12:08:05.942Z",
+      "id": "log-1788267249944-l8uq",
+      "timestamp": "2026-09-01T12:54:09.944Z",
       "type": "error",
       "model": "mixtral-8x7b-32768",
       "status": "failed",
       "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
       "details": {
-        "articleTitle": "Man Arrested For Beating Roommate To Death In Najafgarh",
+        "articleTitle": "DGP Transfers MLM Cryptocurrency Trading Fraud Probe to EOW",
         "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788264485488-72qi",
-      "timestamp": "2026-09-01T12:08:05.488Z",
+      "id": "log-1788267249156-dx2m",
+      "timestamp": "2026-09-01T12:54:09.156Z",
       "type": "error",
       "model": "llama-3.1-8b-instant",
       "status": "failed",
       "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
       "details": {
-        "articleTitle": "Man Arrested For Beating Roommate To Death In Najafgarh",
+        "articleTitle": "DGP Transfers MLM Cryptocurrency Trading Fraud Probe to EOW",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788264485404-t9pc",
-      "timestamp": "2026-09-01T12:08:05.404Z",
+      "id": "log-1788267248860-euyu",
+      "timestamp": "2026-09-01T12:54:08.860Z",
       "type": "error",
       "model": "llama-3.3-70b-versatile",
       "status": "failed",
       "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
       "details": {
-        "articleTitle": "Man Arrested For Beating Roommate To Death In Najafgarh",
+        "articleTitle": "DGP Transfers MLM Cryptocurrency Trading Fraud Probe to EOW",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+        "statusCode": 404
+      }
+    },
+    {
+      "id": "log-1788267243900-kyzu",
+      "timestamp": "2026-09-01T12:54:03.900Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 778,
+      "latencyMs": 3288,
+      "status": "success",
+      "message": "Summarized \"Woman dies in suicide over husband’s drinking\" in 3288ms (778 tokens)",
+      "details": {
+        "promptTokens": 557,
+        "completionTokens": 221
+      }
+    },
+    {
+      "id": "log-1788267240610-s0km",
+      "timestamp": "2026-09-01T12:54:00.610Z",
+      "type": "error",
+      "model": "gemma2-9b-it",
+      "status": "failed",
+      "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
+      "details": {
+        "articleTitle": "Miryalaguda: Woman Ends Life Over Husband’s Drinking Habit",
+        "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
+        "statusCode": 400
+      }
+    },
+    {
+      "id": "log-1788267240132-23c4",
+      "timestamp": "2026-09-01T12:54:00.132Z",
+      "type": "error",
+      "model": "llama-3.1-8b-instant",
+      "status": "failed",
+      "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
+      "details": {
+        "articleTitle": "Miryalaguda: Woman Ends Life Over Husband’s Drinking Habit",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
+        "statusCode": 404
+      }
+    },
+    {
+      "id": "log-1788267239966-caer",
+      "timestamp": "2026-09-01T12:53:59.966Z",
+      "type": "error",
+      "model": "llama-3.3-70b-versatile",
+      "status": "failed",
+      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+      "details": {
+        "articleTitle": "Miryalaguda: Woman Ends Life Over Husband’s Drinking Habit",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+        "statusCode": 404
+      }
+    },
+    {
+      "id": "log-1788267239777-k0sp",
+      "timestamp": "2026-09-01T12:53:59.777Z",
+      "type": "error",
+      "model": "mixtral-8x7b-32768",
+      "status": "failed",
+      "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
+      "details": {
+        "articleTitle": "Miryalaguda: Woman Ends Life Over Husband’s Drinking Habit",
+        "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
+        "statusCode": 400
+      }
+    },
+    {
+      "id": "log-1788267230261-458g",
+      "timestamp": "2026-09-01T12:53:50.261Z",
+      "type": "ai_request",
+      "model": "mistral:open-mistral-nemo",
+      "tokens": 899,
+      "latencyMs": 2876,
+      "status": "success",
+      "message": "Summarized \"Devotees’ joy shattered in deadly jeep crash\" in 2876ms (899 tokens)",
+      "details": {
+        "promptTokens": 612,
+        "completionTokens": 287
+      }
+    },
+    {
+      "id": "log-1788267221934-1ap5",
+      "timestamp": "2026-09-01T12:53:41.934Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 723,
+      "latencyMs": 3235,
+      "status": "success",
+      "message": "Summarized \"840 tonnes of onions reach Chennai to fight shortage\" in 3235ms (723 tokens)",
+      "details": {
+        "promptTokens": 536,
+        "completionTokens": 187
+      }
+    },
+    {
+      "id": "log-1788267218694-o7hx",
+      "timestamp": "2026-09-01T12:53:38.694Z",
+      "type": "error",
+      "model": "gemma2-9b-it",
+      "status": "failed",
+      "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
+      "details": {
+        "articleTitle": "Onions Arrive From Nashik to Ease Shortage in TN",
+        "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
+        "statusCode": 400
+      }
+    },
+    {
+      "id": "log-1788267218366-p54n",
+      "timestamp": "2026-09-01T12:53:38.366Z",
+      "type": "error",
+      "model": "mixtral-8x7b-32768",
+      "status": "failed",
+      "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
+      "details": {
+        "articleTitle": "Onions Arrive From Nashik to Ease Shortage in TN",
+        "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
+        "statusCode": 400
+      }
+    },
+    {
+      "id": "log-1788267217987-7ias",
+      "timestamp": "2026-09-01T12:53:37.987Z",
+      "type": "error",
+      "model": "llama-3.3-70b-versatile",
+      "status": "failed",
+      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+      "details": {
+        "articleTitle": "Onions Arrive From Nashik to Ease Shortage in TN",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+        "statusCode": 404
+      }
+    },
+    {
+      "id": "log-1788267217841-6rgt",
+      "timestamp": "2026-09-01T12:53:37.841Z",
+      "type": "error",
+      "model": "llama-3.1-8b-instant",
+      "status": "failed",
+      "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
+      "details": {
+        "articleTitle": "Onions Arrive From Nashik to Ease Shortage in TN",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
+        "statusCode": 404
+      }
+    },
+    {
+      "id": "log-1788267211303-s7yd",
+      "timestamp": "2026-09-01T12:53:31.303Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 995,
+      "latencyMs": 3568,
+      "status": "success",
+      "message": "Summarized \"Court to rule on Stalin’s election challenge\" in 3568ms (995 tokens)",
+      "details": {
+        "promptTokens": 702,
+        "completionTokens": 293
+      }
+    },
+    {
+      "id": "log-1788267203028-rupf",
+      "timestamp": "2026-09-01T12:53:23.028Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 1050,
+      "latencyMs": 2845,
+      "status": "success",
+      "message": "Summarized \"CBI cracks Rs 28-crore rice scam probe\" in 2845ms (1050 tokens)",
+      "details": {
+        "promptTokens": 763,
+        "completionTokens": 287
+      }
+    },
+    {
+      "id": "log-1788267200174-5le1",
+      "timestamp": "2026-09-01T12:53:20.174Z",
+      "type": "error",
+      "model": "gemma2-9b-it",
+      "status": "failed",
+      "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
+      "details": {
+        "articleTitle": "Subsidised rice meant for labourers sold to traders: CBI probes Rs 28-crore ‘scam’",
+        "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
+        "statusCode": 400
+      }
+    },
+    {
+      "id": "log-1788267199851-e1at",
+      "timestamp": "2026-09-01T12:53:19.851Z",
+      "type": "error",
+      "model": "mixtral-8x7b-32768",
+      "status": "failed",
+      "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
+      "details": {
+        "articleTitle": "Subsidised rice meant for labourers sold to traders: CBI probes Rs 28-crore ‘scam’",
+        "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
+        "statusCode": 400
+      }
+    },
+    {
+      "id": "log-1788267199536-9p8w",
+      "timestamp": "2026-09-01T12:53:19.536Z",
+      "type": "error",
+      "model": "llama-3.1-8b-instant",
+      "status": "failed",
+      "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
+      "details": {
+        "articleTitle": "Subsidised rice meant for labourers sold to traders: CBI probes Rs 28-crore ‘scam’",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
+        "statusCode": 404
+      }
+    },
+    {
+      "id": "log-1788267199395-u5dl",
+      "timestamp": "2026-09-01T12:53:19.395Z",
+      "type": "error",
+      "model": "llama-3.3-70b-versatile",
+      "status": "failed",
+      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+      "details": {
+        "articleTitle": "Subsidised rice meant for labourers sold to traders: CBI probes Rs 28-crore ‘scam’",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
         "statusCode": 404
       }

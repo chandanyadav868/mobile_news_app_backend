@@ -133,13 +133,17 @@ export async function broadcastIngestPushToConnectedDevices(latestArticle: {
       to: token,
       sound: 'default',
       priority: 'high',
+      channelId: 'breaking-news',
       title: `⚡ ${latestArticle.category.toUpperCase()}: ${latestArticle.title}`,
       body: latestArticle.summary ? latestArticle.summary.slice(0, 120) + '...' : latestArticle.title,
       data: {
         articleId: latestArticle.id,
         category: latestArticle.category,
         url: latestArticle.url,
+        imageUrl: latestArticle.imageUrl,
       },
+      // Rich Media Banner Attachment for Inshorts-style BigPicture notification tray display
+      ...(latestArticle.imageUrl ? { attachments: [{ url: latestArticle.imageUrl }] } : {}),
     }));
 
     // Send in chunks of 100 to Expo Push API
