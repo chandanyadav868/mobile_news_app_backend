@@ -48,6 +48,7 @@ app.post('/api/beta/register', BetaController.registerTester);
 app.get('/api/beta/list', BetaController.getTesters);
 app.get('/api/beta/template', BetaController.getTemplate);
 app.post('/api/beta/template', BetaController.updateTemplate);
+app.get('/api/beta/preview', BetaController.renderLivePreview);
 app.post('/api/beta/preview', BetaController.renderLivePreview);
 app.post('/api/beta/send-invite', BetaController.sendInvitation);
 app.delete('/api/beta/:id', BetaController.deleteTester);

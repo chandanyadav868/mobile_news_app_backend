@@ -26,6 +26,7 @@ router.post('/beta/register', BetaController.registerTester);
 router.get('/beta/list', BetaController.getTesters);
 router.get('/beta/template', BetaController.getTemplate);
 router.post('/beta/template', BetaController.updateTemplate);
+router.get('/beta/preview', BetaController.renderLivePreview);
 router.post('/beta/preview', BetaController.renderLivePreview);
 router.post('/beta/send-invite', BetaController.sendInvitation);
 router.delete('/beta/:id', BetaController.deleteTester);

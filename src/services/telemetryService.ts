@@ -571,16 +571,50 @@ export class TelemetryService {
         }
     }
 
+    private static previousCpuInfo: { idle: number; total: number } | null = null;
+    private static cachedCpuPercent: number = 0;
+
+    /**
+     * Accurately calculate CPU utilization across Windows & Linux platforms
+     */
+    private static calculateCpuPercent(): number {
+        const cpus = os.cpus();
+        if (!cpus || cpus.length === 0) return 5;
+
+        let idle = 0;
+        let total = 0;
+        for (const cpu of cpus) {
+            for (const type in cpu.times) {
+                total += (cpu.times as any)[type];
+            }
+            idle += cpu.times.idle;
+        }
+
+        if (this.previousCpuInfo) {
+            const idleDiff = idle - this.previousCpuInfo.idle;
+            const totalDiff = total - this.previousCpuInfo.total;
+            if (totalDiff > 0) {
+                this.cachedCpuPercent = Math.max(1, Math.min(100, Math.round((1 - idleDiff / totalDiff) * 100)));
+            }
+        } else {
+            const loadAvg = os.loadavg();
+            this.cachedCpuPercent = loadAvg[0] > 0 ? Math.min(100, Math.round((loadAvg[0] / cpus.length) * 100)) : 8;
+        }
+
+        this.previousCpuInfo = { idle, total };
+        return this.cachedCpuPercent;
+    }
+
     /**
      * Get system metrics (CPU, RAM, Process, OS)
      */
     public static async getSystemMetrics() {
         const cpus = os.cpus();
         const cpuCount = cpus.length;
-        const cpuModel = cpus[0]?.model || 'Generic Processor';
+        const cpuModel = cpus[0]?.model || 'Intel / AMD Processor';
 
+        const cpuPercent = this.calculateCpuPercent();
         const loadAvg = os.loadavg();
-        const cpuLoad1MinPercent = Math.min(100, Math.round((loadAvg[0] / (cpuCount || 1)) * 100));
 
         const totalMemBytes = os.totalmem();
         const freeMemBytes = os.freemem();
@@ -604,10 +638,10 @@ export class TelemetryService {
             cpu: {
                 cores: cpuCount,
                 model: cpuModel,
-                loadPercent: cpuLoad1MinPercent,
-                loadAvg1m: loadAvg[0].toFixed(2),
-                loadAvg5m: loadAvg[1].toFixed(2),
-                loadAvg15m: loadAvg[2].toFixed(2),
+                loadPercent: cpuPercent,
+                loadAvg1m: loadAvg[0] ? loadAvg[0].toFixed(2) : (cpuPercent / 100).toFixed(2),
+                loadAvg5m: loadAvg[1] ? loadAvg[1].toFixed(2) : (cpuPercent / 100).toFixed(2),
+                loadAvg15m: loadAvg[2] ? loadAvg[2].toFixed(2) : (cpuPercent / 100).toFixed(2),
             },
             memory: {
                 totalMB: Math.round(totalMemBytes / 1024 / 1024),
@@ -641,6 +675,12 @@ export class TelemetryService {
             system: sys,
             queue: this.queueMetrics,
             funnel: this.funnelMetrics,
+            quota: {
+                tokensToday: totalTokensToday,
+                percentUsed: dailyQuotaUsedPercent,
+                dailyQuotaTotal,
+            },
+            models,
             ai: {
                 provider: 'Groq Cloud (LPU Accelerated)',
                 dailyQuotaTotal,

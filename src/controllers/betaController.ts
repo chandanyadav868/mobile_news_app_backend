@@ -459,18 +459,19 @@ export class BetaController {
     }
 
     /**
-     * Render Real-Time HTML Email Preview (POST /api/beta/preview)
+     * Render Real-Time HTML Email Preview (GET & POST /api/beta/preview)
      */
     public static renderLivePreview(req: Request, res: Response): void {
         try {
+            const overrides = req.method === 'POST' ? req.body : {};
             const template: EmailTemplateConfig = {
                 ...MailService.getTemplate(),
-                ...req.body,
+                ...overrides,
             };
             const sampleUser = {
                 name: 'Alex Sharma',
-                email: 'alex@example.com',
-                deviceType: req.body.sampleDevice || 'BOTH',
+                email: 'alex.sharma@example.com',
+                deviceType: overrides?.sampleDevice || 'BOTH',
             };
             const html = MailService.renderEmailHtml(template, sampleUser);
             res.setHeader('Content-Type', 'text/html');
@@ -547,13 +548,6 @@ export class BetaController {
      */
     public static renderCampaignStudio(req: Request, res: Response): void {
         const template = MailService.getTemplate();
-        const initialPreviewHtml = MailService.renderEmailHtml(template, {
-            name: 'Alex Sharma',
-            email: 'alex.sharma@example.com',
-            deviceType: 'BOTH',
-        });
-
-        const initialEncodedPreview = Buffer.from(initialPreviewHtml).toString('base64');
 
         const html = `<!DOCTYPE html>
 <html lang="en">
@@ -1086,7 +1080,7 @@ export class BetaController {
                 </div>
 
                 <div class="preview-iframe-wrapper" id="preview-wrapper" style="max-width: 380px;">
-                    <iframe id="email-preview-iframe" class="preview-iframe"></iframe>
+                    <iframe id="email-preview-iframe" class="preview-iframe" src="/api/beta/preview"></iframe>
                 </div>
             </div>
         </div>
@@ -1138,16 +1132,8 @@ export class BetaController {
         let allTestersData = [];
         let previewDebounceTimer = null;
 
-        // Initialize preview on page load immediately from base64 pre-rendered template
+        // Initialize subscribers on page load
         window.addEventListener('DOMContentLoaded', () => {
-            const iframe = document.getElementById('email-preview-iframe');
-            if (iframe) {
-                try {
-                    iframe.srcdoc = atob('${initialEncodedPreview}');
-                } catch(e) {
-                    updateLivePreview();
-                }
-            }
             loadTestersList();
         });
 

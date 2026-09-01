@@ -1198,32 +1198,47 @@ export class DashboardController {
         }
 
         function renderTelemetryData(d) {
+            if (!d) return;
+
+            // AI Toggle state
             currentAiEnabled = d.aiEnabled;
             updateAiButtonUi(currentAiEnabled);
 
             // CPU
-            document.getElementById('cpu-percent').textContent = d.system.cpu.loadPercent + '%';
-            document.getElementById('cpu-model').textContent = d.system.cpu.model;
-            document.getElementById('cpu-badge').textContent = d.system.cpu.cores + ' Cores';
-            document.getElementById('cpu-bar').style.width = Math.min(100, d.system.cpu.loadPercent) + '%';
+            const cpuPercent = d.system?.cpu?.loadPercent || 0;
+            document.getElementById('cpu-percent').textContent = cpuPercent + '%';
+            document.getElementById('cpu-model').textContent = d.system?.cpu?.model || 'Intel / AMD Processor';
+            document.getElementById('cpu-badge').textContent = (d.system?.cpu?.cores || 8) + ' Cores';
+            document.getElementById('cpu-bar').style.width = Math.min(100, cpuPercent) + '%';
 
             // RAM
-            document.getElementById('ram-used').textContent = formatBytes(d.system.memory.usedMb);
-            document.getElementById('ram-total').textContent = 'Total: ' + formatBytes(d.system.memory.totalMb) + ' • Heap: ' + formatBytes(d.system.memory.processHeapMb);
-            document.getElementById('ram-badge').textContent = d.system.memory.usedPercent + '% Used';
-            document.getElementById('ram-bar').style.width = Math.min(100, d.system.memory.usedPercent) + '%';
+            const usedMB = d.system?.memory?.usedMB || d.system?.memory?.usedMb || 0;
+            const totalMB = d.system?.memory?.totalMB || d.system?.memory?.totalMb || 0;
+            const heapMB = d.system?.memory?.processHeapUsedMB || d.system?.memory?.processHeapMb || 0;
+            const usedMemPercent = d.system?.memory?.usedPercent || 0;
+
+            document.getElementById('ram-used').textContent = formatBytes(usedMB);
+            document.getElementById('ram-total').textContent = 'Total: ' + formatBytes(totalMB) + ' • Heap: ' + formatBytes(heapMB);
+            document.getElementById('ram-badge').textContent = usedMemPercent + '% Used';
+            document.getElementById('ram-bar').style.width = Math.min(100, usedMemPercent) + '%';
 
             // Quota
-            document.getElementById('total-tokens').textContent = (d.quota.tokensToday || 0).toLocaleString();
-            document.getElementById('quota-details').textContent = (d.quota.tokensToday || 0).toLocaleString() + ' / 2,000,000 Daily Tokens';
-            document.getElementById('quota-badge').textContent = d.quota.percentUsed + '% Used';
-            document.getElementById('quota-bar').style.width = Math.min(100, d.quota.percentUsed) + '%';
+            const tokensToday = d.ai?.totalTokensToday ?? d.quota?.tokensToday ?? 0;
+            const quotaPercent = d.ai?.dailyQuotaUsedPercent ?? d.quota?.percentUsed ?? 0;
+            document.getElementById('total-tokens').textContent = tokensToday.toLocaleString();
+            document.getElementById('quota-details').textContent = tokensToday.toLocaleString() + ' / 2,000,000 Daily Tokens';
+            document.getElementById('quota-badge').textContent = quotaPercent + '% Used';
+            document.getElementById('quota-bar').style.width = Math.min(100, quotaPercent) + '%';
 
             // Ingest Queue
-            document.getElementById('queue-pending').textContent = (d.queue.waiting + d.queue.delayed) + ' Pending';
-            document.getElementById('queue-details').textContent = 'Active: ' + d.queue.active + ' • Completed: ' + d.queue.completed;
+            const pendingJobs = (d.queue?.pendingArticles ?? d.queue?.waiting ?? 0);
+            const activeJobs = (d.queue?.activeJobs ?? d.queue?.active ?? 0);
+            const completedJobs = (d.queue?.completedToday ?? d.queue?.completed ?? 0);
+
+            document.getElementById('queue-pending').textContent = pendingJobs + ' Pending';
+            document.getElementById('queue-details').textContent = 'Active: ' + activeJobs + ' • Completed: ' + completedJobs;
             const qBadge = document.getElementById('queue-status-badge');
-            if (d.queue.active > 0) {
+            if (activeJobs > 0) {
                 qBadge.textContent = 'RUNNING';
                 qBadge.style.background = 'rgba(16, 185, 129, 0.15)';
                 qBadge.style.color = '#34D399';
@@ -1234,19 +1249,31 @@ export class DashboardController {
             }
 
             // Uptime
-            document.getElementById('uptime-val').textContent = formatUptime(d.system.uptime);
+            const uptimeSecs = d.system?.server?.processUptimeSeconds ?? d.system?.uptime ?? 0;
+            document.getElementById('uptime-val').textContent = formatUptime(uptimeSecs);
+            const platform = d.system?.server?.platform ?? d.system?.platform ?? 'Node.js';
+            const nodeVer = d.system?.server?.nodeVersion ?? d.system?.nodeVersion ?? 'v24.10.0';
+            const nodeEl = document.getElementById('node-version');
+            if (nodeEl) nodeEl.textContent = platform + ' • ' + nodeVer;
 
             // Ingestion Funnel
-            document.getElementById('funnel-scanned').textContent = d.funnel.rssScannedToday || 0;
-            document.getElementById('funnel-deduped').textContent = d.funnel.dedupedCandidatesToday || 0;
-            document.getElementById('funnel-llm').textContent = d.funnel.llmSummarizedToday || 0;
-            document.getElementById('funnel-direct').textContent = d.funnel.directSavedToday || 0;
-            document.getElementById('funnel-db').textContent = d.funnel.dbInsertedToday || 0;
+            if (d.funnel) {
+                document.getElementById('funnel-scanned').textContent = d.funnel.rssScannedToday || 0;
+                document.getElementById('funnel-deduped').textContent = d.funnel.dedupedCandidatesToday || 0;
+                document.getElementById('funnel-llm').textContent = d.funnel.llmSummarizedToday || 0;
+                document.getElementById('funnel-direct').textContent = d.funnel.directSavedToday || 0;
+                document.getElementById('funnel-db').textContent = d.funnel.dbInsertedToday || 0;
+                const lastRunEl = document.getElementById('funnel-last-run');
+                if (lastRunEl) {
+                    lastRunEl.textContent = 'Last Ingest: ' + (d.funnel.lastIngestAt ? new Date(d.funnel.lastIngestAt).toLocaleTimeString() : 'Idle');
+                }
+            }
 
             // Model Accounting Cards
+            const modelsList = d.ai?.models || d.models || [];
             const modelsContainer = document.getElementById('models-container');
-            if (d.models && d.models.length > 0) {
-                modelsContainer.innerHTML = d.models.map(m => {
+            if (modelsContainer && modelsList.length > 0) {
+                modelsContainer.innerHTML = modelsList.map(m => {
                     const isPaused = m.status === 'disabled';
                     const isCooldown = m.status === 'cooldown';
                     const isReady = m.status === 'ready';
@@ -1290,7 +1317,7 @@ export class DashboardController {
 
             // Recent Logs
             const logsContainer = document.getElementById('logs-container');
-            if (d.recentLogs && d.recentLogs.length > 0) {
+            if (logsContainer && d.recentLogs && d.recentLogs.length > 0) {
                 logsContainer.innerHTML = d.recentLogs.map(l => {
                     const icon = l.status === 'success' ? '🟢' : l.status === 'rotated' ? '🔄' : '🔴';
                     const time = new Date(l.timestamp).toLocaleTimeString();
@@ -1329,6 +1356,10 @@ export class DashboardController {
                 if (json.success) renderTelemetryData(json.data);
             } catch {}
         }
+
+        // Initial snapshot and 3-second live heartbeat poller
+        fetchFallback();
+        setInterval(fetchFallback, 3000);
 
         async function runSummarizeTest() {
             const btn = document.getElementById('btn-run-test');

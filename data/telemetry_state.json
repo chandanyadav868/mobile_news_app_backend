@@ -25,9 +25,9 @@
       "completionTokensToday": 0,
       "totalTokensToday": 0,
       "lastLatencyMs": 0,
-      "status": "ready",
+      "status": "error",
       "lastUsedAt": null,
-      "errorsToday": 0,
+      "errorsToday": 1,
       "rateLimitResetAt": null
     },
     {
@@ -83,20 +83,20 @@
       "lastLatencyMs": 0,
       "status": "error",
       "lastUsedAt": null,
-      "errorsToday": 2,
+      "errorsToday": 14,
       "rateLimitResetAt": null
     },
     {
       "model": "groq:qwen/qwen3.8-27b",
       "displayName": "groq:qwen/qwen3.8-27b",
       "tier": 99,
-      "requestsToday": 3,
-      "promptTokensToday": 1980,
-      "completionTokensToday": 653,
-      "totalTokensToday": 2633,
-      "lastLatencyMs": 972,
+      "requestsToday": 22,
+      "promptTokensToday": 13118,
+      "completionTokensToday": 4556,
+      "totalTokensToday": 17674,
+      "lastLatencyMs": 1103,
       "status": "ready",
-      "lastUsedAt": "2026-09-01T16:28:13.057Z",
+      "lastUsedAt": "2026-09-01T17:01:27.241Z",
       "errorsToday": 0,
       "rateLimitResetAt": null
     },
@@ -104,13 +104,13 @@
       "model": "mistral:mistral-small-latest",
       "displayName": "mistral:mistral-small-latest",
       "tier": 99,
-      "requestsToday": 5,
-      "promptTokensToday": 2798,
-      "completionTokensToday": 1226,
-      "totalTokensToday": 4024,
-      "lastLatencyMs": 3298,
+      "requestsToday": 35,
+      "promptTokensToday": 20345,
+      "completionTokensToday": 8484,
+      "totalTokensToday": 28829,
+      "lastLatencyMs": 2713,
       "status": "ready",
-      "lastUsedAt": "2026-09-01T16:28:19.861Z",
+      "lastUsedAt": "2026-09-01T17:01:33.467Z",
       "errorsToday": 0,
       "rateLimitResetAt": null
     },
@@ -118,13 +118,13 @@
       "model": "groq:openai/gpt-oss-120b",
       "displayName": "groq:openai/gpt-oss-120b",
       "tier": 99,
-      "requestsToday": 3,
-      "promptTokensToday": 1563,
-      "completionTokensToday": 1800,
-      "totalTokensToday": 3363,
-      "lastLatencyMs": 5434,
+      "requestsToday": 22,
+      "promptTokensToday": 13306,
+      "completionTokensToday": 13102,
+      "totalTokensToday": 26408,
+      "lastLatencyMs": 9510,
       "status": "ready",
-      "lastUsedAt": "2026-09-01T16:28:28.813Z",
+      "lastUsedAt": "2026-09-01T17:01:46.500Z",
       "errorsToday": 0,
       "rateLimitResetAt": null
     },
@@ -132,13 +132,13 @@
       "model": "mistral:open-mistral-nemo",
       "displayName": "mistral:open-mistral-nemo",
       "tier": 99,
-      "requestsToday": 2,
-      "promptTokensToday": 1087,
-      "completionTokensToday": 609,
-      "totalTokensToday": 1696,
-      "lastLatencyMs": 16769,
+      "requestsToday": 18,
+      "promptTokensToday": 10812,
+      "completionTokensToday": 5090,
+      "totalTokensToday": 15902,
+      "lastLatencyMs": 3243,
       "status": "ready",
-      "lastUsedAt": "2026-09-01T16:27:51.858Z",
+      "lastUsedAt": "2026-09-01T17:00:59.356Z",
       "errorsToday": 0,
       "rateLimitResetAt": null
     },
@@ -146,579 +146,580 @@
       "model": "groq:openai/gpt-oss-20b",
       "displayName": "groq:openai/gpt-oss-20b",
       "tier": 99,
-      "requestsToday": 2,
-      "promptTokensToday": 1162,
-      "completionTokensToday": 1200,
-      "totalTokensToday": 2362,
-      "lastLatencyMs": 3966,
+      "requestsToday": 15,
+      "promptTokensToday": 8978,
+      "completionTokensToday": 9000,
+      "totalTokensToday": 17978,
+      "lastLatencyMs": 12610,
       "status": "ready",
-      "lastUsedAt": "2026-09-01T16:28:00.036Z",
+      "lastUsedAt": "2026-09-01T17:01:15.484Z",
       "errorsToday": 0,
       "rateLimitResetAt": null
     }
   ],
   "funnel": {
-    "rssScannedToday": 484513,
-    "dedupedCandidatesToday": 46140,
-    "llmSummarizedToday": 998,
-    "directSavedToday": 147,
-    "dbInsertedToday": 928,
-    "lastIngestDurationMs": 205861,
-    "lastIngestAt": "2026-09-01T16:28:32.454Z"
+    "rssScannedToday": 528520,
+    "dedupedCandidatesToday": 48930,
+    "llmSummarizedToday": 1095,
+    "directSavedToday": 149,
+    "dbInsertedToday": 1018,
+    "lastIngestDurationMs": 192855,
+    "lastIngestAt": "2026-09-01T16:58:13.509Z"
   },
   "logs": [
     {
-      "id": "log-1788280108813-5z1a",
-      "timestamp": "2026-09-01T16:28:28.813Z",
+      "id": "log-1788282106500-g68o",
+      "timestamp": "2026-09-01T17:01:46.500Z",
       "type": "ai_request",
       "model": "groq:openai/gpt-oss-120b",
-      "tokens": 1065,
-      "latencyMs": 5434,
+      "tokens": 1055,
+      "latencyMs": 9510,
       "status": "success",
-      "message": "Summarized \"Kanthapuram’s directive on curbs on women puts CPI(M) ties under strain\" in 5434ms (1065 tokens)",
+      "message": "Summarized \"GIANNO CALDWELL: Sanctuary cities call it compassion. Patricia Fox calls it the ultimate price\" in 9510ms (1055 tokens)",
+      "details": {
+        "promptTokens": 455,
+        "completionTokens": 600
+      }
+    },
+    {
+      "id": "log-1788282093467-dtko",
+      "timestamp": "2026-09-01T17:01:33.467Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 649,
+      "latencyMs": 2713,
+      "status": "success",
+      "message": "Summarized \"Ochocinco demands Rams-Bengals Super Bowl!\" in 2713ms (649 tokens)",
+      "details": {
+        "promptTokens": 432,
+        "completionTokens": 217
+      }
+    },
+    {
+      "id": "log-1788282087241-rnxq",
+      "timestamp": "2026-09-01T17:01:27.241Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 590,
+      "latencyMs": 1103,
+      "status": "success",
+      "message": "Summarized \"Americans Reject Lake America Rename\" in 1103ms (590 tokens)",
+      "details": {
+        "promptTokens": 417,
+        "completionTokens": 173
+      }
+    },
+    {
+      "id": "log-1788282082626-wrsh",
+      "timestamp": "2026-09-01T17:01:22.626Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 653,
+      "latencyMs": 2916,
+      "status": "success",
+      "message": "Summarized \"White House fires back at media claims\" in 2916ms (653 tokens)",
+      "details": {
+        "promptTokens": 424,
+        "completionTokens": 229
+      }
+    },
+    {
+      "id": "log-1788282079709-p327",
+      "timestamp": "2026-09-01T17:01:19.709Z",
+      "type": "error",
+      "model": "mistral-large-latest",
+      "status": "failed",
+      "message": "⚠️ [mistral-large-latest] (403) {\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
+      "details": {
+        "articleTitle": "White House brings receipts after media claims noncriminal ICE arrests ‘soaring’: ‘False narratives’",
+        "fullError": "{\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
+        "statusCode": 403
+      }
+    },
+    {
+      "id": "log-1788282075484-kd5q",
+      "timestamp": "2026-09-01T17:01:15.484Z",
+      "type": "ai_request",
+      "model": "groq:openai/gpt-oss-20b",
+      "tokens": 1071,
+      "latencyMs": 12610,
+      "status": "success",
+      "message": "Summarized \"FRANK SILLER: 'I love you, brother' -- the 9/11 loss that inspired a mission of service\" in 12610ms (1071 tokens)",
+      "details": {
+        "promptTokens": 471,
+        "completionTokens": 600
+      }
+    },
+    {
+      "id": "log-1788282059356-n8xp",
+      "timestamp": "2026-09-01T17:00:59.356Z",
+      "type": "ai_request",
+      "model": "mistral:open-mistral-nemo",
+      "tokens": 698,
+      "latencyMs": 3243,
+      "status": "success",
+      "message": "Summarized \"Quaid slams Hathaway as ‘horrible’ sequel pick\" in 3243ms (698 tokens)",
+      "details": {
+        "promptTokens": 430,
+        "completionTokens": 268
+      }
+    },
+    {
+      "id": "log-1788282048182-ljcv",
+      "timestamp": "2026-09-01T17:00:48.182Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 923,
+      "latencyMs": 2986,
+      "status": "success",
+      "message": "Summarized \"Chhattisgarh launches tribal tin ore portal\" in 2986ms (923 tokens)",
+      "details": {
+        "promptTokens": 687,
+        "completionTokens": 236
+      }
+    },
+    {
+      "id": "log-1788282040844-chk7",
+      "timestamp": "2026-09-01T17:00:40.844Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 906,
+      "latencyMs": 1935,
+      "status": "success",
+      "message": "Summarized \"Telangana Unveils Bold New Industrial Blueprint\" in 1935ms (906 tokens)",
+      "details": {
+        "promptTokens": 680,
+        "completionTokens": 226
+      }
+    },
+    {
+      "id": "log-1788281889949-epe1",
+      "timestamp": "2026-09-01T16:58:09.949Z",
+      "type": "ai_request",
+      "model": "groq:openai/gpt-oss-120b",
+      "tokens": 1048,
+      "latencyMs": 5506,
+      "status": "success",
+      "message": "Summarized \"Locals torch migrant shelters as Spain's PM points blame beyond the border\" in 5506ms (1048 tokens)",
+      "details": {
+        "promptTokens": 448,
+        "completionTokens": 600
+      }
+    },
+    {
+      "id": "log-1788281880926-ldle",
+      "timestamp": "2026-09-01T16:58:00.926Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 619,
+      "latencyMs": 22753,
+      "status": "success",
+      "message": "Summarized \"Smart firewalls lock down your Wi-Fi now\" in 22753ms (619 tokens)",
+      "details": {
+        "promptTokens": 407,
+        "completionTokens": 212
+      }
+    },
+    {
+      "id": "log-1788281854664-tkbz",
+      "timestamp": "2026-09-01T16:57:34.664Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 625,
+      "latencyMs": 1244,
+      "status": "success",
+      "message": "Summarized \"Heartland Young Adults Marry Early\" in 1244ms (625 tokens)",
+      "details": {
+        "promptTokens": 415,
+        "completionTokens": 210
+      }
+    },
+    {
+      "id": "log-1788281849906-zcl7",
+      "timestamp": "2026-09-01T16:57:29.906Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 636,
+      "latencyMs": 3305,
+      "status": "success",
+      "message": "Summarized \"Michigan Dems botch land acknowledgment\" in 3305ms (636 tokens)",
+      "details": {
+        "promptTokens": 418,
+        "completionTokens": 218
+      }
+    },
+    {
+      "id": "log-1788281846598-1jxy",
+      "timestamp": "2026-09-01T16:57:26.598Z",
+      "type": "error",
+      "model": "mistral-large-latest",
+      "status": "failed",
+      "message": "⚠️ [mistral-large-latest] (403) {\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
+      "details": {
+        "articleTitle": "Woke stunt goes horribly wrong as Michigan Dems open convention with brutal ‘land acknowledgment’",
+        "fullError": "{\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
+        "statusCode": 403
+      }
+    },
+    {
+      "id": "log-1788281842666-x1yv",
+      "timestamp": "2026-09-01T16:57:22.666Z",
+      "type": "ai_request",
+      "model": "groq:openai/gpt-oss-20b",
+      "tokens": 1065,
+      "latencyMs": 4657,
+      "status": "success",
+      "message": "Summarized \"Colin Kaepernick says NFL is 'actively blackballing me' 10 years after kneeling protest began\" in 4657ms (1065 tokens)",
       "details": {
         "promptTokens": 465,
         "completionTokens": 600
       }
     },
     {
-      "id": "log-1788280099862-bpi6",
-      "timestamp": "2026-09-01T16:28:19.862Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 642,
-      "latencyMs": 3298,
-      "status": "success",
-      "message": "Summarized \"Congress blasts Modi's GDP video as PR stunt\" in 3298ms (642 tokens)",
-      "details": {
-        "promptTokens": 422,
-        "completionTokens": 220
-      }
-    },
-    {
-      "id": "log-1788280093057-6jaw",
-      "timestamp": "2026-09-01T16:28:13.057Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 935,
-      "latencyMs": 972,
-      "status": "success",
-      "message": "Summarized \"Naini Coal Arrives at Yadadri\" in 972ms (935 tokens)",
-      "details": {
-        "promptTokens": 710,
-        "completionTokens": 225
-      }
-    },
-    {
-      "id": "log-1788280087789-nati",
-      "timestamp": "2026-09-01T16:28:07.789Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 867,
-      "latencyMs": 2978,
-      "status": "success",
-      "message": "Summarized \"Four trains halt at Hi-Tech City for festivals\" in 2978ms (867 tokens)",
-      "details": {
-        "promptTokens": 572,
-        "completionTokens": 295
-      }
-    },
-    {
-      "id": "log-1788280084809-kz02",
-      "timestamp": "2026-09-01T16:28:04.809Z",
-      "type": "error",
-      "model": "mistral-large-latest",
-      "status": "failed",
-      "message": "⚠️ [mistral-large-latest] (403) {\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
-      "details": {
-        "articleTitle": "Temporary halt at Hi-Tech City station for four trains to meet festival rush",
-        "fullError": "{\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
-        "statusCode": 403
-      }
-    },
-    {
-      "id": "log-1788280080036-e12y",
-      "timestamp": "2026-09-01T16:28:00.036Z",
-      "type": "ai_request",
-      "model": "groq:openai/gpt-oss-20b",
-      "tokens": 1299,
-      "latencyMs": 3966,
-      "status": "success",
-      "message": "Summarized \"Phase 1 of Census 2027 completed in TN; officials on to preparing District Census Handbook\" in 3966ms (1299 tokens)",
-      "details": {
-        "promptTokens": 699,
-        "completionTokens": 600
-      }
-    },
-    {
-      "id": "log-1788280071858-to5u",
-      "timestamp": "2026-09-01T16:27:51.858Z",
+      "id": "log-1788281834422-dp6f",
+      "timestamp": "2026-09-01T16:57:14.422Z",
       "type": "ai_request",
       "model": "mistral:open-mistral-nemo",
-      "tokens": 969,
-      "latencyMs": 16769,
+      "tokens": 960,
+      "latencyMs": 3401,
       "status": "success",
-      "message": "Summarized \"**KPSC Scam: CID Drags Out Beneficiaries, Names Middlemen**\" in 16769ms (969 tokens)",
+      "message": "Summarized \"Water talks spark hope for Tummidihatti project\" in 3401ms (960 tokens)",
       "details": {
-        "promptTokens": 654,
-        "completionTokens": 315
+        "promptTokens": 681,
+        "completionTokens": 279
       }
     },
     {
-      "id": "log-1788280050819-cb10",
-      "timestamp": "2026-09-01T16:27:30.819Z",
+      "id": "log-1788281826229-15gr",
+      "timestamp": "2026-09-01T16:57:06.229Z",
       "type": "ai_request",
       "model": "groq:openai/gpt-oss-120b",
-      "tokens": 1250,
-      "latencyMs": 5466,
+      "tokens": 1314,
+      "latencyMs": 6420,
       "status": "success",
-      "message": "Summarized \"Christian leader slams Vijaysai Reddy’s remarks on ‘forced conversions’\" in 5466ms (1250 tokens)",
+      "message": "Summarized \"MLA Bhupathi: Teaching Children With Disabilities Challenging\" in 6420ms (1314 tokens)",
       "details": {
-        "promptTokens": 650,
+        "promptTokens": 714,
         "completionTokens": 600
       }
     },
     {
-      "id": "log-1788280041131-mx2e",
-      "timestamp": "2026-09-01T16:27:21.131Z",
+      "id": "log-1788281815021-rafi",
+      "timestamp": "2026-09-01T16:56:55.021Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 1010,
-      "latencyMs": 2979,
+      "tokens": 619,
+      "latencyMs": 3056,
       "status": "success",
-      "message": "Summarized \"Radhakka’s final rites draw massive crowds\" in 2979ms (1010 tokens)",
-      "details": {
-        "promptTokens": 706,
-        "completionTokens": 304
-      }
-    },
-    {
-      "id": "log-1788280033775-c805",
-      "timestamp": "2026-09-01T16:27:13.775Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 603,
-      "latencyMs": 975,
-      "status": "success",
-      "message": "Summarized \"Defence Chief Targets 16 PSUs\" in 975ms (603 tokens)",
-      "details": {
-        "promptTokens": 415,
-        "completionTokens": 188
-      }
-    },
-    {
-      "id": "log-1788280029293-u30k",
-      "timestamp": "2026-09-01T16:27:09.293Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 603,
-      "latencyMs": 2225,
-      "status": "success",
-      "message": "Summarized \"BJP slams Rahul Gandhi over economy remarks\" in 2225ms (603 tokens)",
-      "details": {
-        "promptTokens": 414,
-        "completionTokens": 189
-      }
-    },
-    {
-      "id": "log-1788280027065-hr59",
-      "timestamp": "2026-09-01T16:27:07.065Z",
-      "type": "error",
-      "model": "mistral-large-latest",
-      "status": "failed",
-      "message": "⚠️ [mistral-large-latest] (403) {\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
-      "details": {
-        "articleTitle": "BJP demands Rahul Gandhi apologise for remarks on economy",
-        "fullError": "{\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
-        "statusCode": 403
-      }
-    },
-    {
-      "id": "log-1788280023128-okbt",
-      "timestamp": "2026-09-01T16:27:03.128Z",
-      "type": "ai_request",
-      "model": "groq:openai/gpt-oss-20b",
-      "tokens": 1063,
-      "latencyMs": 6598,
-      "status": "success",
-      "message": "Summarized \"Three candidates shortlisted for Ram Janmabhoomi Trust’s first CEO\" in 6598ms (1063 tokens)",
-      "details": {
-        "promptTokens": 463,
-        "completionTokens": 600
-      }
-    },
-    {
-      "id": "log-1788280013007-x811",
-      "timestamp": "2026-09-01T16:26:53.007Z",
-      "type": "ai_request",
-      "model": "mistral:open-mistral-nemo",
-      "tokens": 727,
-      "latencyMs": 3724,
-      "status": "success",
-      "message": "Summarized \"Andhra Pradesh swelters under deadly heatwave\" in 3724ms (727 tokens)",
+      "message": "Summarized \"Glacial collapse triggers deadly Nepal flood surge\" in 3056ms (619 tokens)",
       "details": {
         "promptTokens": 433,
-        "completionTokens": 294
+        "completionTokens": 186
       }
     },
     {
-      "id": "log-1788280005772-401o",
-      "timestamp": "2026-09-01T16:26:45.772Z",
+      "id": "log-1788281808452-x7sa",
+      "timestamp": "2026-09-01T16:56:48.452Z",
       "type": "ai_request",
-      "model": "groq:openai/gpt-oss-120b",
-      "tokens": 1048,
-      "latencyMs": 5720,
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 579,
+      "latencyMs": 791,
       "status": "success",
-      "message": "Summarized \"Apollo Cancer Centres launches cancer survivorship support community\" in 5720ms (1048 tokens)",
+      "message": "Summarized \"Germany Blames Russia For Drone Strike\" in 791ms (579 tokens)",
       "details": {
-        "promptTokens": 448,
+        "promptTokens": 410,
+        "completionTokens": 169
+      }
+    },
+    {
+      "id": "log-1788281804144-tsqr",
+      "timestamp": "2026-09-01T16:56:44.144Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 1058,
+      "latencyMs": 3181,
+      "status": "success",
+      "message": "Summarized \"Delhi loses 47 lakh voters in massive purge!\" in 3181ms (1058 tokens)",
+      "details": {
+        "promptTokens": 762,
+        "completionTokens": 296
+      }
+    },
+    {
+      "id": "log-1788281800960-vxd9",
+      "timestamp": "2026-09-01T16:56:40.960Z",
+      "type": "error",
+      "model": "mistral-large-latest",
+      "status": "failed",
+      "message": "⚠️ [mistral-large-latest] (403) {\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
+      "details": {
+        "articleTitle": "SIR In Numbers: Delhi Voter Exclusions And How It Exceeds Other States",
+        "fullError": "{\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
+        "statusCode": 403
+      }
+    },
+    {
+      "id": "log-1788281793621-m6zx",
+      "timestamp": "2026-09-01T16:56:33.621Z",
+      "type": "ai_request",
+      "model": "groq:openai/gpt-oss-20b",
+      "tokens": 1045,
+      "latencyMs": 3839,
+      "status": "success",
+      "message": "Summarized \"Houses Set On Fire By Armed Men In Manipur Village, Says Local Authority\" in 3839ms (1045 tokens)",
+      "details": {
+        "promptTokens": 445,
         "completionTokens": 600
       }
     },
     {
-      "id": "log-1788279996543-0m1u",
-      "timestamp": "2026-09-01T16:26:36.543Z",
+      "id": "log-1788281786235-i7pb",
+      "timestamp": "2026-09-01T16:56:26.235Z",
       "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 902,
-      "latencyMs": 2778,
+      "model": "mistral:open-mistral-nemo",
+      "tokens": 723,
+      "latencyMs": 2898,
       "status": "success",
-      "message": "Summarized \"SFI activists injured in violent police crackdown\" in 2778ms (902 tokens)",
+      "message": "Summarized \"Punjab polls shock wave: Five parties split stages in historic split\" in 2898ms (723 tokens)",
       "details": {
-        "promptTokens": 684,
-        "completionTokens": 218
+        "promptTokens": 446,
+        "completionTokens": 277
       }
     },
     {
-      "id": "log-1788279988924-z2ar",
-      "timestamp": "2026-09-01T16:26:28.924Z",
+      "id": "log-1788281779823-3rg5",
+      "timestamp": "2026-09-01T16:56:19.823Z",
+      "type": "ai_request",
+      "model": "groq:openai/gpt-oss-120b",
+      "tokens": 1328,
+      "latencyMs": 5400,
+      "status": "success",
+      "message": "Summarized \"Faridabad Girl, Punished In School Over Biryani Fight, Dies By Suicide\" in 5400ms (1328 tokens)",
+      "details": {
+        "promptTokens": 728,
+        "completionTokens": 600
+      }
+    },
+    {
+      "id": "log-1788281769397-vy5f",
+      "timestamp": "2026-09-01T16:56:09.397Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 1020,
+      "latencyMs": 3202,
+      "status": "success",
+      "message": "Summarized \"AI war erupts in UP: Akhilesh hits back, BJP roars foul\" in 3202ms (1020 tokens)",
+      "details": {
+        "promptTokens": 715,
+        "completionTokens": 305
+      }
+    },
+    {
+      "id": "log-1788281760007-hdbu",
+      "timestamp": "2026-09-01T16:56:00.007Z",
       "type": "ai_request",
       "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 1095,
-      "latencyMs": 1824,
+      "tokens": 889,
+      "latencyMs": 856,
       "status": "success",
-      "message": "Summarized \"Women Lead Hyderabad Voter Deletions\" in 1824ms (1095 tokens)",
+      "message": "Summarized \"Teachers Embrace AI Despite Infrastructure Gaps\" in 856ms (889 tokens)",
       "details": {
-        "promptTokens": 855,
+        "promptTokens": 677,
+        "completionTokens": 212
+      }
+    },
+    {
+      "id": "log-1788281663927-jg3u",
+      "timestamp": "2026-09-01T16:54:23.927Z",
+      "type": "ai_request",
+      "model": "groq:openai/gpt-oss-120b",
+      "tokens": 1060,
+      "latencyMs": 7817,
+      "status": "success",
+      "message": "Summarized \"Penta clinches World Heavyweight Championship match vs Roman Reigns after epic brawl with Rey Fenix\" in 7817ms (1060 tokens)",
+      "details": {
+        "promptTokens": 460,
+        "completionTokens": 600
+      }
+    },
+    {
+      "id": "log-1788281652604-medk",
+      "timestamp": "2026-09-01T16:54:12.604Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 648,
+      "latencyMs": 3345,
+      "status": "success",
+      "message": "Summarized \"Colts GM backs Keenan Allen after DUI arrest\" in 3345ms (648 tokens)",
+      "details": {
+        "promptTokens": 424,
+        "completionTokens": 224
+      }
+    },
+    {
+      "id": "log-1788281645752-6159",
+      "timestamp": "2026-09-01T16:54:05.752Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 928,
+      "latencyMs": 2547,
+      "status": "success",
+      "message": "Summarized \"Odisha Youth Dies After Village Fine\" in 2547ms (928 tokens)",
+      "details": {
+        "promptTokens": 688,
         "completionTokens": 240
       }
     },
     {
-      "id": "log-1788276000022-rnqh",
-      "timestamp": "2026-09-01T15:20:00.022Z",
-      "type": "ai_request",
-      "model": "groq:openai/gpt-oss-120b",
-      "tokens": 1145,
-      "latencyMs": 10690,
-      "status": "success",
-      "message": "Summarized \"NSW government to resume pill testing at music festivals but rejects calls for wider community rollout\" in 10690ms (1145 tokens)",
-      "details": {
-        "promptTokens": 545,
-        "completionTokens": 600
-      }
-    },
-    {
-      "id": "log-1788275985810-c8q4",
-      "timestamp": "2026-09-01T15:19:45.810Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 598,
-      "latencyMs": 3476,
-      "status": "success",
-      "message": "Summarized \"Royal mansion back on market with huge bill\" in 3476ms (598 tokens)",
-      "details": {
-        "promptTokens": 408,
-        "completionTokens": 190
-      }
-    },
-    {
-      "id": "log-1788275963428-mryn",
-      "timestamp": "2026-09-01T15:19:23.428Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 575,
-      "latencyMs": 1865,
-      "status": "success",
-      "message": "Summarized \"Families Save Big On School Costs\" in 1865ms (575 tokens)",
-      "details": {
-        "promptTokens": 401,
-        "completionTokens": 174
-      }
-    },
-    {
-      "id": "log-1788275949158-fryd",
-      "timestamp": "2026-09-01T15:19:09.158Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 916,
-      "latencyMs": 2662,
-      "status": "success",
-      "message": "Summarized \"Farage’s Reform tanks as Tories surge ahead\" in 2662ms (916 tokens)",
-      "details": {
-        "promptTokens": 674,
-        "completionTokens": 242
-      }
-    },
-    {
-      "id": "log-1788275946240-64db",
-      "timestamp": "2026-09-01T15:19:06.240Z",
-      "type": "error",
-      "model": "mistral-large-latest",
-      "status": "failed",
-      "message": "⚠️ [mistral-large-latest] (403) {\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
-      "details": {
-        "articleTitle": "Farage’s Reform crashes to third place in polls as Tories regain ground",
-        "fullError": "{\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
-        "statusCode": 403
-      }
-    },
-    {
-      "id": "log-1788275939773-zgvo",
-      "timestamp": "2026-09-01T15:18:59.773Z",
-      "type": "ai_request",
-      "model": "groq:openai/gpt-oss-20b",
-      "tokens": 1048,
-      "latencyMs": 4622,
-      "status": "success",
-      "message": "Summarized \"Council manager stole hundreds of laptops and iPads earmarked for vulnerable people during Covid-19 pandemic\" in 4622ms (1048 tokens)",
-      "details": {
-        "promptTokens": 448,
-        "completionTokens": 600
-      }
-    },
-    {
-      "id": "log-1788275931623-yakn",
-      "timestamp": "2026-09-01T15:18:51.623Z",
+      "id": "log-1788281636979-mahg",
+      "timestamp": "2026-09-01T16:53:56.979Z",
       "type": "ai_request",
       "model": "mistral:open-mistral-nemo",
-      "tokens": 758,
-      "latencyMs": 2854,
+      "tokens": 888,
+      "latencyMs": 3672,
       "status": "success",
-      "message": "Summarized \"Dyson unveils £420 toothbrush filming your teeth\" in 2854ms (758 tokens)",
+      "message": "Summarized \"Akshay Kumar Dons Wild Spirit for Corbett-Inspired Adventure\" in 3672ms (888 tokens)",
       "details": {
-        "promptTokens": 513,
-        "completionTokens": 245
+        "promptTokens": 601,
+        "completionTokens": 287
       }
     },
     {
-      "id": "log-1788275925240-t3bb",
-      "timestamp": "2026-09-01T15:18:45.240Z",
-      "type": "ai_request",
-      "model": "groq:openai/gpt-oss-120b",
-      "tokens": 1064,
-      "latencyMs": 7508,
-      "status": "success",
-      "message": "Summarized \"Grandfather finds hidden treasure in plain sight as park officials 'dumbfounded' by discovery\" in 7508ms (1064 tokens)",
-      "details": {
-        "promptTokens": 464,
-        "completionTokens": 600
-      }
-    },
-    {
-      "id": "log-1788275914215-7jmq",
-      "timestamp": "2026-09-01T15:18:34.215Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 617,
-      "latencyMs": 3948,
-      "status": "success",
-      "message": "Summarized \"Israel snatches Hamas commander in Gaza raid\" in 3948ms (617 tokens)",
-      "details": {
-        "promptTokens": 413,
-        "completionTokens": 204
-      }
-    },
-    {
-      "id": "log-1788275906748-o0ks",
-      "timestamp": "2026-09-01T15:18:26.748Z",
-      "type": "ai_request",
-      "model": "groq:openai/gpt-oss-120b",
-      "tokens": 1057,
-      "latencyMs": 10275,
-      "status": "success",
-      "message": "Summarized \"Tampa Bay Rays look to capitalize on struggling New York Mets as Freddy Peralta faces former team\" in 10275ms (1057 tokens)",
-      "details": {
-        "promptTokens": 457,
-        "completionTokens": 600
-      }
-    },
-    {
-      "id": "log-1788275606268-mv21",
-      "timestamp": "2026-09-01T15:13:26.268Z",
-      "type": "ai_request",
-      "model": "groq:openai/gpt-oss-120b",
-      "tokens": 1059,
-      "latencyMs": 7203,
-      "status": "success",
-      "message": "Summarized \"Logan Webb and Paul Skenes face off as struggling Giants visit Pirates in pitching duel\" in 7203ms (1059 tokens)",
-      "details": {
-        "promptTokens": 459,
-        "completionTokens": 600
-      }
-    },
-    {
-      "id": "log-1788275595547-v2tn",
-      "timestamp": "2026-09-01T15:13:15.547Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 995,
-      "latencyMs": 4350,
-      "status": "success",
-      "message": "Summarized \"Kia Syros EV hits roads with punch\" in 4350ms (995 tokens)",
-      "details": {
-        "promptTokens": 701,
-        "completionTokens": 294
-      }
-    },
-    {
-      "id": "log-1788275586762-nq8v",
-      "timestamp": "2026-09-01T15:13:06.762Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 863,
-      "latencyMs": 804,
-      "status": "success",
-      "message": "Summarized \"Modi Warns Global Trade Faces War Shock\" in 804ms (863 tokens)",
-      "details": {
-        "promptTokens": 661,
-        "completionTokens": 202
-      }
-    },
-    {
-      "id": "log-1788275580827-e9dl",
-      "timestamp": "2026-09-01T15:13:00.827Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 863,
-      "latencyMs": 3017,
-      "status": "success",
-      "message": "Summarized \"State workers strike over pay delays\" in 3017ms (863 tokens)",
-      "details": {
-        "promptTokens": 638,
-        "completionTokens": 225
-      }
-    },
-    {
-      "id": "log-1788275577807-m3xq",
-      "timestamp": "2026-09-01T15:12:57.807Z",
-      "type": "error",
-      "model": "mistral-large-latest",
-      "status": "failed",
-      "message": "⚠️ [mistral-large-latest] (403) {\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
-      "details": {
-        "articleTitle": "Employees stage demonstration demanding PRC, DA and OPS",
-        "fullError": "{\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
-        "statusCode": 403
-      }
-    },
-    {
-      "id": "log-1788275573327-xoih",
-      "timestamp": "2026-09-01T15:12:53.327Z",
+      "id": "log-1788281616127-tgwk",
+      "timestamp": "2026-09-01T16:53:36.127Z",
       "type": "ai_request",
       "model": "groq:openai/gpt-oss-20b",
-      "tokens": 1037,
-      "latencyMs": 3340,
+      "tokens": 1055,
+      "latencyMs": 6528,
       "status": "success",
-      "message": "Summarized \"Kerala Academy of Sciences award for research scholar\" in 3340ms (1037 tokens)",
+      "message": "Summarized \"Save Water, Grain As El Nino May Trigger Severe Drought: Anam\" in 6528ms (1055 tokens)",
       "details": {
-        "promptTokens": 437,
+        "promptTokens": 455,
         "completionTokens": 600
       }
     },
     {
-      "id": "log-1788275566429-puh7",
-      "timestamp": "2026-09-01T15:12:46.429Z",
+      "id": "log-1788281595984-9qu2",
+      "timestamp": "2026-09-01T16:53:15.984Z",
       "type": "ai_request",
       "model": "mistral:open-mistral-nemo",
-      "tokens": 1033,
-      "latencyMs": 3303,
+      "tokens": 847,
+      "latencyMs": 2457,
       "status": "success",
-      "message": "Summarized \"Fresh faces flood local polls with clean-cut ambition\" in 3303ms (1033 tokens)",
+      "message": "Summarized \"Farmers bloom with new hope for lemon profits\" in 2457ms (847 tokens)",
       "details": {
-        "promptTokens": 726,
-        "completionTokens": 307
-      }
-    },
-    {
-      "id": "log-1788275558910-7xdl",
-      "timestamp": "2026-09-01T15:12:38.910Z",
-      "type": "ai_request",
-      "model": "groq:openai/gpt-oss-120b",
-      "tokens": 1346,
-      "latencyMs": 6629,
-      "status": "success",
-      "message": "Summarized \"Samastha heads for showdown over IUML-backed Waqf meet\" in 6629ms (1346 tokens)",
-      "details": {
-        "promptTokens": 746,
-        "completionTokens": 600
-      }
-    },
-    {
-      "id": "log-1788275548338-3ncc",
-      "timestamp": "2026-09-01T15:12:28.338Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 582,
-      "latencyMs": 2387,
-      "status": "success",
-      "message": "Summarized \"Amaravati gets power grid upgrade boost!\" in 2387ms (582 tokens)",
-      "details": {
-        "promptTokens": 409,
-        "completionTokens": 173
-      }
-    },
-    {
-      "id": "log-1788275542433-9uqr",
-      "timestamp": "2026-09-01T15:12:22.433Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 960,
-      "latencyMs": 1284,
-      "status": "success",
-      "message": "Summarized \"Minister Slams NGO Over MPLADS Claims\" in 1284ms (960 tokens)",
-      "details": {
-        "promptTokens": 716,
+        "promptTokens": 603,
         "completionTokens": 244
       }
     },
     {
-      "id": "log-1788275537155-hkvq",
-      "timestamp": "2026-09-01T15:12:17.155Z",
+      "id": "log-1788281589525-z73q",
+      "timestamp": "2026-09-01T16:53:09.525Z",
       "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 646,
-      "latencyMs": 2558,
+      "model": "groq:openai/gpt-oss-120b",
+      "tokens": 1212,
+      "latencyMs": 8091,
       "status": "success",
-      "message": "Summarized \"Legendary mappilapattu composer Aboobacker dies\" in 2558ms (646 tokens)",
+      "message": "Summarized \"TMC Councillors Remove Dhuliyan Municipality Chairman\" in 8091ms (1212 tokens)",
       "details": {
-        "promptTokens": 425,
-        "completionTokens": 221
+        "promptTokens": 612,
+        "completionTokens": 600
       }
     },
     {
-      "id": "log-1788275534590-17dc",
-      "timestamp": "2026-09-01T15:12:14.590Z",
+      "id": "log-1788281577572-z06b",
+      "timestamp": "2026-09-01T16:52:57.572Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 990,
+      "latencyMs": 2696,
+      "status": "success",
+      "message": "Summarized \"BJP warns another Karnataka minister to quit\" in 2696ms (990 tokens)",
+      "details": {
+        "promptTokens": 709,
+        "completionTokens": 281
+      }
+    },
+    {
+      "id": "log-1788281571034-0zxz",
+      "timestamp": "2026-09-01T16:52:51.034Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 766,
+      "latencyMs": 926,
+      "status": "success",
+      "message": "Summarized \"Collector Shukla Wins Governor's Gold Medal\" in 926ms (766 tokens)",
+      "details": {
+        "promptTokens": 551,
+        "completionTokens": 215
+      }
+    },
+    {
+      "id": "log-1788281566130-g8vq",
+      "timestamp": "2026-09-01T16:52:46.130Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 936,
+      "latencyMs": 4063,
+      "status": "success",
+      "message": "Summarized \"Congress fires back at BRS scam claims\" in 4063ms (936 tokens)",
+      "details": {
+        "promptTokens": 672,
+        "completionTokens": 264
+      }
+    },
+    {
+      "id": "log-1788281562065-ka3m",
+      "timestamp": "2026-09-01T16:52:42.065Z",
       "type": "error",
       "model": "mistral-large-latest",
       "status": "failed",
       "message": "⚠️ [mistral-large-latest] (403) {\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
       "details": {
-        "articleTitle": "Mappilapattu composer Kozhikode Aboobacker passes away",
+        "articleTitle": "Yours Is a Govt of Scams, Ours Is One of Schemes: Kavya",
         "fullError": "{\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
         "statusCode": 403
       }
     },
     {
-      "id": "log-1788275530576-n1j5",
-      "timestamp": "2026-09-01T15:12:10.576Z",
+      "id": "log-1788281557506-5sy9",
+      "timestamp": "2026-09-01T16:52:37.506Z",
       "type": "ai_request",
       "model": "groq:openai/gpt-oss-20b",
-      "tokens": 1186,
-      "latencyMs": 3830,
+      "tokens": 1334,
+      "latencyMs": 4102,
       "status": "success",
-      "message": "Summarized \"Art Director Anand Sai’s son detained in hit-and-run case in Hyderabad\" in 3830ms (1186 tokens)",
+      "message": "Summarized \"Hyderabad’s Shruti Malpani Honoured with Bharat Gaurav Award 2026\" in 4102ms (1334 tokens)",
       "details": {
-        "promptTokens": 586,
+        "promptTokens": 734,
+        "completionTokens": 600
+      }
+    },
+    {
+      "id": "log-1788281549431-yt7f",
+      "timestamp": "2026-09-01T16:52:29.431Z",
+      "type": "ai_request",
+      "model": "mistral:open-mistral-nemo",
+      "tokens": 871,
+      "latencyMs": 3063,
+      "status": "success",
+      "message": "Summarized \"**Reddy unveils medical lifeline for NH 65 travelers**\" in 3063ms (871 tokens)",
+      "details": {
+        "promptTokens": 578,
+        "completionTokens": 293
+      }
+    },
+    {
+      "id": "log-1788281542239-rgar",
+      "timestamp": "2026-09-01T16:52:22.239Z",
+      "type": "ai_request",
+      "model": "groq:openai/gpt-oss-120b",
+      "tokens": 1328,
+      "latencyMs": 6284,
+      "status": "success",
+      "message": "Summarized \"Revision of auto fares being reviewed\" in 6284ms (1328 tokens)",
+      "details": {
+        "promptTokens": 728,
         "completionTokens": 600
       }
     }
