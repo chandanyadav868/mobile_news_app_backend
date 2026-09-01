@@ -211,7 +211,19 @@ export class TelemetryService {
                 const todayStr = new Date().toISOString().slice(0, 10);
                 if (data.trackedDate === todayStr && Array.isArray(data.models)) {
                     data.models.forEach((m: ModelUsageMetric) => {
-                        this.modelMetrics.set(m.model, m);
+                        // Only load metric counters for actively registered Groq & Mistral models
+                        if (this.modelMetrics.has(m.model)) {
+                            const current = this.modelMetrics.get(m.model)!;
+                            this.modelMetrics.set(m.model, {
+                                ...current,
+                                requestsToday: m.requestsToday || 0,
+                                promptTokensToday: m.promptTokensToday || 0,
+                                completionTokensToday: m.completionTokensToday || 0,
+                                totalTokensToday: m.totalTokensToday || 0,
+                                lastLatencyMs: m.lastLatencyMs || 0,
+                                lastUsedAt: m.lastUsedAt || null,
+                            });
+                        }
                     });
                     if (Array.isArray(data.logs)) {
                         this.logs = data.logs;
@@ -228,7 +240,7 @@ export class TelemetryService {
                     this.aiEnabled = data.aiEnabled;
                 }
 
-                console.log(`💾 [Telemetry] Loaded persistent state (AI Enabled: ${this.aiEnabled})`);
+                console.log(`💾 [Telemetry] Loaded persistent state (AI Enabled: ${this.aiEnabled}, Active Fleet: ${this.modelMetrics.size} models)`);
             }
         } catch (e: any) {
             console.warn('[Telemetry] Could not load state from disk:', e.message);
@@ -258,6 +270,35 @@ export class TelemetryService {
         } catch (e: any) {
             console.warn('[Telemetry] Save state error:', e.message);
         }
+    }
+
+    /**
+     * Resets all telemetry counters and aligns model registry to clean 0 state
+     */
+    public static resetTelemetryMetrics() {
+        this.modelMetrics.forEach((metric) => {
+            metric.requestsToday = 0;
+            metric.promptTokensToday = 0;
+            metric.completionTokensToday = 0;
+            metric.totalTokensToday = 0;
+            metric.lastLatencyMs = 0;
+            metric.status = 'ready';
+            metric.errorsToday = 0;
+            metric.lastUsedAt = null;
+        });
+        this.disabledModels.clear();
+        this.funnelMetrics = {
+            rssScannedToday: 0,
+            dedupedCandidatesToday: 0,
+            llmSummarizedToday: 0,
+            directSavedToday: 0,
+            dbInsertedToday: 0,
+            lastIngestDurationMs: 0,
+            lastIngestAt: null,
+        };
+        this.logs = [];
+        this.saveStateToDisk();
+        this.broadcastTelemetry();
     }
 
     /**

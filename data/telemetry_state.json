@@ -4,8 +4,8 @@
   "models": [
     {
       "model": "llama-3.3-70b-versatile",
-      "displayName": "llama-3.3-70b-versatile",
-      "tier": 99,
+      "displayName": "Groq LLaMA 3.3 70B (Ultra-Fast LPU)",
+      "tier": 1,
       "requestsToday": 0,
       "promptTokensToday": 0,
       "completionTokensToday": 0,
@@ -13,12 +13,12 @@
       "lastLatencyMs": 0,
       "status": "error",
       "lastUsedAt": null,
-      "errorsToday": 243,
+      "errorsToday": 7,
       "rateLimitResetAt": null
     },
     {
       "model": "mistral-small-latest",
-      "displayName": "Mistral Small (Secondary Fast Tier)",
+      "displayName": "Mistral Small (Fast Serverless)",
       "tier": 2,
       "requestsToday": 0,
       "promptTokensToday": 0,
@@ -27,13 +27,13 @@
       "lastLatencyMs": 0,
       "status": "error",
       "lastUsedAt": null,
-      "errorsToday": 8,
+      "errorsToday": 1,
       "rateLimitResetAt": null
     },
     {
       "model": "llama-3.1-8b-instant",
-      "displayName": "llama-3.1-8b-instant",
-      "tier": 99,
+      "displayName": "Groq LLaMA 3.1 8B (Sub-300ms)",
+      "tier": 1,
       "requestsToday": 0,
       "promptTokensToday": 0,
       "completionTokensToday": 0,
@@ -41,7 +41,7 @@
       "lastLatencyMs": 0,
       "status": "error",
       "lastUsedAt": null,
-      "errorsToday": 243,
+      "errorsToday": 7,
       "rateLimitResetAt": null
     },
     {
@@ -60,50 +60,22 @@
     },
     {
       "model": "mixtral-8x7b-32768",
-      "displayName": "mixtral-8x7b-32768",
-      "tier": 99,
-      "requestsToday": 0,
-      "promptTokensToday": 0,
-      "completionTokensToday": 0,
-      "totalTokensToday": 0,
-      "lastLatencyMs": 0,
-      "status": "error",
-      "lastUsedAt": null,
-      "errorsToday": 243,
-      "rateLimitResetAt": null
-    },
-    {
-      "model": "gemma2-9b-it",
-      "displayName": "gemma2-9b-it",
-      "tier": 99,
-      "requestsToday": 0,
-      "promptTokensToday": 0,
-      "completionTokensToday": 0,
-      "totalTokensToday": 0,
-      "lastLatencyMs": 0,
-      "status": "error",
-      "lastUsedAt": null,
-      "errorsToday": 241,
-      "rateLimitResetAt": null
-    },
-    {
-      "model": "gemini-3-flash-preview",
-      "displayName": "Gemini 3 Flash Live (Primary • Unlimited)",
+      "displayName": "Groq Mixtral 8x7B (High Throughput)",
       "tier": 1,
       "requestsToday": 0,
       "promptTokensToday": 0,
       "completionTokensToday": 0,
       "totalTokensToday": 0,
       "lastLatencyMs": 0,
-      "status": "rate_limited",
+      "status": "error",
       "lastUsedAt": null,
-      "errorsToday": 527,
+      "errorsToday": 7,
       "rateLimitResetAt": null
     },
     {
-      "model": "@cf/meta/llama-3.3-70b-instruct",
-      "displayName": "Cloudflare Llama 3.3 70B (Edge Tier)",
-      "tier": 3,
+      "model": "gemma2-9b-it",
+      "displayName": "Google Gemma 9B (Groq LPU Engine)",
+      "tier": 1,
       "requestsToday": 0,
       "promptTokensToday": 0,
       "completionTokensToday": 0,
@@ -111,62 +83,20 @@
       "lastLatencyMs": 0,
       "status": "error",
       "lastUsedAt": null,
-      "errorsToday": 1,
-      "rateLimitResetAt": null
-    },
-    {
-      "model": "qwen/qwen3.8-27b",
-      "displayName": "Qwen 3.8 27B (Groq • Exhausted)",
-      "tier": 4,
-      "requestsToday": 0,
-      "promptTokensToday": 0,
-      "completionTokensToday": 0,
-      "totalTokensToday": 0,
-      "lastLatencyMs": 0,
-      "status": "rate_limited",
-      "lastUsedAt": null,
-      "errorsToday": 0,
-      "rateLimitResetAt": null
-    },
-    {
-      "model": "gemini-2.5-flash",
-      "displayName": "gemini-2.5-flash",
-      "tier": 99,
-      "requestsToday": 0,
-      "promptTokensToday": 0,
-      "completionTokensToday": 0,
-      "totalTokensToday": 0,
-      "lastLatencyMs": 0,
-      "status": "rate_limited",
-      "lastUsedAt": null,
-      "errorsToday": 527,
-      "rateLimitResetAt": null
-    },
-    {
-      "model": "gemini-3.5-flash",
-      "displayName": "gemini-3.5-flash",
-      "tier": 99,
-      "requestsToday": 1,
-      "promptTokensToday": 423,
-      "completionTokensToday": 201,
-      "totalTokensToday": 624,
-      "lastLatencyMs": 39607,
-      "status": "rate_limited",
-      "lastUsedAt": "2026-09-01T07:08:10.043Z",
-      "errorsToday": 526,
+      "errorsToday": 7,
       "rateLimitResetAt": null
     },
     {
       "model": "mistral:mistral-small-latest",
       "displayName": "mistral:mistral-small-latest",
       "tier": 99,
-      "requestsToday": 510,
-      "promptTokensToday": 278097,
-      "completionTokensToday": 117607,
-      "totalTokensToday": 395704,
-      "lastLatencyMs": 3066,
+      "requestsToday": 8,
+      "promptTokensToday": 5387,
+      "completionTokensToday": 2103,
+      "totalTokensToday": 7490,
+      "lastLatencyMs": 2917,
       "status": "ready",
-      "lastUsedAt": "2026-09-01T11:55:53.845Z",
+      "lastUsedAt": "2026-09-01T12:09:35.664Z",
       "errorsToday": 0,
       "rateLimitResetAt": null
     },
@@ -174,567 +104,556 @@
       "model": "mistral:open-mistral-nemo",
       "displayName": "mistral:open-mistral-nemo",
       "tier": 99,
-      "requestsToday": 13,
-      "promptTokensToday": 6402,
-      "completionTokensToday": 3750,
-      "totalTokensToday": 10152,
-      "lastLatencyMs": 3912,
+      "requestsToday": 3,
+      "promptTokensToday": 1955,
+      "completionTokensToday": 916,
+      "totalTokensToday": 2871,
+      "lastLatencyMs": 3220,
       "status": "ready",
-      "lastUsedAt": "2026-09-01T09:31:29.578Z",
+      "lastUsedAt": "2026-09-01T12:09:16.791Z",
       "errorsToday": 0,
-      "rateLimitResetAt": null
-    },
-    {
-      "model": "@cf/qwen/qwen2.5-7b-instruct",
-      "displayName": "@cf/qwen/qwen2.5-7b-instruct",
-      "tier": 99,
-      "requestsToday": 0,
-      "promptTokensToday": 0,
-      "completionTokensToday": 0,
-      "totalTokensToday": 0,
-      "lastLatencyMs": 0,
-      "status": "error",
-      "lastUsedAt": null,
-      "errorsToday": 2,
       "rateLimitResetAt": null
     }
   ],
   "funnel": {
-    "rssScannedToday": 232508,
-    "dedupedCandidatesToday": 21604,
-    "llmSummarizedToday": 528,
-    "directSavedToday": 41,
-    "dbInsertedToday": 358,
-    "lastIngestDurationMs": 140310,
-    "lastIngestAt": "2026-09-01T11:52:20.327Z"
+    "rssScannedToday": 257916,
+    "dedupedCandidatesToday": 28350,
+    "llmSummarizedToday": 577,
+    "directSavedToday": 44,
+    "dbInsertedToday": 408,
+    "lastIngestDurationMs": 145544,
+    "lastIngestAt": "2026-09-01T12:02:25.590Z"
   },
   "logs": [
     {
-      "id": "log-1788263753845-qur8",
-      "timestamp": "2026-09-01T11:55:53.845Z",
+      "id": "log-1788264575664-dhkx",
+      "timestamp": "2026-09-01T12:09:35.664Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 712,
-      "latencyMs": 3066,
+      "tokens": 889,
+      "latencyMs": 2917,
       "status": "success",
-      "message": "Summarized \"Pawan Kalyan pumps ₹100 crore into Godavari villages\" in 3066ms (712 tokens)",
+      "message": "Summarized \"Congress shifts Colachel MLA to front row\" in 2917ms (889 tokens)",
       "details": {
-        "promptTokens": 458,
-        "completionTokens": 254
+        "promptTokens": 638,
+        "completionTokens": 251
       }
     },
     {
-      "id": "log-1788263750769-c99l",
-      "timestamp": "2026-09-01T11:55:50.769Z",
+      "id": "log-1788264572741-tkfl",
+      "timestamp": "2026-09-01T12:09:32.741Z",
       "type": "error",
       "model": "gemma2-9b-it",
       "status": "failed",
       "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
       "details": {
-        "articleTitle": "Pawan Kalyan sanctions another ₹100 crore for Godavari villages ahead of Pushkarams",
+        "articleTitle": "Colachel MLA Tharahai Cuthbert New Seat Sparks Attention in Assembly",
         "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788263750182-scku",
-      "timestamp": "2026-09-01T11:55:50.182Z",
+      "id": "log-1788264572494-gkav",
+      "timestamp": "2026-09-01T12:09:32.494Z",
       "type": "error",
       "model": "mixtral-8x7b-32768",
       "status": "failed",
       "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
       "details": {
-        "articleTitle": "Pawan Kalyan sanctions another ₹100 crore for Godavari villages ahead of Pushkarams",
+        "articleTitle": "Colachel MLA Tharahai Cuthbert New Seat Sparks Attention in Assembly",
         "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788263749648-kjyu",
-      "timestamp": "2026-09-01T11:55:49.648Z",
+      "id": "log-1788264572182-2q79",
+      "timestamp": "2026-09-01T12:09:32.182Z",
       "type": "error",
       "model": "llama-3.1-8b-instant",
       "status": "failed",
       "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
       "details": {
-        "articleTitle": "Pawan Kalyan sanctions another ₹100 crore for Godavari villages ahead of Pushkarams",
+        "articleTitle": "Colachel MLA Tharahai Cuthbert New Seat Sparks Attention in Assembly",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788263749493-t4qr",
-      "timestamp": "2026-09-01T11:55:49.493Z",
+      "id": "log-1788264572098-uglg",
+      "timestamp": "2026-09-01T12:09:32.098Z",
       "type": "error",
       "model": "llama-3.3-70b-versatile",
       "status": "failed",
       "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
       "details": {
-        "articleTitle": "Pawan Kalyan sanctions another ₹100 crore for Godavari villages ahead of Pushkarams",
+        "articleTitle": "Colachel MLA Tharahai Cuthbert New Seat Sparks Attention in Assembly",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788263536640-ex7u",
-      "timestamp": "2026-09-01T11:52:16.640Z",
+      "id": "log-1788264567272-gnny",
+      "timestamp": "2026-09-01T12:09:27.272Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 620,
-      "latencyMs": 2489,
+      "tokens": 969,
+      "latencyMs": 5456,
       "status": "success",
-      "message": "Summarized \"Son begs PM: Free my dad now!\" in 2489ms (620 tokens)",
+      "message": "Summarized \"Academician Sangamithra joins varsity syndicate\" in 5456ms (969 tokens)",
       "details": {
-        "promptTokens": 426,
-        "completionTokens": 194
+        "promptTokens": 704,
+        "completionTokens": 265
       }
     },
     {
-      "id": "log-1788263534148-pvf9",
-      "timestamp": "2026-09-01T11:52:14.148Z",
-      "type": "rate_limit",
-      "model": "gemini-3.5-flash",
-      "status": "failed",
-      "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "Jimmy Lai’s son tells Burnham: Help save my father, before it’s too late",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 33.881981159s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"33s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788263533905-pmlq",
-      "timestamp": "2026-09-01T11:52:13.905Z",
-      "type": "rate_limit",
-      "model": "gemini-2.5-flash",
-      "status": "failed",
-      "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "Jimmy Lai’s son tells Burnham: Help save my father, before it’s too late",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 34.128347614s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"34s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788263533463-dxa5",
-      "timestamp": "2026-09-01T11:52:13.463Z",
-      "type": "rate_limit",
-      "model": "gemini-3-flash-preview",
-      "status": "failed",
-      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "Jimmy Lai’s son tells Burnham: Help save my father, before it’s too late",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 34.552340734s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-3-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"34s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788263532866-ow3f",
-      "timestamp": "2026-09-01T11:52:12.866Z",
+      "id": "log-1788264561811-f3pr",
+      "timestamp": "2026-09-01T12:09:21.811Z",
       "type": "error",
       "model": "gemma2-9b-it",
       "status": "failed",
       "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
       "details": {
-        "articleTitle": "Jimmy Lai’s son tells Burnham: Help save my father, before it’s too late",
+        "articleTitle": "Governor R.V. Arlekar Nominates Senior Academician to Bharathiar Varsity Syndicate",
         "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788263532608-nzfm",
-      "timestamp": "2026-09-01T11:52:12.608Z",
-      "type": "error",
-      "model": "mixtral-8x7b-32768",
-      "status": "failed",
-      "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
-      "details": {
-        "articleTitle": "Jimmy Lai’s son tells Burnham: Help save my father, before it’s too late",
-        "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
-        "statusCode": 400
-      }
-    },
-    {
-      "id": "log-1788263532254-1jt9",
-      "timestamp": "2026-09-01T11:52:12.254Z",
-      "type": "error",
-      "model": "llama-3.3-70b-versatile",
-      "status": "failed",
-      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
-      "details": {
-        "articleTitle": "Jimmy Lai’s son tells Burnham: Help save my father, before it’s too late",
-        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
-        "statusCode": 404
-      }
-    },
-    {
-      "id": "log-1788263532176-ms9c",
-      "timestamp": "2026-09-01T11:52:12.176Z",
+      "id": "log-1788264561513-m2pm",
+      "timestamp": "2026-09-01T12:09:21.513Z",
       "type": "error",
       "model": "llama-3.1-8b-instant",
       "status": "failed",
       "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
       "details": {
-        "articleTitle": "Jimmy Lai’s son tells Burnham: Help save my father, before it’s too late",
+        "articleTitle": "Governor R.V. Arlekar Nominates Senior Academician to Bharathiar Varsity Syndicate",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788263528482-4bqm",
-      "timestamp": "2026-09-01T11:52:08.482Z",
+      "id": "log-1788264561407-mc07",
+      "timestamp": "2026-09-01T12:09:21.407Z",
+      "type": "error",
+      "model": "llama-3.3-70b-versatile",
+      "status": "failed",
+      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+      "details": {
+        "articleTitle": "Governor R.V. Arlekar Nominates Senior Academician to Bharathiar Varsity Syndicate",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+        "statusCode": 404
+      }
+    },
+    {
+      "id": "log-1788264561320-fxrw",
+      "timestamp": "2026-09-01T12:09:21.320Z",
+      "type": "error",
+      "model": "mixtral-8x7b-32768",
+      "status": "failed",
+      "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
+      "details": {
+        "articleTitle": "Governor R.V. Arlekar Nominates Senior Academician to Bharathiar Varsity Syndicate",
+        "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
+        "statusCode": 400
+      }
+    },
+    {
+      "id": "log-1788264556791-ng2h",
+      "timestamp": "2026-09-01T12:09:16.791Z",
+      "type": "ai_request",
+      "model": "mistral:open-mistral-nemo",
+      "tokens": 822,
+      "latencyMs": 3220,
+      "status": "success",
+      "message": "Summarized \"Telangana braces for heat, humidity, and scattered storms\" in 3220ms (822 tokens)",
+      "details": {
+        "promptTokens": 544,
+        "completionTokens": 278
+      }
+    },
+    {
+      "id": "log-1788264549509-odj5",
+      "timestamp": "2026-09-01T12:09:09.509Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 632,
-      "latencyMs": 2491,
+      "tokens": 906,
+      "latencyMs": 3481,
       "status": "success",
-      "message": "Summarized \"UK schools scramble to beat the heatwave\" in 2491ms (632 tokens)",
+      "message": "Summarized \"Vijay extends free bus travel for differently-abled\" in 3481ms (906 tokens)",
       "details": {
-        "promptTokens": 424,
-        "completionTokens": 208
+        "promptTokens": 633,
+        "completionTokens": 273
       }
     },
     {
-      "id": "log-1788263525988-yb2p",
-      "timestamp": "2026-09-01T11:52:05.988Z",
-      "type": "rate_limit",
-      "model": "gemini-3.5-flash",
-      "status": "failed",
-      "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "Experts explain how UK schools must adapt to heatwaves",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 42.029415665s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-3.5-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"42s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788263525673-bqq8",
-      "timestamp": "2026-09-01T11:52:05.673Z",
-      "type": "rate_limit",
-      "model": "gemini-2.5-flash",
-      "status": "failed",
-      "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "Experts explain how UK schools must adapt to heatwaves",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 42.35217633s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"42s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788263525401-bgc2",
-      "timestamp": "2026-09-01T11:52:05.401Z",
-      "type": "rate_limit",
-      "model": "gemini-3-flash-preview",
-      "status": "failed",
-      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "Experts explain how UK schools must adapt to heatwaves",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 42.630801595s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"42s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788263524681-wh5g",
-      "timestamp": "2026-09-01T11:52:04.681Z",
+      "id": "log-1788264546023-bjea",
+      "timestamp": "2026-09-01T12:09:06.023Z",
       "type": "error",
       "model": "gemma2-9b-it",
       "status": "failed",
       "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
       "details": {
-        "articleTitle": "Experts explain how UK schools must adapt to heatwaves",
+        "articleTitle": "CM Vijay Announces Extension of Free Bus Travel for Differently-abled",
         "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788263524399-slpd",
-      "timestamp": "2026-09-01T11:52:04.399Z",
+      "id": "log-1788264545691-ubgl",
+      "timestamp": "2026-09-01T12:09:05.691Z",
       "type": "error",
       "model": "mixtral-8x7b-32768",
       "status": "failed",
       "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
       "details": {
-        "articleTitle": "Experts explain how UK schools must adapt to heatwaves",
+        "articleTitle": "CM Vijay Announces Extension of Free Bus Travel for Differently-abled",
         "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788263523989-ub9t",
-      "timestamp": "2026-09-01T11:52:03.989Z",
+      "id": "log-1788264545081-lrvv",
+      "timestamp": "2026-09-01T12:09:05.081Z",
       "type": "error",
       "model": "llama-3.3-70b-versatile",
       "status": "failed",
       "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
       "details": {
-        "articleTitle": "Experts explain how UK schools must adapt to heatwaves",
+        "articleTitle": "CM Vijay Announces Extension of Free Bus Travel for Differently-abled",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788263523899-f6ad",
-      "timestamp": "2026-09-01T11:52:03.899Z",
+      "id": "log-1788264544971-qmvq",
+      "timestamp": "2026-09-01T12:09:04.971Z",
       "type": "error",
       "model": "llama-3.1-8b-instant",
       "status": "failed",
       "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
       "details": {
-        "articleTitle": "Experts explain how UK schools must adapt to heatwaves",
+        "articleTitle": "CM Vijay Announces Extension of Free Bus Travel for Differently-abled",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788263520124-buqs",
-      "timestamp": "2026-09-01T11:52:00.124Z",
+      "id": "log-1788264540630-8o2t",
+      "timestamp": "2026-09-01T12:09:00.630Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 597,
-      "latencyMs": 2663,
+      "tokens": 910,
+      "latencyMs": 2832,
       "status": "success",
-      "message": "Summarized \"Lynch estate fights $1.2bn HP fraud ruling\" in 2663ms (597 tokens)",
+      "message": "Summarized \"Messi hangs up boots on Argentina career\" in 2832ms (910 tokens)",
       "details": {
-        "promptTokens": 407,
-        "completionTokens": 190
+        "promptTokens": 657,
+        "completionTokens": 253
       }
     },
     {
-      "id": "log-1788263517454-mgd8",
-      "timestamp": "2026-09-01T11:51:57.454Z",
-      "type": "rate_limit",
-      "model": "gemini-3.5-flash",
-      "status": "failed",
-      "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "Mike Lynch’s estate wins right to challenge $1.2 billion HP fraud ruling",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 50.577430078s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"50s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788263517212-zjpp",
-      "timestamp": "2026-09-01T11:51:57.212Z",
-      "type": "rate_limit",
-      "model": "gemini-3-flash-preview",
-      "status": "failed",
-      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "Mike Lynch’s estate wins right to challenge $1.2 billion HP fraud ruling",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 50.805267534s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"50s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788263516839-wqic",
-      "timestamp": "2026-09-01T11:51:56.839Z",
-      "type": "rate_limit",
-      "model": "gemini-2.5-flash",
-      "status": "failed",
-      "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "Mike Lynch’s estate wins right to challenge $1.2 billion HP fraud ruling",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 51.179782507s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"51s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788263512977-hruh",
-      "timestamp": "2026-09-01T11:51:52.977Z",
+      "id": "log-1788264533590-8x6j",
+      "timestamp": "2026-09-01T12:08:53.590Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 1029,
-      "latencyMs": 3376,
+      "tokens": 896,
+      "latencyMs": 2980,
       "status": "success",
-      "message": "Summarized \"New jab smashes weight loss records!\" in 3376ms (1029 tokens)",
+      "message": "Summarized \"Trump welcomes Xi to Washington in September\" in 2980ms (896 tokens)",
       "details": {
-        "promptTokens": 718,
-        "completionTokens": 311
+        "promptTokens": 661,
+        "completionTokens": 235
       }
     },
     {
-      "id": "log-1788263509598-p7hu",
-      "timestamp": "2026-09-01T11:51:49.598Z",
-      "type": "rate_limit",
-      "model": "gemini-3.5-flash",
+      "id": "log-1788264530604-vzvd",
+      "timestamp": "2026-09-01T12:08:50.604Z",
+      "type": "error",
+      "model": "gemma2-9b-it",
       "status": "failed",
-      "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
       "details": {
-        "articleTitle": "Experimental weight loss jab outperforms Mounjaro in latest study",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 58.41586699s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"58s\"}]}}",
-        "statusCode": 429
+        "articleTitle": "Trump 'Looking Forward' to Hosting Xi Jinping in September",
+        "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
+        "statusCode": 400
       }
     },
     {
-      "id": "log-1788263509269-89m7",
-      "timestamp": "2026-09-01T11:51:49.269Z",
-      "type": "rate_limit",
-      "model": "gemini-3-flash-preview",
+      "id": "log-1788264530212-lkl6",
+      "timestamp": "2026-09-01T12:08:50.212Z",
+      "type": "error",
+      "model": "mixtral-8x7b-32768",
       "status": "failed",
-      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
       "details": {
-        "articleTitle": "Experimental weight loss jab outperforms Mounjaro in latest study",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 58.74700222s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-3-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"58s\"}]}}",
-        "statusCode": 429
+        "articleTitle": "Trump 'Looking Forward' to Hosting Xi Jinping in September",
+        "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
+        "statusCode": 400
       }
     },
     {
-      "id": "log-1788263509045-htfv",
-      "timestamp": "2026-09-01T11:51:49.045Z",
-      "type": "rate_limit",
-      "model": "gemini-2.5-flash",
+      "id": "log-1788264529863-2hur",
+      "timestamp": "2026-09-01T12:08:49.863Z",
+      "type": "error",
+      "model": "llama-3.1-8b-instant",
       "status": "failed",
-      "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
       "details": {
-        "articleTitle": "Experimental weight loss jab outperforms Mounjaro in latest study",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 59.015948297s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"59s\"}]}}",
-        "statusCode": 429
+        "articleTitle": "Trump 'Looking Forward' to Hosting Xi Jinping in September",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
+        "statusCode": 404
       }
     },
     {
-      "id": "log-1788263504227-6och",
-      "timestamp": "2026-09-01T11:51:44.227Z",
+      "id": "log-1788264529772-iiyu",
+      "timestamp": "2026-09-01T12:08:49.772Z",
+      "type": "error",
+      "model": "llama-3.3-70b-versatile",
+      "status": "failed",
+      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+      "details": {
+        "articleTitle": "Trump 'Looking Forward' to Hosting Xi Jinping in September",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+        "statusCode": 404
+      }
+    },
+    {
+      "id": "log-1788264525261-cf81",
+      "timestamp": "2026-09-01T12:08:45.261Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 621,
-      "latencyMs": 2860,
+      "tokens": 986,
+      "latencyMs": 3613,
       "status": "success",
-      "message": "Summarized \"Tories flip Brexit stance with Badenoch move\" in 2860ms (621 tokens)",
+      "message": "Summarized \"Nepal’s glacial flood disaster toll jumps past 900\" in 3613ms (986 tokens)",
       "details": {
-        "promptTokens": 424,
-        "completionTokens": 197
+        "promptTokens": 698,
+        "completionTokens": 288
       }
     },
     {
-      "id": "log-1788263501363-8o84",
-      "timestamp": "2026-09-01T11:51:41.363Z",
-      "type": "rate_limit",
-      "model": "gemini-3.5-flash",
+      "id": "log-1788264521641-yi6h",
+      "timestamp": "2026-09-01T12:08:41.641Z",
+      "type": "error",
+      "model": "gemma2-9b-it",
       "status": "failed",
-      "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
       "details": {
-        "articleTitle": "The Brexit surprise that Badenoch could be plotting after her Tory reshuffle",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 6.659661826s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"6s\"}]}}",
-        "statusCode": 429
+        "articleTitle": "Nepal Toll Surges as Rescuers Struggle Through Unimaginable Disaster",
+        "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
+        "statusCode": 400
       }
     },
     {
-      "id": "log-1788263501064-z2jc",
-      "timestamp": "2026-09-01T11:51:41.064Z",
-      "type": "rate_limit",
-      "model": "gemini-3-flash-preview",
+      "id": "log-1788264521294-sqs5",
+      "timestamp": "2026-09-01T12:08:41.294Z",
+      "type": "error",
+      "model": "llama-3.1-8b-instant",
       "status": "failed",
-      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
       "details": {
-        "articleTitle": "The Brexit surprise that Badenoch could be plotting after her Tory reshuffle",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 6.963880453s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-3-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"6s\"}]}}",
-        "statusCode": 429
+        "articleTitle": "Nepal Toll Surges as Rescuers Struggle Through Unimaginable Disaster",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
+        "statusCode": 404
       }
     },
     {
-      "id": "log-1788263500786-yav2",
-      "timestamp": "2026-09-01T11:51:40.786Z",
-      "type": "rate_limit",
-      "model": "gemini-2.5-flash",
+      "id": "log-1788264521159-f5yl",
+      "timestamp": "2026-09-01T12:08:41.159Z",
+      "type": "error",
+      "model": "llama-3.3-70b-versatile",
       "status": "failed",
-      "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
       "details": {
-        "articleTitle": "The Brexit surprise that Badenoch could be plotting after her Tory reshuffle",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 7.239320736s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"7s\"}]}}",
-        "statusCode": 429
+        "articleTitle": "Nepal Toll Surges as Rescuers Struggle Through Unimaginable Disaster",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+        "statusCode": 404
       }
     },
     {
-      "id": "log-1788263496903-lptf",
-      "timestamp": "2026-09-01T11:51:36.903Z",
+      "id": "log-1788264521068-xkb0",
+      "timestamp": "2026-09-01T12:08:41.068Z",
+      "type": "error",
+      "model": "mixtral-8x7b-32768",
+      "status": "failed",
+      "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
+      "details": {
+        "articleTitle": "Nepal Toll Surges as Rescuers Struggle Through Unimaginable Disaster",
+        "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
+        "statusCode": 400
+      }
+    },
+    {
+      "id": "log-1788264515705-lg67",
+      "timestamp": "2026-09-01T12:08:35.705Z",
+      "type": "ai_request",
+      "model": "mistral:open-mistral-nemo",
+      "tokens": 1006,
+      "latencyMs": 3280,
+      "status": "success",
+      "message": "Summarized \"Messi bids farewell after legendary 21-year run\" in 3280ms (1006 tokens)",
+      "details": {
+        "promptTokens": 737,
+        "completionTokens": 269
+      }
+    },
+    {
+      "id": "log-1788264508075-hq1w",
+      "timestamp": "2026-09-01T12:08:28.075Z",
+      "type": "ai_request",
+      "model": "mistral:open-mistral-nemo",
+      "tokens": 1043,
+      "latencyMs": 4169,
+      "status": "success",
+      "message": "Summarized \"Saka fires Arsenal past Villa in title showdown\" in 4169ms (1043 tokens)",
+      "details": {
+        "promptTokens": 674,
+        "completionTokens": 369
+      }
+    },
+    {
+      "id": "log-1788264503899-bl4e",
+      "timestamp": "2026-09-01T12:08:23.899Z",
+      "type": "error",
+      "model": "mistral-small-latest",
+      "status": "failed",
+      "message": "⚠️ [mistral-small-latest] (503) {\"object\":\"error\",\"message\":\"Service temporarily unavailable due to high load, please retry.\",\"type\":\"internal_server_er",
+      "details": {
+        "articleTitle": "Saka Strikes as Flawless Arsenal Punish Troubled Villa",
+        "fullError": "{\"object\":\"error\",\"message\":\"Service temporarily unavailable due to high load, please retry.\",\"type\":\"internal_server_er",
+        "statusCode": 503
+      }
+    },
+    {
+      "id": "log-1788264503377-gxnp",
+      "timestamp": "2026-09-01T12:08:23.377Z",
+      "type": "error",
+      "model": "gemma2-9b-it",
+      "status": "failed",
+      "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
+      "details": {
+        "articleTitle": "Saka Strikes as Flawless Arsenal Punish Troubled Villa",
+        "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
+        "statusCode": 400
+      }
+    },
+    {
+      "id": "log-1788264503128-bqul",
+      "timestamp": "2026-09-01T12:08:23.128Z",
+      "type": "error",
+      "model": "mixtral-8x7b-32768",
+      "status": "failed",
+      "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
+      "details": {
+        "articleTitle": "Saka Strikes as Flawless Arsenal Punish Troubled Villa",
+        "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
+        "statusCode": 400
+      }
+    },
+    {
+      "id": "log-1788264502754-68bf",
+      "timestamp": "2026-09-01T12:08:22.754Z",
+      "type": "error",
+      "model": "llama-3.3-70b-versatile",
+      "status": "failed",
+      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+      "details": {
+        "articleTitle": "Saka Strikes as Flawless Arsenal Punish Troubled Villa",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+        "statusCode": 404
+      }
+    },
+    {
+      "id": "log-1788264502668-vepn",
+      "timestamp": "2026-09-01T12:08:22.668Z",
+      "type": "error",
+      "model": "llama-3.1-8b-instant",
+      "status": "failed",
+      "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
+      "details": {
+        "articleTitle": "Saka Strikes as Flawless Arsenal Punish Troubled Villa",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
+        "statusCode": 404
+      }
+    },
+    {
+      "id": "log-1788264498403-on8m",
+      "timestamp": "2026-09-01T12:08:18.403Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 985,
+      "latencyMs": 3719,
+      "status": "success",
+      "message": "Summarized \"Krishna’s birthday lights up Hyderabad!\" in 3719ms (985 tokens)",
+      "details": {
+        "promptTokens": 712,
+        "completionTokens": 273
+      }
+    },
+    {
+      "id": "log-1788264490162-hcsw",
+      "timestamp": "2026-09-01T12:08:10.162Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
       "tokens": 949,
-      "latencyMs": 3183,
+      "latencyMs": 3911,
       "status": "success",
-      "message": "Summarized \"UK youth face friendless crisis surge\" in 3183ms (949 tokens)",
+      "message": "Summarized \"Roommate beaten to death over trivial fight\" in 3911ms (949 tokens)",
       "details": {
-        "promptTokens": 701,
-        "completionTokens": 248
+        "promptTokens": 684,
+        "completionTokens": 265
       }
     },
     {
-      "id": "log-1788263493716-g7ik",
-      "timestamp": "2026-09-01T11:51:33.716Z",
-      "type": "rate_limit",
-      "model": "gemini-3.5-flash",
+      "id": "log-1788264486231-b4um",
+      "timestamp": "2026-09-01T12:08:06.231Z",
+      "type": "error",
+      "model": "gemma2-9b-it",
       "status": "failed",
-      "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
       "details": {
-        "articleTitle": "Young people five times more likely to have no friends than a decade ago, experts find",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 14.299828053s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"14s\"}]}}",
-        "statusCode": 429
+        "articleTitle": "Man Arrested For Beating Roommate To Death In Najafgarh",
+        "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
+        "statusCode": 400
       }
     },
     {
-      "id": "log-1788263493395-kadt",
-      "timestamp": "2026-09-01T11:51:33.395Z",
-      "type": "rate_limit",
-      "model": "gemini-3-flash-preview",
+      "id": "log-1788264485942-o7vs",
+      "timestamp": "2026-09-01T12:08:05.942Z",
+      "type": "error",
+      "model": "mixtral-8x7b-32768",
       "status": "failed",
-      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
       "details": {
-        "articleTitle": "Young people five times more likely to have no friends than a decade ago, experts find",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 14.619504431s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"14s\"}]}}",
-        "statusCode": 429
+        "articleTitle": "Man Arrested For Beating Roommate To Death In Najafgarh",
+        "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
+        "statusCode": 400
       }
     },
     {
-      "id": "log-1788263493061-1ncb",
-      "timestamp": "2026-09-01T11:51:33.061Z",
-      "type": "rate_limit",
-      "model": "gemini-2.5-flash",
+      "id": "log-1788264485488-72qi",
+      "timestamp": "2026-09-01T12:08:05.488Z",
+      "type": "error",
+      "model": "llama-3.1-8b-instant",
       "status": "failed",
-      "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
       "details": {
-        "articleTitle": "Young people five times more likely to have no friends than a decade ago, experts find",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 14.95490079s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"14s\"}]}}",
-        "statusCode": 429
+        "articleTitle": "Man Arrested For Beating Roommate To Death In Najafgarh",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
+        "statusCode": 404
       }
     },
     {
-      "id": "log-1788263488601-zkmf",
-      "timestamp": "2026-09-01T11:51:28.601Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 598,
-      "latencyMs": 2914,
-      "status": "success",
-      "message": "Summarized \"Labour’s Burnham boost fades fast\" in 2914ms (598 tokens)",
-      "details": {
-        "promptTokens": 405,
-        "completionTokens": 193
-      }
-    },
-    {
-      "id": "log-1788263485683-206v",
-      "timestamp": "2026-09-01T11:51:25.683Z",
-      "type": "rate_limit",
-      "model": "gemini-3.5-flash",
+      "id": "log-1788264485404-t9pc",
+      "timestamp": "2026-09-01T12:08:05.404Z",
+      "type": "error",
+      "model": "llama-3.3-70b-versatile",
       "status": "failed",
-      "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
       "details": {
-        "articleTitle": "‘Burnham bounce’ is over, pollsters warn",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 22.337994668s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"22s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788263485367-vooo",
-      "timestamp": "2026-09-01T11:51:25.367Z",
-      "type": "rate_limit",
-      "model": "gemini-3-flash-preview",
-      "status": "failed",
-      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "‘Burnham bounce’ is over, pollsters warn",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 22.655100855s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-3-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"22s\"}]}}",
-        "statusCode": 429
+        "articleTitle": "Man Arrested For Beating Roommate To Death In Najafgarh",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+        "statusCode": 404
       }
     }
   ]

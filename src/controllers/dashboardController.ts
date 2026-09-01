@@ -98,6 +98,19 @@ export class DashboardController {
     }
 
     /**
+     * POST /api/v1/dashboard/reset-metrics
+     * Reset all model counters and metrics to clean 0 state
+     */
+    public static async resetMetrics(req: Request, res: Response): Promise<void> {
+        try {
+            TelemetryService.resetTelemetryMetrics();
+            res.json({ success: true, message: 'All telemetry metrics and fleet counters reset to clean 0 state' });
+        } catch (error: any) {
+            res.status(500).json({ success: false, message: error.message });
+        }
+    }
+
+    /**
      * POST /api/v1/dashboard/summarize-test
      * Interactive test summarization across Multi-Provider AI Mesh (supports exactOnly direct model testing)
      */
@@ -706,6 +719,9 @@ export class DashboardController {
                 <button class="btn-action" onclick="flushCache()">
                     <span>🧹 Flush Cache</span>
                 </button>
+                <button class="btn-action" onclick="resetTelemetryFleet()" style="border-color: rgba(239, 68, 68, 0.35); color: #F87171;">
+                    <span>🔄 Reset AI Fleet</span>
+                </button>
                 <button id="ai-toggle-btn" class="ai-toggle-btn" onclick="toggleAiSwitch()">
                     <span class="status-dot"></span>
                     <span id="ai-toggle-label">🟢 AI Summarizer: ACTIVE</span>
@@ -825,7 +841,7 @@ export class DashboardController {
         <section class="models-section">
             <div class="section-header">
                 <h2 class="section-title">🧠 Multi-Model AI Auto-Rotation & Failover Pool</h2>
-                <span class="val-sub">Google Gemini 3 Flash • Mistral AI • Cloudflare Workers AI • Groq (Optional)</span>
+                <span class="val-sub">Groq Cloud LPU (Primary Ultra-Fast) • Mistral AI Serverless</span>
             </div>
             <div class="models-list" id="models-container">
                 <!-- Populated dynamically via SSE -->
@@ -844,24 +860,17 @@ export class DashboardController {
                 <div class="input-group">
                     <label>Preferred Model (Direct Test / Zero Fallback)</label>
                     <select id="test-model">
-                        <option value="">Auto-Rotate (Multi-Provider Priority Pool)</option>
-                        <optgroup label="Google Gemini">
-                            <option value="gemini-3-flash-preview">Google Gemini 3 Flash Live (gemini-3-flash-preview)</option>
-                            <option value="gemini-2.5-flash">Google Gemini 2.5 Flash (gemini-2.5-flash)</option>
-                            <option value="gemini-3.5-flash">Google Gemini 3.5 Flash (gemini-3.5-flash)</option>
+                        <option value="">Auto-Rotate (Groq LPU ↔ Mistral AI Balanced Fleet)</option>
+                        <optgroup label="Groq Cloud LPU">
+                            <option value="llama-3.3-70b-versatile">Groq LLaMA 3.3 70B (llama-3.3-70b-versatile)</option>
+                            <option value="llama-3.1-8b-instant">Groq LLaMA 3.1 8B (llama-3.1-8b-instant)</option>
+                            <option value="mixtral-8x7b-32768">Groq Mixtral 8x7B (mixtral-8x7b-32768)</option>
+                            <option value="gemma2-9b-it">Google Gemma 9B on Groq (gemma2-9b-it)</option>
                         </optgroup>
-                        <optgroup label="Mistral AI">
+                        <optgroup label="Mistral AI Serverless">
                             <option value="mistral-small-latest">Mistral Small (mistral-small-latest)</option>
-                            <option value="open-mistral-nemo">Mistral Nemo (open-mistral-nemo)</option>
-                        </optgroup>
-                        <optgroup label="Cloudflare Workers AI">
-                            <option value="@cf/meta/llama-3.3-70b-instruct">Cloudflare Llama 3.3 70B (@cf/meta/llama-3.3-70b-instruct)</option>
-                            <option value="@cf/qwen/qwen2.5-7b-instruct">Cloudflare Qwen 2.5 7B (@cf/qwen/qwen2.5-7b-instruct)</option>
-                        </optgroup>
-                        <optgroup label="Groq Cloud">
-                            <option value="qwen/qwen3.8-27b">Groq Qwen 3.8 27B (qwen/qwen3.8-27b)</option>
-                            <option value="openai/gpt-oss-120b">Groq GPT-OSS 120B (openai/gpt-oss-120b)</option>
-                            <option value="openai/gpt-oss-20b">Groq GPT-OSS 20B (openai/gpt-oss-20b)</option>
+                            <option value="open-mistral-nemo">Mistral NeMo 12B (open-mistral-nemo)</option>
+                            <option value="mistral-large-latest">Mistral Large (mistral-large-latest)</option>
                         </optgroup>
                     </select>
                 </div>
@@ -974,6 +983,17 @@ export class DashboardController {
                 alert(json.message || 'Cache flushed');
             } catch (e) {
                 alert('Failed to flush cache: ' + e.message);
+            }
+        }
+
+        async function resetTelemetryFleet() {
+            if (!confirm('Reset all AI fleet metrics and align to clean 0 state?')) return;
+            try {
+                const res = await fetch('/api/v1/dashboard/reset-metrics', { method: 'POST' });
+                const json = await res.json();
+                alert(json.message || 'AI Fleet Reset');
+            } catch (e) {
+                alert('Failed to reset metrics: ' + e.message);
             }
         }
 

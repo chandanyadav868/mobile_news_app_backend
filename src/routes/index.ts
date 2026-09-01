@@ -27,6 +27,7 @@ router.post('/dashboard/toggle-ai', DashboardController.toggleAi);
 router.post('/dashboard/toggle-model', DashboardController.toggleModel);
 router.post('/dashboard/trigger-ingest', DashboardController.triggerIngest);
 router.post('/dashboard/clear-cache', DashboardController.clearCache);
+router.post('/dashboard/reset-metrics', DashboardController.resetMetrics);
 router.post('/dashboard/summarize-test', DashboardController.summarizeTest);
 
 router.get('/health', (_req: Request, res: Response) => {
