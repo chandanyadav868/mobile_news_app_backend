@@ -467,28 +467,17 @@ export async function ingestAllFeeds(): Promise<{
           modelUsed = 'RSS-Direct (0 tokens)';
           TelemetryService.incrementFunnel('directSaved', 1);
         } else {
-          // 🟢 Multi-Provider Load-Balancing: Distribute across Gemini, Groq, Mistral, and Cloudflare
-          let preferredModel: string | undefined = undefined;
-          let preferredProvider: string | undefined = undefined;
-          if (i < 3) {
-            preferredProvider = 'gemini';
-            preferredModel = 'gemini-3-flash-preview';
-          } else if (i < 8) {
-            preferredProvider = 'groq';
-            preferredModel = 'llama-3.3-70b-versatile';
-          } else if (i < 13) {
-            preferredProvider = 'gemini';
-            preferredModel = 'gemini-2.5-flash';
-          } else if (i < 18) {
-            preferredProvider = 'groq';
-            preferredModel = 'llama-3.1-8b-instant';
-          } else if (i < 23) {
-            preferredProvider = 'mistral';
-            preferredModel = 'mistral-small-latest';
-          } else {
-            preferredProvider = 'cloudflare';
-            preferredModel = '@cf/meta/llama-3.3-70b-instruct';
-          }
+          // 🟢 High-Speed Multi-Model Rotation: Alternate dynamically between Groq LPU & Mistral AI
+          const rotatingEngines = [
+            { provider: 'groq', model: 'llama-3.3-70b-versatile' },
+            { provider: 'mistral', model: 'mistral-small-latest' },
+            { provider: 'groq', model: 'llama-3.1-8b-instant' },
+            { provider: 'mistral', model: 'open-mistral-nemo' },
+            { provider: 'groq', model: 'mixtral-8x7b-32768' },
+          ];
+          const assigned = rotatingEngines[i % rotatingEngines.length];
+          const preferredProvider = assigned.provider;
+          const preferredModel = assigned.model;
 
           const aiResult = await UniversalLlmService.summarizeNews({
             title: finalTitle,

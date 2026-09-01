@@ -82,22 +82,16 @@ export class TelemetryService {
     // Active SSE Stream Clients
     private static sseClients: Response[] = [];
 
-    // Set of manually disabled models by user
-    private static disabledModels: Set<string> = new Set<string>([
-        // Groq disabled by default due to daily token exhaustion
-        'qwen/qwen3.8-27b',
-        'qwen/qwen3.6-27b',
-        'openai/gpt-oss-120b',
-        'openai/gpt-oss-20b',
-    ]);
+    // Set of manually disabled models by user (empty by default so all Groq & Mistral models rotate)
+    private static disabledModels: Set<string> = new Set<string>();
 
-    // Per-Model Accounting Map
+    // Per-Model Accounting Map (Groq LPU + Mistral AI Fleet)
     private static modelMetrics: Map<string, ModelUsageMetric> = new Map([
         [
-            'gemini-3-flash-preview',
+            'llama-3.3-70b-versatile',
             {
-                model: 'gemini-3-flash-preview',
-                displayName: 'Gemini 3 Flash Live (Primary • Unlimited)',
+                model: 'llama-3.3-70b-versatile',
+                displayName: 'Groq LLaMA 3.3 70B (Ultra-Fast LPU)',
                 tier: 1,
                 requestsToday: 0,
                 promptTokensToday: 0,
@@ -114,7 +108,7 @@ export class TelemetryService {
             'mistral-small-latest',
             {
                 model: 'mistral-small-latest',
-                displayName: 'Mistral Small (Secondary Fast Tier)',
+                displayName: 'Mistral Small (Fast Serverless)',
                 tier: 2,
                 requestsToday: 0,
                 promptTokensToday: 0,
@@ -128,11 +122,11 @@ export class TelemetryService {
             },
         ],
         [
-            '@cf/meta/llama-3.3-70b-instruct',
+            'llama-3.1-8b-instant',
             {
-                model: '@cf/meta/llama-3.3-70b-instruct',
-                displayName: 'Cloudflare Llama 3.3 70B (Edge Tier)',
-                tier: 3,
+                model: 'llama-3.1-8b-instant',
+                displayName: 'Groq LLaMA 3.1 8B (Sub-300ms)',
+                tier: 1,
                 requestsToday: 0,
                 promptTokensToday: 0,
                 completionTokensToday: 0,
@@ -145,17 +139,51 @@ export class TelemetryService {
             },
         ],
         [
-            'qwen/qwen3.8-27b',
+            'open-mistral-nemo',
             {
-                model: 'qwen/qwen3.8-27b',
-                displayName: 'Qwen 3.8 27B (Groq • Exhausted)',
-                tier: 4,
+                model: 'open-mistral-nemo',
+                displayName: 'Mistral NeMo 12B (High Precision)',
+                tier: 2,
                 requestsToday: 0,
                 promptTokensToday: 0,
                 completionTokensToday: 0,
                 totalTokensToday: 0,
                 lastLatencyMs: 0,
-                status: 'rate_limited',
+                status: 'ready',
+                lastUsedAt: null,
+                errorsToday: 0,
+                rateLimitResetAt: null,
+            },
+        ],
+        [
+            'mixtral-8x7b-32768',
+            {
+                model: 'mixtral-8x7b-32768',
+                displayName: 'Groq Mixtral 8x7B (High Throughput)',
+                tier: 1,
+                requestsToday: 0,
+                promptTokensToday: 0,
+                completionTokensToday: 0,
+                totalTokensToday: 0,
+                lastLatencyMs: 0,
+                status: 'ready',
+                lastUsedAt: null,
+                errorsToday: 0,
+                rateLimitResetAt: null,
+            },
+        ],
+        [
+            'gemma2-9b-it',
+            {
+                model: 'gemma2-9b-it',
+                displayName: 'Google Gemma 9B (Groq LPU Engine)',
+                tier: 1,
+                requestsToday: 0,
+                promptTokensToday: 0,
+                completionTokensToday: 0,
+                totalTokensToday: 0,
+                lastLatencyMs: 0,
+                status: 'ready',
                 lastUsedAt: null,
                 errorsToday: 0,
                 rateLimitResetAt: null,

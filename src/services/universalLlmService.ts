@@ -24,55 +24,11 @@ export interface LlmProviderConfig {
 }
 
 export class UniversalLlmService {
-    // Multi-Provider Registry in Priority Failover Order (Tier 1: Unlimited Google Gemini)
+    // Dual High-Speed Rotating Providers: Groq Cloud LPU + Mistral AI Serverless
     private static getProviders(): LlmProviderConfig[] {
         const providers: LlmProviderConfig[] = [];
 
-        // 1. Google Gemini (Tier 1: High Quality & High Speed)
-        if (env.GEMINI_API_KEY) {
-            providers.push({
-                id: 'gemini',
-                name: 'Google Gemini',
-                baseUrl: 'https://generativelanguage.googleapis.com',
-                apiKey: env.GEMINI_API_KEY,
-                models: [
-                    'gemini-3-flash-preview',
-                    'gemini-2.5-flash',
-                    'gemini-3.5-flash',
-                ],
-            });
-        }
-
-        // 2. Mistral AI (Tier 2: Fast European Serverless Engine)
-        if (env.MISTRAL_API_KEY) {
-            providers.push({
-                id: 'mistral',
-                name: 'Mistral AI',
-                baseUrl: env.MISTRAL_BASE_URL.replace(/\/chat\/completions\/?$/, '').replace(/\/$/, ''),
-                apiKey: env.MISTRAL_API_KEY,
-                models: [
-                    'mistral-small-latest',
-                    'open-mistral-nemo',
-                    'mistral-large-latest',
-                ],
-            });
-        }
-
-        // 3. Cloudflare Workers AI (Tier 3: Global Edge Tier)
-        if (env.CLOUDFLARE_API_TOKEN && env.CLOUDFLARE_ACCOUNT_ID) {
-            providers.push({
-                id: 'cloudflare',
-                name: 'Cloudflare Workers AI',
-                baseUrl: `https://api.cloudflare.com/client/v4/accounts/${env.CLOUDFLARE_ACCOUNT_ID}/ai/v1`,
-                apiKey: env.CLOUDFLARE_API_TOKEN,
-                models: [
-                    '@cf/meta/llama-3.3-70b-instruct',
-                    '@cf/qwen/qwen2.5-7b-instruct',
-                ],
-            });
-        }
-
-        // 4. Groq Cloud (Tier 4: Ultra-Fast LPU Engine)
+        // 1. Groq Cloud (Primary Ultra-Fast LPU Engine: 500+ Tokens/sec)
         if (env.GROQ_API_KEY) {
             providers.push({
                 id: 'groq',
@@ -84,8 +40,21 @@ export class UniversalLlmService {
                     'llama-3.1-8b-instant',
                     'mixtral-8x7b-32768',
                     'gemma2-9b-it',
-                    'qwen/qwen3.8-27b',
-                    'qwen/qwen3.6-27b',
+                ],
+            });
+        }
+
+        // 2. Mistral AI (High-Speed European Serverless Engine)
+        if (env.MISTRAL_API_KEY) {
+            providers.push({
+                id: 'mistral',
+                name: 'Mistral AI',
+                baseUrl: env.MISTRAL_BASE_URL.replace(/\/chat\/completions\/?$/, '').replace(/\/$/, ''),
+                apiKey: env.MISTRAL_API_KEY,
+                models: [
+                    'mistral-small-latest',
+                    'open-mistral-nemo',
+                    'mistral-large-latest',
                 ],
             });
         }
