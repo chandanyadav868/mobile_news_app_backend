@@ -26,11 +26,16 @@ export class SpeechController {
                 return;
             }
 
-            const chosenVoice = voice || (lang ? TTSService.getVoiceForLanguage(lang) : 'en-IN-NeerjaNeural');
+            const detected = TTSService.detectLanguageFromText(text);
+            const chosenVoice = voice && voice !== 'en-IN-NeerjaNeural'
+                ? voice
+                : (detected.lang !== 'en' ? detected.voice : (lang ? TTSService.getVoiceForLanguage(lang) : 'en-IN-NeerjaNeural'));
+            const effectiveLang = lang || detected.lang || 'en';
+
             const startTime = Date.now();
             console.log(`\n===============================================================`);
             console.log(`🎧 [VOICE ENGINE DISPATCH] >>> ENGINE: MICROSOFT EDGE TTS <<<`);
-            console.log(`   • Voice: ${chosenVoice} (Lang: ${lang || 'en'})`);
+            console.log(`   • Voice: ${chosenVoice} (Detected Lang: ${effectiveLang})`);
             console.log(`   • Text Length: ${text.length} characters`);
             console.log(`   • Snippet: "${text.slice(0, 70)}..."`);
             console.log(`===============================================================`);

@@ -243,28 +243,43 @@ export async function triggerManualIngest(req: Request, res: Response) {
  */
 export async function checkNewArticles(req: Request, res: Response) {
   try {
-    const { since, category, country } = req.query;
+    const { since, category, categories, country } = req.query;
     const countryCode = (typeof country === 'string' ? country : 'IN').toUpperCase();
-    const categoryParam = typeof category === 'string' ? category : 'My Feed';
+    
+    // Parse categories from query (e.g. "Politics,Cricket,Technology,Hindi News")
+    let categoryList: string[] = [];
+    if (typeof categories === 'string' && categories.trim()) {
+      categoryList = categories.split(',').map((c) => c.trim()).filter(Boolean);
+    } else if (typeof category === 'string' && category.trim()) {
+      categoryList = [category.trim()];
+    }
 
-    const sinceDate = since ? new Date(String(since)) : new Date(Date.now() - 3600000);
+    const isAllCategories =
+      categoryList.length === 0 ||
+      categoryList.some((c) => ['my feed', 'trending', 'all', '⏰ daily dose', 'daily dose'].includes(c.toLowerCase()));
 
-    const isMainOrTrending =
-      categoryParam.toLowerCase() === 'my feed' ||
-      categoryParam.toLowerCase() === 'trending' ||
-      categoryParam.toLowerCase() === 'all' ||
-      categoryParam === '⏰ Daily Dose';
+    const sinceDate = since && !isNaN(new Date(String(since)).getTime())
+      ? new Date(String(since))
+      : null;
 
-    const whereClause: any = isMainOrTrending
-      ? {
-          publishedAt: { gt: sinceDate },
-          OR: [{ country: { equals: countryCode } }, { country: { equals: 'GLOBAL' } }],
-        }
-      : {
-          category: { equals: categoryParam, mode: 'insensitive' },
-          publishedAt: { gt: sinceDate },
-          OR: [{ country: { equals: countryCode } }, { country: { equals: 'GLOBAL' } }],
-        };
+    const whereClause: any = {
+      OR: [{ country: { equals: countryCode } }, { country: { equals: 'GLOBAL' } }],
+    };
+
+    if (sinceDate) {
+      whereClause.AND = [
+        {
+          OR: [
+            { publishedAt: { gt: sinceDate } },
+            { createdAt: { gt: sinceDate } },
+          ],
+        },
+      ];
+    }
+
+    if (!isAllCategories && categoryList.length > 0) {
+      whereClause.category = { in: categoryList, mode: 'insensitive' };
+    }
 
     const [newCount, latestArticle] = await Promise.all([
       prisma.article.count({ where: whereClause }),
@@ -288,20 +303,20 @@ export async function checkNewArticles(req: Request, res: Response) {
       success: true,
       hasNew: newCount > 0,
       count: newCount,
+      checkedAt: new Date().toISOString(),
       latestArticle: latestArticle
         ? {
             id: latestArticle.id,
             title: latestArticle.title,
             summary: latestArticle.summary,
+            content: latestArticle.summary,
             image: latestArticle.imageUrl,
-            imageUrl: latestArticle.imageUrl,
             category: latestArticle.category,
-            source: latestArticle.source,
-            link: latestArticle.url,
-            pubDate: latestArticle.publishedAt.toISOString(),
+            source: latestArticle.source || 'NewsFlow Alert',
+            pubDate: latestArticle.publishedAt?.toISOString(),
+            link: latestArticle.url || 'https://inshorts.com',
           }
         : null,
-      checkedAt: new Date().toISOString(),
     });
   } catch (error: any) {
     console.error('Error in checkNewArticles:', error);

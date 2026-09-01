@@ -1,5 +1,5 @@
 {
-  "trackedDate": "2026-08-30",
+  "trackedDate": "2026-09-01",
   "aiEnabled": true,
   "models": [
     {
@@ -11,9 +11,9 @@
       "completionTokensToday": 0,
       "totalTokensToday": 0,
       "lastLatencyMs": 0,
-      "status": "rate_limited",
+      "status": "error",
       "lastUsedAt": null,
-      "errorsToday": 243,
+      "errorsToday": 129,
       "rateLimitResetAt": null
     },
     {
@@ -25,9 +25,9 @@
       "completionTokensToday": 0,
       "totalTokensToday": 0,
       "lastLatencyMs": 0,
-      "status": "ready",
+      "status": "error",
       "lastUsedAt": null,
-      "errorsToday": 0,
+      "errorsToday": 1,
       "rateLimitResetAt": null
     },
     {
@@ -67,36 +67,36 @@
       "completionTokensToday": 0,
       "totalTokensToday": 0,
       "lastLatencyMs": 0,
-      "status": "rate_limited",
+      "status": "error",
       "lastUsedAt": null,
-      "errorsToday": 243,
+      "errorsToday": 129,
       "rateLimitResetAt": null
     },
     {
       "model": "gemini-3.5-flash",
       "displayName": "gemini-3.5-flash",
       "tier": 99,
-      "requestsToday": 0,
-      "promptTokensToday": 0,
-      "completionTokensToday": 0,
-      "totalTokensToday": 0,
-      "lastLatencyMs": 0,
+      "requestsToday": 1,
+      "promptTokensToday": 423,
+      "completionTokensToday": 201,
+      "totalTokensToday": 624,
+      "lastLatencyMs": 39607,
       "status": "rate_limited",
-      "lastUsedAt": null,
-      "errorsToday": 241,
+      "lastUsedAt": "2026-09-01T07:08:10.043Z",
+      "errorsToday": 128,
       "rateLimitResetAt": null
     },
     {
       "model": "mistral:mistral-small-latest",
       "displayName": "mistral:mistral-small-latest",
       "tier": 99,
-      "requestsToday": 238,
-      "promptTokensToday": 135644,
-      "completionTokensToday": 55146,
-      "totalTokensToday": 190790,
-      "lastLatencyMs": 2543,
+      "requestsToday": 122,
+      "promptTokensToday": 68748,
+      "completionTokensToday": 28577,
+      "totalTokensToday": 97325,
+      "lastLatencyMs": 2575,
       "status": "ready",
-      "lastUsedAt": "2026-08-30T18:02:00.163Z",
+      "lastUsedAt": "2026-09-01T07:32:08.448Z",
       "errorsToday": 0,
       "rateLimitResetAt": null
     },
@@ -111,7 +111,7 @@
       "lastLatencyMs": 0,
       "status": "error",
       "lastUsedAt": null,
-      "errorsToday": 119,
+      "errorsToday": 61,
       "rateLimitResetAt": null
     },
     {
@@ -125,7 +125,7 @@
       "lastLatencyMs": 0,
       "status": "error",
       "lastUsedAt": null,
-      "errorsToday": 118,
+      "errorsToday": 62,
       "rateLimitResetAt": null
     },
     {
@@ -139,7 +139,7 @@
       "lastLatencyMs": 0,
       "status": "error",
       "lastUsedAt": null,
-      "errorsToday": 118,
+      "errorsToday": 61,
       "rateLimitResetAt": null
     },
     {
@@ -153,558 +153,572 @@
       "lastLatencyMs": 0,
       "status": "error",
       "lastUsedAt": null,
-      "errorsToday": 118,
+      "errorsToday": 60,
       "rateLimitResetAt": null
     },
     {
       "model": "mistral:open-mistral-nemo",
       "displayName": "mistral:open-mistral-nemo",
       "tier": 99,
-      "requestsToday": 1,
-      "promptTokensToday": 407,
-      "completionTokensToday": 275,
-      "totalTokensToday": 682,
-      "lastLatencyMs": 4430,
+      "requestsToday": 5,
+      "promptTokensToday": 2362,
+      "completionTokensToday": 1396,
+      "totalTokensToday": 3758,
+      "lastLatencyMs": 7603,
       "status": "ready",
-      "lastUsedAt": "2026-08-30T09:25:42.909Z",
+      "lastUsedAt": "2026-09-01T07:33:35.518Z",
       "errorsToday": 0,
+      "rateLimitResetAt": null
+    },
+    {
+      "model": "@cf/qwen/qwen2.5-7b-instruct",
+      "displayName": "@cf/qwen/qwen2.5-7b-instruct",
+      "tier": 99,
+      "requestsToday": 0,
+      "promptTokensToday": 0,
+      "completionTokensToday": 0,
+      "totalTokensToday": 0,
+      "lastLatencyMs": 0,
+      "status": "error",
+      "lastUsedAt": null,
+      "errorsToday": 1,
       "rateLimitResetAt": null
     }
   ],
   "funnel": {
-    "rssScannedToday": 110474,
-    "dedupedCandidatesToday": 22970,
-    "llmSummarizedToday": 239,
-    "directSavedToday": 9,
-    "dbInsertedToday": 178,
-    "lastIngestDurationMs": 411420,
-    "lastIngestAt": "2026-08-30T17:56:51.773Z"
+    "rssScannedToday": 53405,
+    "dedupedCandidatesToday": 5381,
+    "llmSummarizedToday": 129,
+    "directSavedToday": 13,
+    "dbInsertedToday": 96,
+    "lastIngestDurationMs": 441205,
+    "lastIngestAt": "2026-09-01T06:52:22.074Z"
   },
   "logs": [
     {
-      "id": "log-1788112926311-lolh",
-      "timestamp": "2026-08-30T18:02:06.311Z",
-      "type": "error",
-      "model": "llama-3.3-70b-versatile",
-      "status": "failed",
-      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
-      "details": {
-        "articleTitle": "Telangana NEET-PG: Glitches at One Centre, Drunk Candidate Sent Back Home",
-        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
-        "statusCode": 404
-      }
-    },
-    {
-      "id": "log-1788112920163-xyk4",
-      "timestamp": "2026-08-30T18:02:00.163Z",
+      "id": "log-1788248015518-0fca",
+      "timestamp": "2026-09-01T07:33:35.518Z",
       "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 682,
-      "latencyMs": 2543,
+      "model": "mistral:open-mistral-nemo",
+      "tokens": 686,
+      "latencyMs": 7603,
       "status": "success",
-      "message": "Summarized \"Kochi cathedral resumes traditional Mass\" in 2543ms (682 tokens)",
+      "message": "Summarized \"Telangana BJP Chief Demands Justice After Nurse Murder\" in 7603ms (686 tokens)",
       "details": {
-        "promptTokens": 439,
-        "completionTokens": 243
+        "promptTokens": 411,
+        "completionTokens": 275
       }
     },
     {
-      "id": "log-1788112917616-96sh",
-      "timestamp": "2026-08-30T18:01:57.616Z",
+      "id": "log-1788247986702-qmii",
+      "timestamp": "2026-09-01T07:33:06.702Z",
       "type": "rate_limit",
       "model": "gemini-3.5-flash",
       "status": "failed",
       "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "articleTitle": "Congregation-facing Mass resumes at St. Mary’s Cathedral Basilica in Kochi",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 51.852979815s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"51s\"}]}}",
+        "articleTitle": "Telangana BJP Chief Seeks Strict Action in Pahadishareef Nurse Murder Case",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 48.771888913s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"48s\"}]}}",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788112917165-wbo2",
-      "timestamp": "2026-08-30T18:01:57.165Z",
-      "type": "rate_limit",
+      "id": "log-1788247977559-fj81",
+      "timestamp": "2026-09-01T07:32:57.559Z",
+      "type": "error",
       "model": "gemini-2.5-flash",
       "status": "failed",
-      "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "message": "⚠️ [gemini-2.5-flash] (500) fetch failed",
       "details": {
-        "articleTitle": "Congregation-facing Mass resumes at St. Mary’s Cathedral Basilica in Kochi",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 52.311784295s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"52s\"}]}}",
-        "statusCode": 429
+        "articleTitle": "Telangana BJP Chief Seeks Strict Action in Pahadishareef Nurse Murder Case",
+        "fullError": "fetch failed",
+        "statusCode": 500
       }
     },
     {
-      "id": "log-1788112916927-pgua",
-      "timestamp": "2026-08-30T18:01:56.927Z",
-      "type": "rate_limit",
+      "id": "log-1788247966920-a7q5",
+      "timestamp": "2026-09-01T07:32:46.920Z",
+      "type": "error",
       "model": "gemini-3-flash-preview",
       "status": "failed",
-      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "message": "⚠️ [gemini-3-flash-preview] (500) fetch failed",
       "details": {
-        "articleTitle": "Congregation-facing Mass resumes at St. Mary’s Cathedral Basilica in Kochi",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 52.545299161s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-3-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"52s\"}]}}",
-        "statusCode": 429
+        "articleTitle": "Telangana BJP Chief Seeks Strict Action in Pahadishareef Nurse Murder Case",
+        "fullError": "fetch failed",
+        "statusCode": 500
       }
     },
     {
-      "id": "log-1788112916329-mmtv",
-      "timestamp": "2026-08-30T18:01:56.329Z",
+      "id": "log-1788247956676-dp03",
+      "timestamp": "2026-09-01T07:32:36.676Z",
       "type": "error",
       "model": "gemma2-9b-it",
       "status": "failed",
       "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
       "details": {
-        "articleTitle": "Congregation-facing Mass resumes at St. Mary’s Cathedral Basilica in Kochi",
+        "articleTitle": "Telangana BJP Chief Seeks Strict Action in Pahadishareef Nurse Murder Case",
         "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788112915073-84kt",
-      "timestamp": "2026-08-30T18:01:55.073Z",
+      "id": "log-1788247956164-o5n9",
+      "timestamp": "2026-09-01T07:32:36.164Z",
       "type": "error",
       "model": "mixtral-8x7b-32768",
       "status": "failed",
       "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
       "details": {
-        "articleTitle": "Congregation-facing Mass resumes at St. Mary’s Cathedral Basilica in Kochi",
+        "articleTitle": "Telangana BJP Chief Seeks Strict Action in Pahadishareef Nurse Murder Case",
         "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788112914789-97vl",
-      "timestamp": "2026-08-30T18:01:54.789Z",
+      "id": "log-1788247954258-pxp4",
+      "timestamp": "2026-09-01T07:32:34.258Z",
       "type": "error",
       "model": "llama-3.1-8b-instant",
       "status": "failed",
       "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
       "details": {
-        "articleTitle": "Congregation-facing Mass resumes at St. Mary’s Cathedral Basilica in Kochi",
+        "articleTitle": "Telangana BJP Chief Seeks Strict Action in Pahadishareef Nurse Murder Case",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788112914252-5eew",
-      "timestamp": "2026-08-30T18:01:54.252Z",
-      "type": "error",
-      "model": "llama-3.3-70b-versatile",
-      "status": "failed",
-      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
-      "details": {
-        "articleTitle": "Congregation-facing Mass resumes at St. Mary’s Cathedral Basilica in Kochi",
-        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
-        "statusCode": 404
-      }
-    },
-    {
-      "id": "log-1788112908317-x2gm",
-      "timestamp": "2026-08-30T18:01:48.317Z",
+      "id": "log-1788247928448-yj0k",
+      "timestamp": "2026-09-01T07:32:08.448Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 637,
-      "latencyMs": 2390,
+      "tokens": 588,
+      "latencyMs": 2575,
       "status": "success",
-      "message": "Summarized \"Marathas slam Shinde with black flags in fury\" in 2390ms (637 tokens)",
+      "message": "Summarized \"Japan loosens overtime rules now\" in 2575ms (588 tokens)",
       "details": {
-        "promptTokens": 424,
-        "completionTokens": 213
+        "promptTokens": 401,
+        "completionTokens": 187
       }
     },
     {
-      "id": "log-1788112905926-6abd",
-      "timestamp": "2026-08-30T18:01:45.926Z",
+      "id": "log-1788247925871-32g7",
+      "timestamp": "2026-09-01T07:32:05.871Z",
       "type": "rate_limit",
       "model": "gemini-3.5-flash",
       "status": "failed",
       "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "articleTitle": "Maratha protesters wave black flags at Eknath Shinde in Parbhani",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 3.545402139s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"3s\"}]}}",
+        "articleTitle": "Japan Eases Overtime Rules, Sparking Fears Of Return To Workaholic Culture",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 42.682774953s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-3.5-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"42s\"}]}}",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788112905121-mm09",
-      "timestamp": "2026-08-30T18:01:45.121Z",
-      "type": "rate_limit",
+      "id": "log-1788247924769-i1vq",
+      "timestamp": "2026-09-01T07:32:04.769Z",
+      "type": "error",
       "model": "gemini-2.5-flash",
       "status": "failed",
-      "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "message": "⚠️ [gemini-2.5-flash] (500) fetch failed",
       "details": {
-        "articleTitle": "Maratha protesters wave black flags at Eknath Shinde in Parbhani",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 4.347734395s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"4s\"}]}}",
-        "statusCode": 429
+        "articleTitle": "Japan Eases Overtime Rules, Sparking Fears Of Return To Workaholic Culture",
+        "fullError": "fetch failed",
+        "statusCode": 500
       }
     },
     {
-      "id": "log-1788112904884-exes",
-      "timestamp": "2026-08-30T18:01:44.884Z",
-      "type": "rate_limit",
+      "id": "log-1788247914139-xmer",
+      "timestamp": "2026-09-01T07:31:54.139Z",
+      "type": "error",
       "model": "gemini-3-flash-preview",
       "status": "failed",
-      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "message": "⚠️ [gemini-3-flash-preview] (500) fetch failed",
       "details": {
-        "articleTitle": "Maratha protesters wave black flags at Eknath Shinde in Parbhani",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 4.585312881s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"4s\"}]}}",
-        "statusCode": 429
+        "articleTitle": "Japan Eases Overtime Rules, Sparking Fears Of Return To Workaholic Culture",
+        "fullError": "fetch failed",
+        "statusCode": 500
       }
     },
     {
-      "id": "log-1788112904295-jwuj",
-      "timestamp": "2026-08-30T18:01:44.295Z",
+      "id": "log-1788247903507-5o85",
+      "timestamp": "2026-09-01T07:31:43.507Z",
       "type": "error",
       "model": "gemma2-9b-it",
       "status": "failed",
       "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
       "details": {
-        "articleTitle": "Maratha protesters wave black flags at Eknath Shinde in Parbhani",
+        "articleTitle": "Japan Eases Overtime Rules, Sparking Fears Of Return To Workaholic Culture",
         "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788112904082-3tpo",
-      "timestamp": "2026-08-30T18:01:44.082Z",
+      "id": "log-1788247902958-5qnr",
+      "timestamp": "2026-09-01T07:31:42.958Z",
       "type": "error",
       "model": "mixtral-8x7b-32768",
       "status": "failed",
       "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
       "details": {
-        "articleTitle": "Maratha protesters wave black flags at Eknath Shinde in Parbhani",
+        "articleTitle": "Japan Eases Overtime Rules, Sparking Fears Of Return To Workaholic Culture",
         "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788112903802-qz8o",
-      "timestamp": "2026-08-30T18:01:43.802Z",
+      "id": "log-1788247899270-obfg",
+      "timestamp": "2026-09-01T07:31:39.270Z",
       "type": "error",
       "model": "llama-3.1-8b-instant",
       "status": "failed",
       "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
       "details": {
-        "articleTitle": "Maratha protesters wave black flags at Eknath Shinde in Parbhani",
+        "articleTitle": "Japan Eases Overtime Rules, Sparking Fears Of Return To Workaholic Culture",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788112903731-l6ua",
-      "timestamp": "2026-08-30T18:01:43.731Z",
+      "id": "log-1788247898511-3xzq",
+      "timestamp": "2026-09-01T07:31:38.511Z",
       "type": "error",
       "model": "llama-3.3-70b-versatile",
       "status": "failed",
       "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
       "details": {
-        "articleTitle": "Maratha protesters wave black flags at Eknath Shinde in Parbhani",
+        "articleTitle": "Japan Eases Overtime Rules, Sparking Fears Of Return To Workaholic Culture",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788112900031-vrvz",
-      "timestamp": "2026-08-30T18:01:40.031Z",
+      "id": "log-1788247885437-gtd6",
+      "timestamp": "2026-09-01T07:31:25.437Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 984,
-      "latencyMs": 3935,
+      "tokens": 560,
+      "latencyMs": 10858,
       "status": "success",
-      "message": "Summarized \"Uttarakhand’s NLU dream stuck in limbo for 15 years\" in 3935ms (984 tokens)",
+      "message": "Summarized \"Police rescue kidnapped girl, hunt suspects\" in 10858ms (560 tokens)",
       "details": {
-        "promptTokens": 710,
-        "completionTokens": 274
+        "promptTokens": 418,
+        "completionTokens": 142
       }
     },
     {
-      "id": "log-1788112896091-cl1u",
-      "timestamp": "2026-08-30T18:01:36.091Z",
+      "id": "log-1788247874563-edjd",
+      "timestamp": "2026-09-01T07:31:14.563Z",
       "type": "rate_limit",
       "model": "gemini-3.5-flash",
       "status": "failed",
       "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "articleTitle": "No campus, no students as Uttarakhand’s NLU remains on paper",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 13.380601865s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"13s\"}]}}",
+        "articleTitle": "Patancheru Police Trace Kidnapped Minor Girl, Hunt for Accused",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 33.978998957s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-3.5-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"33s\"}]}}",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788112895786-lup2",
-      "timestamp": "2026-08-30T18:01:35.786Z",
+      "id": "log-1788247874370-mmm0",
+      "timestamp": "2026-09-01T07:31:14.370Z",
       "type": "rate_limit",
       "model": "gemini-2.5-flash",
       "status": "failed",
       "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "articleTitle": "No campus, no students as Uttarakhand’s NLU remains on paper",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 13.687503404s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-2.5-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"13s\"}]}}",
+        "articleTitle": "Patancheru Police Trace Kidnapped Minor Girl, Hunt for Accused",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 48.611381169s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"48s\"}]}}",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788112895136-9891",
-      "timestamp": "2026-08-30T18:01:35.136Z",
-      "type": "rate_limit",
+      "id": "log-1788247859280-arzh",
+      "timestamp": "2026-09-01T07:30:59.280Z",
+      "type": "error",
       "model": "gemini-3-flash-preview",
       "status": "failed",
-      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "message": "⚠️ [gemini-3-flash-preview] (500) fetch failed",
       "details": {
-        "articleTitle": "No campus, no students as Uttarakhand’s NLU remains on paper",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 14.345895486s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"14s\"}]}}",
-        "statusCode": 429
+        "articleTitle": "Patancheru Police Trace Kidnapped Minor Girl, Hunt for Accused",
+        "fullError": "fetch failed",
+        "statusCode": 500
       }
     },
     {
-      "id": "log-1788112894394-18d4",
-      "timestamp": "2026-08-30T18:01:34.394Z",
+      "id": "log-1788247848879-rkzn",
+      "timestamp": "2026-09-01T07:30:48.879Z",
       "type": "error",
       "model": "gemma2-9b-it",
       "status": "failed",
       "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
       "details": {
-        "articleTitle": "No campus, no students as Uttarakhand’s NLU remains on paper",
+        "articleTitle": "Patancheru Police Trace Kidnapped Minor Girl, Hunt for Accused",
         "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788112894201-kise",
-      "timestamp": "2026-08-30T18:01:34.201Z",
+      "id": "log-1788247847958-sylg",
+      "timestamp": "2026-09-01T07:30:47.958Z",
       "type": "error",
       "model": "mixtral-8x7b-32768",
       "status": "failed",
       "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
       "details": {
-        "articleTitle": "No campus, no students as Uttarakhand’s NLU remains on paper",
+        "articleTitle": "Patancheru Police Trace Kidnapped Minor Girl, Hunt for Accused",
         "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788112893441-r92k",
-      "timestamp": "2026-08-30T18:01:33.441Z",
+      "id": "log-1788247844154-q1jn",
+      "timestamp": "2026-09-01T07:30:44.154Z",
       "type": "error",
       "model": "llama-3.1-8b-instant",
       "status": "failed",
       "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
       "details": {
-        "articleTitle": "No campus, no students as Uttarakhand’s NLU remains on paper",
+        "articleTitle": "Patancheru Police Trace Kidnapped Minor Girl, Hunt for Accused",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788112893362-ly4u",
-      "timestamp": "2026-08-30T18:01:33.362Z",
+      "id": "log-1788247843999-2enw",
+      "timestamp": "2026-09-01T07:30:43.999Z",
       "type": "error",
       "model": "llama-3.3-70b-versatile",
       "status": "failed",
       "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
       "details": {
-        "articleTitle": "No campus, no students as Uttarakhand’s NLU remains on paper",
+        "articleTitle": "Patancheru Police Trace Kidnapped Minor Girl, Hunt for Accused",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788112888935-p0cs",
-      "timestamp": "2026-08-30T18:01:28.935Z",
+      "id": "log-1788247824267-ee57",
+      "timestamp": "2026-09-01T07:30:24.267Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 941,
-      "latencyMs": 2667,
+      "tokens": 949,
+      "latencyMs": 3916,
       "status": "success",
-      "message": "Summarized \"Telangana to build mega cricket stadium\" in 2667ms (941 tokens)",
+      "message": "Summarized \"RGV’s Dhurandhar sparks toxic debate online\" in 3916ms (949 tokens)",
       "details": {
-        "promptTokens": 661,
-        "completionTokens": 280
+        "promptTokens": 680,
+        "completionTokens": 269
       }
     },
     {
-      "id": "log-1788112886265-9c5n",
-      "timestamp": "2026-08-30T18:01:26.265Z",
+      "id": "log-1788247820348-lc0r",
+      "timestamp": "2026-09-01T07:30:20.348Z",
       "type": "rate_limit",
       "model": "gemini-3.5-flash",
       "status": "failed",
       "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "articleTitle": "Future City to get world-class cricket stadium; foundation stone likely to be laid in December",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 23.211025638s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"23s\"}]}}",
+        "articleTitle": "RGV’s Dhurandhar Praise Sparks Toxic Comparison",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 28.191362241s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"28s\"}]}}",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788112875630-vhb1",
-      "timestamp": "2026-08-30T18:01:15.630Z",
+      "id": "log-1788247820030-jovq",
+      "timestamp": "2026-09-01T07:30:20.030Z",
       "type": "rate_limit",
       "model": "gemini-2.5-flash",
       "status": "failed",
       "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "articleTitle": "Future City to get world-class cricket stadium; foundation stone likely to be laid in December",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 33.840560217s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-2.5-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"33s\"}]}}",
+        "articleTitle": "RGV’s Dhurandhar Praise Sparks Toxic Comparison",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 28.546216006s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"28s\"}]}}",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788112875392-j07z",
-      "timestamp": "2026-08-30T18:01:15.392Z",
-      "type": "rate_limit",
+      "id": "log-1788247815655-v715",
+      "timestamp": "2026-09-01T07:30:15.655Z",
+      "type": "error",
       "model": "gemini-3-flash-preview",
       "status": "failed",
-      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "message": "⚠️ [gemini-3-flash-preview] (500) fetch failed",
       "details": {
-        "articleTitle": "Future City to get world-class cricket stadium; foundation stone likely to be laid in December",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 34.160269472s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"34s\"}]}}",
-        "statusCode": 429
+        "articleTitle": "RGV’s Dhurandhar Praise Sparks Toxic Comparison",
+        "fullError": "fetch failed",
+        "statusCode": 500
       }
     },
     {
-      "id": "log-1788112874705-8rc1",
-      "timestamp": "2026-08-30T18:01:14.705Z",
+      "id": "log-1788247804998-7v50",
+      "timestamp": "2026-09-01T07:30:04.998Z",
       "type": "error",
       "model": "gemma2-9b-it",
       "status": "failed",
       "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
       "details": {
-        "articleTitle": "Future City to get world-class cricket stadium; foundation stone likely to be laid in December",
+        "articleTitle": "RGV’s Dhurandhar Praise Sparks Toxic Comparison",
         "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788112874425-cj7u",
-      "timestamp": "2026-08-30T18:01:14.426Z",
+      "id": "log-1788247802127-74jv",
+      "timestamp": "2026-09-01T07:30:02.127Z",
       "type": "error",
       "model": "mixtral-8x7b-32768",
       "status": "failed",
       "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
       "details": {
-        "articleTitle": "Future City to get world-class cricket stadium; foundation stone likely to be laid in December",
+        "articleTitle": "RGV’s Dhurandhar Praise Sparks Toxic Comparison",
         "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
         "statusCode": 400
       }
     },
     {
-      "id": "log-1788112874067-z1tr",
-      "timestamp": "2026-08-30T18:01:14.067Z",
+      "id": "log-1788247801699-zah3",
+      "timestamp": "2026-09-01T07:30:01.699Z",
       "type": "error",
       "model": "llama-3.1-8b-instant",
       "status": "failed",
       "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
       "details": {
-        "articleTitle": "Future City to get world-class cricket stadium; foundation stone likely to be laid in December",
+        "articleTitle": "RGV’s Dhurandhar Praise Sparks Toxic Comparison",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788112873953-78hr",
-      "timestamp": "2026-08-30T18:01:13.953Z",
+      "id": "log-1788247801565-x55i",
+      "timestamp": "2026-09-01T07:30:01.565Z",
       "type": "error",
       "model": "llama-3.3-70b-versatile",
       "status": "failed",
       "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
       "details": {
-        "articleTitle": "Future City to get world-class cricket stadium; foundation stone likely to be laid in December",
+        "articleTitle": "RGV’s Dhurandhar Praise Sparks Toxic Comparison",
         "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
         "statusCode": 404
       }
     },
     {
-      "id": "log-1788112869625-lcga",
-      "timestamp": "2026-08-30T18:01:09.625Z",
+      "id": "log-1788247792114-ko6o",
+      "timestamp": "2026-09-01T07:29:52.114Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 858,
-      "latencyMs": 2574,
+      "tokens": 614,
+      "latencyMs": 6443,
       "status": "success",
-      "message": "Summarized \"Hyderabad drenches under sudden downpour!\" in 2574ms (858 tokens)",
+      "message": "Summarized \"FDA busts deadly snack repackaging racket\" in 6443ms (614 tokens)",
       "details": {
-        "promptTokens": 634,
-        "completionTokens": 224
+        "promptTokens": 419,
+        "completionTokens": 195
       }
     },
     {
-      "id": "log-1788112867050-vxdk",
-      "timestamp": "2026-08-30T18:01:07.050Z",
+      "id": "log-1788247785654-9qi1",
+      "timestamp": "2026-09-01T07:29:45.654Z",
       "type": "rate_limit",
       "model": "gemini-3.5-flash",
       "status": "failed",
       "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
       "details": {
-        "articleTitle": "Scattered showers lash Hyderabad on August 30",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 42.419114657s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"42s\"}]}}",
+        "articleTitle": "Nai Mumbai: Expired Lay's, Kurkure, Maggi Repackaging; FDA Seizes",
+        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 2.88616339s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-3.5-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"2s\"}]}}",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788112866843-p9ng",
-      "timestamp": "2026-08-30T18:01:06.843Z",
-      "type": "rate_limit",
+      "id": "log-1788247778238-g5wd",
+      "timestamp": "2026-09-01T07:29:38.238Z",
+      "type": "error",
       "model": "gemini-2.5-flash",
       "status": "failed",
-      "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "message": "⚠️ [gemini-2.5-flash] (500) fetch failed",
       "details": {
-        "articleTitle": "Scattered showers lash Hyderabad on August 30",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 42.6337102s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"42s\"}]}}",
-        "statusCode": 429
+        "articleTitle": "Nai Mumbai: Expired Lay's, Kurkure, Maggi Repackaging; FDA Seizes",
+        "fullError": "fetch failed",
+        "statusCode": 500
       }
     },
     {
-      "id": "log-1788112866478-vfkv",
-      "timestamp": "2026-08-30T18:01:06.478Z",
-      "type": "rate_limit",
+      "id": "log-1788247767639-5kdr",
+      "timestamp": "2026-09-01T07:29:27.639Z",
+      "type": "error",
       "model": "gemini-3-flash-preview",
       "status": "failed",
-      "message": "⚠️ [gemini-3-flash-preview] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
+      "message": "⚠️ [gemini-3-flash-preview] (500) fetch failed",
       "details": {
-        "articleTitle": "Scattered showers lash Hyderabad on August 30",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3-flash\\nPlease retry in 42.995072102s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-3-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"42s\"}]}}",
-        "statusCode": 429
+        "articleTitle": "Nai Mumbai: Expired Lay's, Kurkure, Maggi Repackaging; FDA Seizes",
+        "fullError": "fetch failed",
+        "statusCode": 500
       }
     },
     {
-      "id": "log-1788112862089-1cz4",
-      "timestamp": "2026-08-30T18:01:02.089Z",
+      "id": "log-1788247757270-el7q",
+      "timestamp": "2026-09-01T07:29:17.270Z",
+      "type": "error",
+      "model": "gemma2-9b-it",
+      "status": "failed",
+      "message": "⚠️ [gemma2-9b-it] (400) {\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
+      "details": {
+        "articleTitle": "Nai Mumbai: Expired Lay's, Kurkure, Maggi Repackaging; FDA Seizes",
+        "fullError": "{\"error\":{\"message\":\"The model `gemma2-9b-it` has been decommissioned and is no longer supported. Please refer to https:",
+        "statusCode": 400
+      }
+    },
+    {
+      "id": "log-1788247729437-5cbk",
+      "timestamp": "2026-09-01T07:28:49.437Z",
+      "type": "error",
+      "model": "mixtral-8x7b-32768",
+      "status": "failed",
+      "message": "⚠️ [mixtral-8x7b-32768] (400) {\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
+      "details": {
+        "articleTitle": "Nai Mumbai: Expired Lay's, Kurkure, Maggi Repackaging; FDA Seizes",
+        "fullError": "{\"error\":{\"message\":\"The model `mixtral-8x7b-32768` has been decommissioned and is no longer supported. Please refer to ",
+        "statusCode": 400
+      }
+    },
+    {
+      "id": "log-1788247699242-5sn2",
+      "timestamp": "2026-09-01T07:28:19.242Z",
+      "type": "error",
+      "model": "llama-3.1-8b-instant",
+      "status": "failed",
+      "message": "⚠️ [llama-3.1-8b-instant] (404) {\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
+      "details": {
+        "articleTitle": "Nai Mumbai: Expired Lay's, Kurkure, Maggi Repackaging; FDA Seizes",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.1-8b-instant` does not exist or you do not have access to it.\",\"type\":\"invalid_r",
+        "statusCode": 404
+      }
+    },
+    {
+      "id": "log-1788247699169-gcm3",
+      "timestamp": "2026-09-01T07:28:19.169Z",
+      "type": "error",
+      "model": "llama-3.3-70b-versatile",
+      "status": "failed",
+      "message": "⚠️ [llama-3.3-70b-versatile] (404) {\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+      "details": {
+        "articleTitle": "Nai Mumbai: Expired Lay's, Kurkure, Maggi Repackaging; FDA Seizes",
+        "fullError": "{\"error\":{\"message\":\"The model `llama-3.3-70b-versatile` does not exist or you do not have access to it.\",\"type\":\"invali",
+        "statusCode": 404
+      }
+    },
+    {
+      "id": "log-1788247678854-ypu8",
+      "timestamp": "2026-09-01T07:27:58.854Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 809,
-      "latencyMs": 2053,
+      "tokens": 768,
+      "latencyMs": 9701,
       "status": "success",
-      "message": "Summarized \"NEET PG hits 97.47% attendance in Hyderabad\" in 2053ms (809 tokens)",
+      "message": "Summarized \"Kochi Metro Phase 3 plan lands with airport link!\" in 9701ms (768 tokens)",
       "details": {
-        "promptTokens": 600,
-        "completionTokens": 209
-      }
-    },
-    {
-      "id": "log-1788112860031-y871",
-      "timestamp": "2026-08-30T18:01:00.031Z",
-      "type": "rate_limit",
-      "model": "gemini-3.5-flash",
-      "status": "failed",
-      "message": "⚠️ [gemini-3.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "97.47% attendance for NEET PG in Hyderabad",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 49.501813087s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"model\":\"gemini-3.5-flash\",\"location\":\"global\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"49s\"}]}}",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788112859712-e71h",
-      "timestamp": "2026-08-30T18:00:59.712Z",
-      "type": "rate_limit",
-      "model": "gemini-2.5-flash",
-      "status": "failed",
-      "message": "⚠️ [gemini-2.5-flash] (429) {\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more in",
-      "details": {
-        "articleTitle": "97.47% attendance for NEET PG in Hyderabad",
-        "fullError": "{\"error\":{\"code\":429,\"message\":\"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-2.5-flash\\nPlease retry in 49.766034785s.\",\"status\":\"RESOURCE_EXHAUSTED\",\"details\":[{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://ai.google.dev/gemini-api/docs/rate-limits\"}]},{\"@type\":\"type.googleapis.com/google.rpc.QuotaFailure\",\"violations\":[{\"quotaMetric\":\"generativelanguage.googleapis.com/generate_content_free_tier_requests\",\"quotaId\":\"GenerateRequestsPerDayPerProjectPerModel-FreeTier\",\"quotaDimensions\":{\"location\":\"global\",\"model\":\"gemini-2.5-flash\"},\"quotaValue\":\"20\"}]},{\"@type\":\"type.googleapis.com/google.rpc.RetryInfo\",\"retryDelay\":\"49s\"}]}}",
-        "statusCode": 429
+        "promptTokens": 533,
+        "completionTokens": 235
       }
     }
   ]

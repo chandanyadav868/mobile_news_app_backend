@@ -17,6 +17,20 @@ const CACHE_TTL_MS = 3 * 60 * 60 * 1000; // 3 Hours TTL
 
 export class TTSService {
     /**
+     * Auto-detect regional Indian script from text characters
+     */
+    public static detectLanguageFromText(text: string): { lang: string; voice: string } {
+        if (/[\u0900-\u097F]/.test(text)) return { lang: 'hi', voice: 'hi-IN-SwaraNeural' };
+        if (/[\u0B80-\u0BFF]/.test(text)) return { lang: 'ta', voice: 'ta-IN-PallaviNeural' };
+        if (/[\u0C00-\u0C7F]/.test(text)) return { lang: 'te', voice: 'te-IN-ShrutiNeural' };
+        if (/[\u0980-\u09FF]/.test(text)) return { lang: 'bn', voice: 'bn-IN-TanishaaNeural' };
+        if (/[\u0A80-\u0AFF]/.test(text)) return { lang: 'gu', voice: 'gu-IN-DhwaniNeural' };
+        if (/[\u0C80-\u0CFF]/.test(text)) return { lang: 'kn', voice: 'kn-IN-SapnaNeural' };
+        if (/[\u0D00-\u0D7F]/.test(text)) return { lang: 'ml', voice: 'ml-IN-SobhanaNeural' };
+        return { lang: 'en', voice: 'en-IN-NeerjaNeural' };
+    }
+
+    /**
      * Map language code to corresponding regional native Edge-TTS neural voice
      */
     public static getVoiceForLanguage(lang: string = 'en', gender: 'female' | 'male' = 'female'): string {

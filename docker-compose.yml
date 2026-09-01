@@ -49,6 +49,7 @@ services:
       redis:
         condition: service_healthy
     environment:
+      NODE_ENV: production
       PORT: 4000
       DATABASE_URL: postgresql://${POSTGRES_USER:-newsflow_user}:${POSTGRES_PASSWORD:-newsflow_secret_password}@postgres:5432/${POSTGRES_DB:-newsflow_db}?schema=public
       REDIS_URL: redis://redis:6379
