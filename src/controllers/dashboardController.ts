@@ -173,11 +173,10 @@ export class DashboardController {
         }
     }
 
-    /**
-     * GET /dashboard
-     * Render full modern dark-mode responsive HTML Web Dashboard
-     */
     public static async renderDashboard(req: Request, res: Response): Promise<void> {
+        const initialTelemetry = await TelemetryService.getFullTelemetry();
+        const initialTelemetryBase64 = Buffer.from(JSON.stringify(initialTelemetry)).toString('base64');
+
         const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -984,7 +983,7 @@ export class DashboardController {
                     <span class="card-badge" style="background: rgba(245, 158, 11, 0.15); color: #FBBF24;">Node.js</span>
                 </div>
                 <div class="val-large" id="uptime-val" style="color: #FBBF24;">0m 0s</div>
-                <div class="val-sub" id="node-env">win32 • v24.10.0</div>
+                <div class="val-sub" id="node-version">win32 • v24.10.0</div>
                 <div class="progress-bar-bg">
                     <div class="progress-bar-fill" style="width: 100%; background: linear-gradient(90deg, #F59E0B, #FBBF24);"></div>
                 </div>
@@ -995,7 +994,7 @@ export class DashboardController {
         <section class="funnel-section">
             <div class="funnel-header">
                 <h2 class="section-title">📊 Real-Time Ingestion Funnel & Routing Breakdown</h2>
-                <span class="val-sub" id="funnel-timing">Last Run: Idle</span>
+                <span class="val-sub" id="funnel-last-run">Last Run: Idle</span>
             </div>
             <div class="funnel-grid">
                 <!-- Step 1: Scanned -->
@@ -1353,11 +1352,22 @@ export class DashboardController {
             try {
                 const res = await fetch('/api/v1/dashboard/stats');
                 const json = await res.json();
-                if (json.success) renderTelemetryData(json.data);
+                if (json && json.success) renderTelemetryData(json.data);
             } catch {}
         }
 
-        // Initial snapshot and 3-second live heartbeat poller
+        // 1. Immediately hydrate with pre-rendered server snapshot
+        try {
+            const rawBase64 = '${initialTelemetryBase64}';
+            if (rawBase64) {
+                const initData = JSON.parse(decodeURIComponent(escape(atob(rawBase64))));
+                if (initData) renderTelemetryData(initData);
+            }
+        } catch(e) {
+            console.warn('Initial server render bootstrap warning:', e);
+        }
+
+        // 2. Fetch immediate fresh API snapshot and begin 3-second heartbeat poller
         fetchFallback();
         setInterval(fetchFallback, 3000);
 
