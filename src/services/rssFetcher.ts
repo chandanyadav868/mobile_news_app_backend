@@ -467,13 +467,14 @@ export async function ingestAllFeeds(): Promise<{
           modelUsed = 'RSS-Direct (0 tokens)';
           TelemetryService.incrementFunnel('directSaved', 1);
         } else {
-          // 🟢 High-Speed Multi-Model Rotation: Alternate dynamically between Groq LPU & Mistral AI
+          // 🟢 High-Speed Multi-Model Rotation: Alternate dynamically between Groq Cloud & Mistral AI
           const rotatingEngines = [
-            { provider: 'groq', model: 'llama-3.3-70b-versatile' },
+            { provider: 'groq', model: 'qwen/qwen3.8-27b' },
             { provider: 'mistral', model: 'mistral-small-latest' },
-            { provider: 'groq', model: 'llama-3.1-8b-instant' },
+            { provider: 'groq', model: 'openai/gpt-oss-120b' },
             { provider: 'mistral', model: 'open-mistral-nemo' },
-            { provider: 'groq', model: 'mixtral-8x7b-32768' },
+            { provider: 'groq', model: 'openai/gpt-oss-20b' },
+            { provider: 'mistral', model: 'mistral-large-latest' },
           ];
           const assigned = rotatingEngines[i % rotatingEngines.length];
           const preferredProvider = assigned.provider;

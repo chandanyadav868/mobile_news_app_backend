@@ -85,13 +85,13 @@ export class TelemetryService {
     // Set of manually disabled models by user (empty by default so all Groq & Mistral models rotate)
     private static disabledModels: Set<string> = new Set<string>();
 
-    // Per-Model Accounting Map (Groq LPU + Mistral AI Fleet)
+    // Per-Model Accounting Map (Groq Cloud + Mistral AI Fleet)
     private static modelMetrics: Map<string, ModelUsageMetric> = new Map([
         [
-            'llama-3.3-70b-versatile',
+            'qwen/qwen3.8-27b',
             {
-                model: 'llama-3.3-70b-versatile',
-                displayName: 'Groq LLaMA 3.3 70B (Ultra-Fast LPU)',
+                model: 'qwen/qwen3.8-27b',
+                displayName: 'Groq Qwen 3.8 27B',
                 tier: 1,
                 requestsToday: 0,
                 promptTokensToday: 0,
@@ -108,7 +108,7 @@ export class TelemetryService {
             'mistral-small-latest',
             {
                 model: 'mistral-small-latest',
-                displayName: 'Mistral Small (Fast Serverless)',
+                displayName: 'Mistral Small (Serverless)',
                 tier: 2,
                 requestsToday: 0,
                 promptTokensToday: 0,
@@ -122,10 +122,10 @@ export class TelemetryService {
             },
         ],
         [
-            'llama-3.1-8b-instant',
+            'openai/gpt-oss-120b',
             {
-                model: 'llama-3.1-8b-instant',
-                displayName: 'Groq LLaMA 3.1 8B (Sub-300ms)',
+                model: 'openai/gpt-oss-120b',
+                displayName: 'Groq GPT-OSS 120B',
                 tier: 1,
                 requestsToday: 0,
                 promptTokensToday: 0,
@@ -142,7 +142,7 @@ export class TelemetryService {
             'open-mistral-nemo',
             {
                 model: 'open-mistral-nemo',
-                displayName: 'Mistral NeMo 12B (High Precision)',
+                displayName: 'Mistral NeMo 12B',
                 tier: 2,
                 requestsToday: 0,
                 promptTokensToday: 0,
@@ -156,10 +156,10 @@ export class TelemetryService {
             },
         ],
         [
-            'mixtral-8x7b-32768',
+            'openai/gpt-oss-20b',
             {
-                model: 'mixtral-8x7b-32768',
-                displayName: 'Groq Mixtral 8x7B (High Throughput)',
+                model: 'openai/gpt-oss-20b',
+                displayName: 'Groq GPT-OSS 20B',
                 tier: 1,
                 requestsToday: 0,
                 promptTokensToday: 0,
@@ -173,11 +173,11 @@ export class TelemetryService {
             },
         ],
         [
-            'gemma2-9b-it',
+            'mistral-large-latest',
             {
-                model: 'gemma2-9b-it',
-                displayName: 'Google Gemma 9B (Groq LPU Engine)',
-                tier: 1,
+                model: 'mistral-large-latest',
+                displayName: 'Mistral Large (Flagship)',
+                tier: 2,
                 requestsToday: 0,
                 promptTokensToday: 0,
                 completionTokensToday: 0,

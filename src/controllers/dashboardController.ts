@@ -860,12 +860,11 @@ export class DashboardController {
                 <div class="input-group">
                     <label>Preferred Model (Direct Test / Zero Fallback)</label>
                     <select id="test-model">
-                        <option value="">Auto-Rotate (Groq LPU ↔ Mistral AI Balanced Fleet)</option>
-                        <optgroup label="Groq Cloud LPU">
-                            <option value="llama-3.3-70b-versatile">Groq LLaMA 3.3 70B (llama-3.3-70b-versatile)</option>
-                            <option value="llama-3.1-8b-instant">Groq LLaMA 3.1 8B (llama-3.1-8b-instant)</option>
-                            <option value="mixtral-8x7b-32768">Groq Mixtral 8x7B (mixtral-8x7b-32768)</option>
-                            <option value="gemma2-9b-it">Google Gemma 9B on Groq (gemma2-9b-it)</option>
+                        <option value="">Auto-Rotate (Groq Cloud ↔ Mistral AI Balanced Fleet)</option>
+                        <optgroup label="Groq Cloud">
+                            <option value="qwen/qwen3.8-27b">Groq Qwen 3.8 27B (qwen/qwen3.8-27b)</option>
+                            <option value="openai/gpt-oss-120b">Groq GPT-OSS 120B (openai/gpt-oss-120b)</option>
+                            <option value="openai/gpt-oss-20b">Groq GPT-OSS 20B (openai/gpt-oss-20b)</option>
                         </optgroup>
                         <optgroup label="Mistral AI Serverless">
                             <option value="mistral-small-latest">Mistral Small (mistral-small-latest)</option>
