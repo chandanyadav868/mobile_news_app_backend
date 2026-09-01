@@ -9,6 +9,7 @@ import { extractArticleContent } from './articleExtractor.js';
 import { logStream } from './logStreamService.js';
 import UniversalLlmService from './universalLlmService.js';
 import TelemetryService from './telemetryService.js';
+import { broadcastIngestPushToConnectedDevices } from './deviceRegistryService.js';
 
 const CHROME_HEADERS = {
   'User-Agent':
@@ -370,11 +371,10 @@ export async function ingestAllFeeds(): Promise<{
     const uniqueArticles = Array.from(uniqueMap.values());
     const candidateHashes = uniqueArticles.map((a) => a.hash);
 
-    // ─── STAGE 2: POSTGRESQL DATE-BOUNDED DEDUPLICATION ───
-    // Query ONLY the indexed recent partition rather than scanning the entire table
+    // ─── STAGE 2: POSTGRESQL GLOBAL HASH DEDUPLICATION (O(1) Indexed B-Tree) ───
+    // Query global indexed hashes across the table to ensure 100% of candidate articles are genuinely new
     const existingArticles = await prisma.article.findMany({
       where: {
-        publishedAt: { gte: cutoffDate },
         hash: { in: candidateHashes },
       },
       select: { hash: true },
@@ -559,10 +559,26 @@ export async function ingestAllFeeds(): Promise<{
       }
     }
 
-    // 5. Invalidate Redis cache so frontend immediately gets freshest stories
+    // 5. Invalidate Redis cache & Broadcast breaking news to all connected mobile devices in Redis
     if (insertedCount > 0) {
       await invalidateFeedCache();
       logStream.emitLog('info', '⚡ Redis cache invalidated with fresh headlines.');
+
+      // Fetch the latest inserted article for instant push broadcast
+      const latestInserted = await prisma.article.findFirst({
+        orderBy: { createdAt: 'desc' },
+      });
+
+      if (latestInserted) {
+        broadcastIngestPushToConnectedDevices({
+          id: latestInserted.id,
+          title: latestInserted.title,
+          summary: latestInserted.summary,
+          category: latestInserted.category,
+          imageUrl: latestInserted.imageUrl,
+          url: latestInserted.url,
+        }).catch((e) => console.warn('[Push Broadcast Error]:', e.message));
+      }
     }
 
     lastSuccessfulScrapeTime = new Date();

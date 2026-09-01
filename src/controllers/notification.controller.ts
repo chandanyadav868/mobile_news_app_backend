@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
 import { prisma } from '../config/db.js';
+import { registerDeviceInRedis } from '../services/deviceRegistryService.js';
 
 const MIN_CATEGORIES = 5;
 
@@ -28,20 +29,23 @@ export async function subscribeDevice(req: Request, res: Response) {
 
     const countryCode = (country || 'IN').toUpperCase();
 
-    // Upsert subscription in database
-    const subscription = await prisma.deviceSubscription.upsert({
-      where: { pushToken },
-      update: {
-        categories,
-        country: countryCode,
-        updatedAt: new Date(),
-      },
-      create: {
-        pushToken,
-        categories,
-        country: countryCode,
-      },
-    });
+    // Upsert subscription in database & store in Redis
+    const [subscription] = await Promise.all([
+      prisma.deviceSubscription.upsert({
+        where: { pushToken },
+        update: {
+          categories,
+          country: countryCode,
+          updatedAt: new Date(),
+        },
+        create: {
+          pushToken,
+          categories,
+          country: countryCode,
+        },
+      }),
+      registerDeviceInRedis(pushToken, categories, countryCode),
+    ]);
 
     console.log(
       `🔔 [Push Notification Subscribed] Token: ${pushToken.substring(0, 15)}... Categories (${categories.length}): [${categories.join(', ')}]`
