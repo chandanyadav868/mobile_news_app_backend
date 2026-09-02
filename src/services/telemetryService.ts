@@ -387,6 +387,14 @@ export class TelemetryService {
     }
 
     /**
+     * Normalize model identifiers to canonical names (e.g. groq:qwen/qwen3.8-27b -> qwen/qwen3.8-27b)
+     */
+    public static normalizeModelKey(rawModel: string): string {
+        if (!rawModel) return 'unknown';
+        return rawModel.replace(/^(groq:|mistral:)/i, '');
+    }
+
+    /**
      * Record a successful AI request and update token accounting
      */
     public static recordAiUsage(params: {
@@ -396,10 +404,11 @@ export class TelemetryService {
         latencyMs: number;
         articleTitle?: string;
     }) {
-        const metric = this.modelMetrics.get(params.model) || {
-            model: params.model,
-            displayName: params.model,
-            tier: 99,
+        const canonicalKey = this.normalizeModelKey(params.model);
+        const metric = this.modelMetrics.get(canonicalKey) || this.modelMetrics.get(params.model) || {
+            model: canonicalKey,
+            displayName: canonicalKey,
+            tier: 2,
             requestsToday: 0,
             promptTokensToday: 0,
             completionTokensToday: 0,
@@ -421,7 +430,7 @@ export class TelemetryService {
         metric.status = 'ready';
         metric.lastUsedAt = new Date().toISOString();
 
-        this.modelMetrics.set(params.model, metric);
+        this.modelMetrics.set(canonicalKey, metric);
 
         this.addLog({
             type: 'ai_request',

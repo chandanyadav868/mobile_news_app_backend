@@ -487,70 +487,162 @@ export class DashboardController {
 
         .models-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 14px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
         }
 
-        .model-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 16px;
+        .model-item {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
+            backdrop-filter: blur(12px);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .model-item:hover {
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 0 15px rgba(59, 130, 246, 0.15);
+        }
+
+        .model-item.model-disabled {
+            opacity: 0.6;
+            background: rgba(15, 23, 42, 0.4);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .model-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
         }
 
         .model-name {
+            font-size: 14px;
             font-weight: 700;
-            font-size: 13px;
-            color: #60A5FA;
+            color: #F8FAFC;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .model-stats-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
+        .model-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 999px;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+
+        .card-badge-ready {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34D399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
+        }
+
+        .card-badge-cooldown {
+            background: rgba(245, 158, 11, 0.15);
+            color: #FBBF24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            box-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
+        }
+
+        .card-badge-paused {
+            background: rgba(239, 68, 68, 0.15);
+            color: #F87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .model-tier {
+            font-size: 11px;
             color: var(--text-sub);
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        .model-stats-val {
+        .model-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .model-stat-col {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .stat-lbl {
+            font-size: 10px;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-weight: 600;
+        }
+
+        .stat-val {
+            font-size: 13px;
             font-weight: 700;
-            color: var(--text-main);
+            color: #F8FAFC;
             font-family: 'JetBrains Mono', monospace;
         }
 
-        .model-toggle-btn {
-            display: inline-flex;
+        .model-controls {
+            margin-top: auto;
+        }
+
+        .btn-model-toggle {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 800;
-            cursor: pointer;
-            border: 1px solid rgba(16, 185, 129, 0.4);
-            background: rgba(16, 185, 129, 0.15);
-            color: #34D399;
-            transition: all 0.2s;
-            margin-top: 6px;
-            width: 100%;
         }
 
-        .model-toggle-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        .btn-model-toggle.disable {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: #FCA5A5;
         }
 
-        .model-toggle-btn.disabled {
-            border-color: rgba(239, 68, 68, 0.4);
-            background: rgba(239, 68, 68, 0.15);
-            color: #F87171;
+        .btn-model-toggle.disable:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.5);
+            color: #FFF;
         }
 
-        .model-toggle-btn.disabled:hover {
-            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+        .btn-model-toggle.enable {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6EE7B7;
+        }
+
+        .btn-model-toggle.enable:hover {
+            background: rgba(16, 185, 129, 0.25);
+            border-color: rgba(16, 185, 129, 0.6);
+            color: #FFF;
         }
 
         /* Split View: Interactive Test Studio & Live Logs */
