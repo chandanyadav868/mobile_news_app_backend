@@ -174,9 +174,6 @@ export class DashboardController {
     }
 
     public static async renderDashboard(req: Request, res: Response): Promise<void> {
-        const initialTelemetry = await TelemetryService.getFullTelemetry();
-        const initialTelemetryBase64 = Buffer.from(JSON.stringify(initialTelemetry)).toString('base64');
-
         const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1353,23 +1350,10 @@ export class DashboardController {
                 const res = await fetch('/api/v1/dashboard/stats');
                 const json = await res.json();
                 if (json && json.success) renderTelemetryData(json.data);
-            } catch {}
-        }
-
-        // 1. Immediately hydrate with pre-rendered server snapshot
-        try {
-            const rawBase64 = '${initialTelemetryBase64}';
-            if (rawBase64) {
-                const initData = JSON.parse(decodeURIComponent(escape(atob(rawBase64))));
-                if (initData) renderTelemetryData(initData);
+            } catch (e) {
+                console.warn('Dashboard fetch fallback error:', e);
             }
-        } catch(e) {
-            console.warn('Initial server render bootstrap warning:', e);
         }
-
-        // 2. Fetch immediate fresh API snapshot and begin 3-second heartbeat poller
-        fetchFallback();
-        setInterval(fetchFallback, 3000);
 
         async function runSummarizeTest() {
             const btn = document.getElementById('btn-run-test');
@@ -1420,8 +1404,10 @@ export class DashboardController {
             }
         }
 
-        // Initialize Live SSE Stream
+        // Initialize Live Telemetry
+        fetchFallback();
         startEventSourceStream();
+        setInterval(fetchFallback, 3000);
     </script>
 </body>
 </html>`;
