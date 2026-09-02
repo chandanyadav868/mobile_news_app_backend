@@ -1303,7 +1303,7 @@ export class DashboardController {
                             '</div>' +
                         '</div>' +
                         '<div class="model-controls">' +
-                            '<button class="btn-model-toggle ' + (isPaused ? 'enable' : 'disable') + '" onclick="toggleModelSwitch(\'' + m.model + '\')">' +
+                            '<button class="btn-model-toggle ' + (isPaused ? 'enable' : 'disable') + '" data-model="' + m.model + '" onclick="toggleModelSwitch(this.dataset.model)">' +
                                 (isPaused ? '▶️ Enable in Rotation' : '⏸️ Disable (Zero Cost)') +
                             '</button>' +
                         '</div>' +
