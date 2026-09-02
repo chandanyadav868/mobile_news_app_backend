@@ -103,12 +103,37 @@ export async function getFeed(req: Request, res: Response) {
       }
     }
 
-    const categoryClusters = selectedCategoryEntries.map(({ cat, items }) => ({
-      id: `cluster-${cat}`,
-      categoryTitle: cat,
-      leadNews: items[0],
-      subNews: items.slice(1, 4),
-    }));
+    // Guarantee every category cluster has at least 4 cards (1 lead + 3 sub)
+    // If a new RSS fetch only brings 1-2 new articles, backfill from historical DB/cache
+    const categoryClusters = (
+      await Promise.all(
+        selectedCategoryEntries.map(async ({ cat, items }) => {
+          let completeItems = [...items];
+
+          if (completeItems.length < 4) {
+            const existingIds = completeItems.map((a) => a.id).filter(Boolean);
+            const backfill = await prisma.article.findMany({
+              where: {
+                category: { equals: cat, mode: 'insensitive' },
+                ...(existingIds.length > 0 ? { id: { notIn: existingIds } } : {}),
+              },
+              orderBy: { publishedAt: 'desc' },
+              take: 4 - completeItems.length,
+            });
+            completeItems = [...completeItems, ...backfill];
+          }
+
+          if (completeItems.length === 0) return null;
+
+          return {
+            id: `cluster-${cat}`,
+            categoryTitle: cat,
+            leadNews: completeItems[0],
+            subNews: completeItems.slice(1, 4),
+          };
+        })
+      )
+    ).filter(Boolean);
 
     // 4. Fetch 5 latest visual insights
     const visualInsights = await prisma.insightStory.findMany({
