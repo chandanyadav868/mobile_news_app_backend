@@ -45,32 +45,36 @@ export class MailService {
      * Get or initialize Nodemailer transporter
      */
     private static getTransporter(): nodemailer.Transporter {
-        if (!this.transporter) {
-            const host = process.env.SMTP_HOST || 'smtp.gmail.com';
-            const port = parseInt(process.env.SMTP_PORT || '587', 10);
-            const user = process.env.SMTP_USER || '';
-            const pass = process.env.SMTP_PASS || '';
+        const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+        const port = parseInt(process.env.SMTP_PORT || '587', 10);
+        const user = (process.env.SMTP_USER || '').trim();
+        // Automatically strip all spaces from Google 16-character App Password (e.g. "topo mcij urxm rrfx" -> "topomcijurxmrrfx")
+        const pass = (process.env.SMTP_PASS || '').replace(/\s+/g, '').trim();
 
-            if (user && pass) {
-                this.transporter = nodemailer.createTransport({
-                    host,
-                    port,
-                    secure: port === 465,
+        if (user && pass) {
+            if (host.includes('gmail') || user.endsWith('@gmail.com')) {
+                return nodemailer.createTransport({
+                    service: 'gmail',
                     auth: { user, pass },
                 });
-            } else {
-                // Fallback test mode: uses Ethereal or test stream
-                this.transporter = nodemailer.createTransport({
-                    host: 'smtp.ethereal.email',
-                    port: 587,
-                    auth: {
-                        user: 'ethereal.user@ethereal.email',
-                        pass: 'ethereal.pass',
-                    },
-                });
             }
+            return nodemailer.createTransport({
+                host,
+                port,
+                secure: port === 465,
+                auth: { user, pass },
+            });
         }
-        return this.transporter;
+
+        // Fallback test mode: uses Ethereal
+        return nodemailer.createTransport({
+            host: 'smtp.ethereal.email',
+            port: 587,
+            auth: {
+                user: 'ethereal.user@ethereal.email',
+                pass: 'ethereal.pass',
+            },
+        });
     }
 
     /**
@@ -334,7 +338,7 @@ export class MailService {
             const html = this.renderEmailHtml(template, tester);
             const transporter = this.getTransporter();
 
-            const from = process.env.SMTP_FROM || `"${template.appName}" <no-reply@newsflow.ai>`;
+            const from = process.env.SMTP_FROM || (process.env.SMTP_USER ? `"${template.appName}" <${process.env.SMTP_USER}>` : `"${template.appName}" <no-reply@newsflow.ai>`);
 
             // Check if SMTP is configured, else simulate success with logging
             if (!process.env.SMTP_USER) {
