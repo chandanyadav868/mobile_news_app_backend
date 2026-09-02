@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import { MailtrapClient } from 'mailtrap';
+import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 
@@ -338,11 +339,18 @@ export class MailService {
 
             const html = this.renderEmailHtml(template, tester);
 
+            // Always reload .env on each invocation so disk changes are picked up immediately
+            dotenv.config();
+
             // ─── PRIORITY 1: Mailtrap API Token Dispatch (Direct HTTPS API & Official SDK) ─────
             const mailtrapToken = (process.env.MAILTRAP_API_TOKEN || '').trim();
             if (mailtrapToken) {
                 const inboxId = (process.env.MAILTRAP_INBOX_ID || '').trim();
-                const senderEmail = process.env.MAILTRAP_SENDER_EMAIL || 'hello@demomailtrap.co';
+                let senderEmail = (process.env.MAILTRAP_SENDER_EMAIL || '').trim();
+                // Ensure sender uses verified domain humantalking.com (demomailtrap.com was exhausted by Mailtrap)
+                if (!senderEmail || senderEmail.includes('demomailtrap')) {
+                    senderEmail = 'no-reply@humantalking.com';
+                }
                 const senderName = process.env.MAILTRAP_SENDER_NAME || template.appName || 'NewsFlow VIP Beta';
 
                 // 1. If explicit sandbox inbox is provided in .env, route directly to Sandbox API
