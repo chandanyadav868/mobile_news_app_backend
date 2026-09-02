@@ -19,6 +19,7 @@ export interface EmailTemplateConfig {
     apkDirectUrl: string;
     invitationCode: string;
     footerText: string;
+    rawHtml?: string;
 }
 
 export const DEFAULT_EMAIL_TEMPLATE: EmailTemplateConfig = {
@@ -111,6 +112,14 @@ export class MailService {
     }
 
     /**
+     * Get default raw HTML template for the code editor
+     */
+    public static getDefaultRawHtml(): string {
+        const cleanTpl = { ...DEFAULT_EMAIL_TEMPLATE, rawHtml: undefined };
+        return this.renderEmailHtml(cleanTpl, { name: '{{name}}', email: '{{email}}' });
+    }
+
+    /**
      * Generate responsive HTML email string from template and user variables
      */
     public static renderEmailHtml(
@@ -118,6 +127,15 @@ export class MailService {
         user: { name?: string | null; email: string; deviceType?: string }
     ): string {
         const userName = user.name ? user.name.trim() : 'Beta Tester';
+
+        // If raw custom HTML & CSS is supplied by user, interpolate variables directly
+        if (template.rawHtml && template.rawHtml.trim().length > 0) {
+            return template.rawHtml
+                .replace(/\{\{\s*name\s*\}\}/gi, userName)
+                .replace(/\{\{\s*email\s*\}\}/gi, user.email || '')
+                .replace(/\{\{\s*code\s*\}\}/gi, template.invitationCode || 'VIP-NEWS-2026')
+                .replace(/\{\{\s*date\s*\}\}/gi, new Date().toLocaleDateString());
+        }
 
         return `<!DOCTYPE html>
 <html lang="en">

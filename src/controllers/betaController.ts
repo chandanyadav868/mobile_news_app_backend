@@ -548,6 +548,18 @@ export class BetaController {
      */
     public static renderCampaignStudio(req: Request, res: Response): void {
         const template = MailService.getTemplate();
+        const rawHtmlContent = template.rawHtml && template.rawHtml.trim().length > 0
+            ? template.rawHtml
+            : MailService.getDefaultRawHtml();
+
+        const escapeHtml = (str: string): string => {
+            return (str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        };
 
         const html = `<!DOCTYPE html>
 <html lang="en">
@@ -828,6 +840,55 @@ export class BetaController {
             box-shadow: 0 6px 18px rgba(16, 185, 129, 0.45);
         }
 
+        .code-editor {
+            width: 100%;
+            height: 520px;
+            background: #050811;
+            color: #F1F5F9;
+            font-family: 'JetBrains Mono', Consolas, Monaco, monospace;
+            font-size: 12px;
+            line-height: 1.55;
+            padding: 14px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            resize: vertical;
+            outline: none;
+            tab-size: 2;
+            transition: all 0.2s ease;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: auto;
+        }
+
+        .code-editor:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2), inset 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .var-chip {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94A3B8;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .var-chip:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: var(--primary);
+            color: #93C5FD;
+            transform: translateY(-1px);
+        }
+
         .preview-iframe-wrapper {
             width: 100%;
             height: 640px;
@@ -1000,66 +1061,49 @@ export class BetaController {
 
         <!-- Split Grid: Template Editor & Real-Time Live Preview -->
         <div class="split-grid">
-            <!-- Left Pane: Template Editor -->
-            <div class="studio-card">
-                <div class="section-header">
+            <!-- Left Pane: Raw HTML & CSS Studio -->
+            <div class="studio-card" style="display: flex; flex-direction: column;">
+                <div class="section-header" style="margin-bottom: 12px;">
                     <div>
-                        <h2 class="section-title">✉️ Email Campaign & Story Editor</h2>
-                        <span class="val-sub">Edits update the live preview pane immediately</span>
+                        <h2 class="section-title">💻 Raw HTML & CSS Email Studio</h2>
+                        <span class="val-sub">Directly code or paste responsive HTML & CSS for any campaign</span>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <select id="preset-selector" onchange="loadPresetTemplate(this.value)" style="padding: 6px 10px; font-size: 12px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 8px; color: #FFFFFF; font-weight: 600; cursor: pointer;">
+                            <option value="vip">⚡ VIP Beta Invitation</option>
+                            <option value="breaking">🚨 Breaking News Alert</option>
+                            <option value="newsletter">🗞️ Weekly News Digest</option>
+                            <option value="minimal">📄 Clean Minimal Letter</option>
+                            <option value="blank">🧼 Blank HTML Canvas</option>
+                        </select>
                     </div>
                 </div>
 
-                <div class="input-group">
+                <div class="input-group" style="margin-bottom: 12px;">
                     <label>Email Subject Line</label>
-                    <input type="text" id="tpl-subject" oninput="updateLivePreview()" value="${template.subject}">
+                    <input type="text" id="tpl-subject" value="${template.subject}" placeholder="e.g. 🚀 You're Invited: Exclusive NewsFlow VIP Beta Access!">
                 </div>
 
-                <div class="input-group">
-                    <label>Headline Title</label>
-                    <input type="text" id="tpl-headline" oninput="updateLivePreview()" value="${template.headline}">
+                <!-- Dynamic Variables Bar -->
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+                    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                        <span style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">Click to Insert:</span>
+                        <button type="button" class="var-chip" onclick="insertVariable('{{name}}')">👤 {{name}}</button>
+                        <button type="button" class="var-chip" onclick="insertVariable('{{email}}')">📧 {{email}}</button>
+                        <button type="button" class="var-chip" onclick="insertVariable('{{code}}')">🔑 {{code}}</button>
+                        <button type="button" class="var-chip" onclick="insertVariable('{{date}}')">📅 {{date}}</button>
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                        <button type="button" class="var-chip" onclick="copyEditorCode()" style="color: #60A5FA; border-color: rgba(59,130,246,0.3);">📋 Copy HTML</button>
+                    </div>
                 </div>
 
-                <div class="input-group">
-                    <label>Hero Banner Image URL</label>
-                    <input type="text" id="tpl-hero-img" oninput="updateLivePreview()" value="${template.heroImageUrl}">
+                <!-- Raw HTML & CSS Code Textarea -->
+                <div style="flex: 1; display: flex; flex-direction: column;">
+                    <textarea id="tpl-raw-html" class="code-editor" spellcheck="false" oninput="updateLivePreview()" onkeydown="handleEditorKeydown(event)">${escapeHtml(rawHtmlContent)}</textarea>
                 </div>
 
-                <div class="input-group">
-                    <label>Introductory Message</label>
-                    <textarea id="tpl-intro" rows="2" oninput="updateLivePreview()">${template.introMessage}</textarea>
-                </div>
-
-                <div class="input-group">
-                    <label>Featured Story Card Title</label>
-                    <input type="text" id="tpl-story-title" oninput="updateLivePreview()" value="${template.storyTitle}">
-                </div>
-
-                <div class="input-group">
-                    <label>Featured Story Summary</label>
-                    <textarea id="tpl-story-summary" rows="3" oninput="updateLivePreview()">${template.storySummary}</textarea>
-                </div>
-
-                <div class="input-group">
-                    <label>Android Play Store / Testing Link</label>
-                    <input type="text" id="tpl-android-url" oninput="updateLivePreview()" value="${template.androidUrl}">
-                </div>
-
-                <div class="input-group">
-                    <label>Apple TestFlight Link</label>
-                    <input type="text" id="tpl-ios-url" oninput="updateLivePreview()" value="${template.iosUrl}">
-                </div>
-
-                <div class="input-group">
-                    <label>Direct APK Download Link</label>
-                    <input type="text" id="tpl-apk-url" oninput="updateLivePreview()" value="${template.apkDirectUrl}">
-                </div>
-
-                <div class="input-group">
-                    <label>VIP Access Code</label>
-                    <input type="text" id="tpl-code" oninput="updateLivePreview()" value="${template.invitationCode}">
-                </div>
-
-                <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap;">
                     <button class="btn-primary" onclick="saveEmailTemplate()" style="flex: 1;">💾 Save Template</button>
                     <button class="btn-secondary" onclick="resetEmailTemplateDefault()">🔄 Reset Default</button>
                     <button class="btn-success" onclick="sendInviteToAllPending()">🚀 Send to All Pending</button>
@@ -1214,36 +1258,87 @@ export class BetaController {
 
         function getFormTemplatePayload() {
             return {
-                subject: document.getElementById('tpl-subject').value,
-                headline: document.getElementById('tpl-headline').value,
-                heroImageUrl: document.getElementById('tpl-hero-img').value,
-                introMessage: document.getElementById('tpl-intro').value,
-                storyTitle: document.getElementById('tpl-story-title').value,
-                storySummary: document.getElementById('tpl-story-summary').value,
-                androidUrl: document.getElementById('tpl-android-url').value,
-                iosUrl: document.getElementById('tpl-ios-url').value,
-                apkDirectUrl: document.getElementById('tpl-apk-url').value,
-                invitationCode: document.getElementById('tpl-code').value,
+                subject: (document.getElementById('tpl-subject').value || '').trim(),
+                rawHtml: (document.getElementById('tpl-raw-html').value || ''),
             };
         }
 
         function updateLivePreview() {
             if (previewDebounceTimer) clearTimeout(previewDebounceTimer);
-            previewDebounceTimer = setTimeout(async () => {
-                const payload = getFormTemplatePayload();
-                try {
-                    const res = await fetch('/api/beta/preview', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload),
-                    });
-                    const html = await res.text();
-                    const iframe = document.getElementById('email-preview-iframe');
-                    if (iframe) iframe.srcdoc = html;
-                } catch (e) {
-                    console.warn('Preview render error:', e);
-                }
-            }, 80);
+            previewDebounceTimer = setTimeout(function() {
+                var textarea = document.getElementById('tpl-raw-html');
+                var iframe = document.getElementById('email-preview-iframe');
+                if (!textarea || !iframe) return;
+                var raw = textarea.value;
+                var sampleContent = raw
+                    .replace(/\\{\\{\\s*name\\s*\\}\\}/gi, 'Alex Sharma')
+                    .replace(/\\{\\{\\s*email\\s*\\}\\}/gi, 'alex.sharma@example.com')
+                    .replace(/\\{\\{\\s*code\\s*\\}\\}/gi, 'VIP-NEWS-2026')
+                    .replace(/\\{\\{\\s*date\\s*\\}\\}/gi, new Date().toLocaleDateString());
+                iframe.srcdoc = sampleContent;
+            }, 30);
+        }
+
+        function insertVariable(varText) {
+            var textarea = document.getElementById('tpl-raw-html');
+            if (!textarea) return;
+            var start = textarea.selectionStart;
+            var end = textarea.selectionEnd;
+            var text = textarea.value;
+            textarea.value = text.substring(0, start) + varText + text.substring(end);
+            textarea.selectionStart = textarea.selectionEnd = start + varText.length;
+            textarea.focus();
+            updateLivePreview();
+        }
+
+        function copyEditorCode() {
+            var textarea = document.getElementById('tpl-raw-html');
+            if (!textarea) return;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(textarea.value).then(function() {
+                    alert('📋 HTML & CSS code copied to clipboard!');
+                }).catch(function() {
+                    textarea.select();
+                    document.execCommand('copy');
+                    alert('📋 HTML & CSS code copied!');
+                });
+            } else {
+                textarea.select();
+                document.execCommand('copy');
+                alert('📋 HTML & CSS code copied!');
+            }
+        }
+
+        function handleEditorKeydown(e) {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                var textarea = e.target;
+                var start = textarea.selectionStart;
+                var end = textarea.selectionEnd;
+                textarea.value = textarea.value.substring(0, start) + '  ' + textarea.value.substring(end);
+                textarea.selectionStart = textarea.selectionEnd = start + 2;
+                updateLivePreview();
+            }
+        }
+
+        var DEFAULT_BACKEND_HTML = ${JSON.stringify(rawHtmlContent)};
+
+        var PRESETS = {
+            vip: DEFAULT_BACKEND_HTML,
+            breaking: '<!DOCTYPE html>\\n<html>\\n<head>\\n  <meta charset=\"utf-8\">\\n  <style>\\n    body { margin: 0; padding: 0; background: #080B12; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif; color: #FFFFFF; }\\n    .box { max-width: 600px; margin: 24px auto; background: #0E1526; border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 14px; padding: 24px; }\\n    .badge { display: inline-block; background: #EF4444; color: #FFF; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 999px; }\\n    h1 { font-size: 22px; font-weight: 800; margin: 16px 0 12px; }\\n    p { font-size: 14px; color: #94A3B8; line-height: 1.6; }\\n    .btn { display: inline-block; background: #EF4444; color: #FFF; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; margin-top: 16px; }\\n  </style>\\n</head>\\n<body>\\n  <div class=\"box\">\\n    <span class=\"badge\">🚨 BREAKING NEWS ALERT</span>\\n    <h1>Major Global Breakthrough Verified Live</h1>\\n    <p>Hello {{name}}, an urgent event was verified by NewsFlow AI edge agents.</p>\\n    <a href=\"https://play.google.com/apps/testing/com.newsflow.app\" class=\"btn\">Read Full Story on NewsFlow</a>\\n  </div>\\n</body>\\n</html>',
+            newsletter: '<!DOCTYPE html>\\n<html>\\n<head>\\n  <meta charset=\"utf-8\">\\n  <style>\\n    body { margin: 0; padding: 0; background: #0B0F19; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif; color: #F1F5F9; }\\n    .container { max-width: 600px; margin: 20px auto; background: #111827; border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 24px; }\\n    .card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 16px; margin-bottom: 12px; }\\n  </style>\\n</head>\\n<body>\\n  <div class=\"container\">\\n    <h2>🗞️ NewsFlow Weekly Digest</h2>\\n    <p style=\"color: #94A3B8; font-size: 13px;\">Curated for {{name}} • {{date}}</p>\\n    <div class=\"card\">\\n      <h3>⚡ AI Breakthrough at Edge</h3>\\n      <p style=\"color: #94A3B8; font-size: 13px;\">NewsFlow achieves real-time inference on mobile devices.</p>\\n    </div>\\n  </div>\\n</body>\\n</html>',
+            minimal: '<!DOCTYPE html>\\n<html>\\n<head>\\n  <meta charset=\"utf-8\">\\n  <style>\\n    body { margin: 0; padding: 32px 16px; background: #FFFFFF; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, sans-serif; color: #111827; }\\n    .content { max-width: 540px; margin: 0 auto; line-height: 1.6; }\\n    .btn { display: inline-block; background: #0F172A; color: #FFF; text-decoration: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; margin-top: 14px; }\\n  </style>\\n</head>\\n<body>\\n  <div class=\"content\">\\n    <h2>Welcome to NewsFlow, {{name}}</h2>\\n    <p>Your access code <strong>{{code}}</strong> is active.</p>\\n    <a href=\"https://play.google.com/apps/testing/com.newsflow.app\" class=\"btn\">Get Started</a>\\n  </div>\\n</body>\\n</html>',
+            blank: '<!DOCTYPE html>\\n<html>\\n<head>\\n  <meta charset=\"utf-8\">\\n  <style>\\n    body { margin: 0; padding: 24px; background: #0B0F19; color: #FFFFFF; font-family: sans-serif; }\\n  </style>\\n</head>\\n<body>\\n  <h1>Hello {{name}}!</h1>\\n  <p>Your custom HTML & CSS goes here.</p>\\n</body>\\n</html>'
+        };
+
+        function loadPresetTemplate(key) {
+            if (!PRESETS[key]) return;
+            if (!confirm('Load the \"' + key + '\" preset? Your current unsaved changes in the editor will be replaced.')) return;
+            var textarea = document.getElementById('tpl-raw-html');
+            if (textarea) {
+                textarea.value = PRESETS[key];
+                updateLivePreview();
+            }
         }
 
         function setPreviewDevice(mode) {
@@ -1272,7 +1367,7 @@ export class BetaController {
                 });
                 const json = await res.json();
                 if (json.success) {
-                    alert('✅ Email template saved successfully!');
+                    alert('✅ Custom HTML & CSS email template saved successfully!');
                 }
             } catch (e) {
                 alert('Error saving template: ' + e.message);
@@ -1285,7 +1380,7 @@ export class BetaController {
                 const res = await fetch('/api/beta/template', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({}),
+                    body: JSON.stringify({ rawHtml: '' }),
                 });
                 location.reload();
             } catch (e) {
@@ -1355,6 +1450,9 @@ export class BetaController {
                 alert('Delete error: ' + e.message);
             }
         }
+
+        // Initialize preview on page load
+        updateLivePreview();
     </script>
 </body>
 </html>`;
