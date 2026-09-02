@@ -336,11 +336,91 @@ export class MailService {
                 : this.getTemplate();
 
             const html = this.renderEmailHtml(template, tester);
-            const transporter = this.getTransporter();
 
+            // ─── PRIORITY 1: Mailtrap API Token Dispatch (Direct HTTPS API) ─────
+            const mailtrapToken = (process.env.MAILTRAP_API_TOKEN || '').trim();
+            if (mailtrapToken) {
+                let inboxId = (process.env.MAILTRAP_INBOX_ID || '').trim();
+                const senderEmail = process.env.MAILTRAP_SENDER_EMAIL || 'hello@demomailtrap.co';
+                const senderName = process.env.MAILTRAP_SENDER_NAME || template.appName || 'NewsFlow VIP Beta';
+
+                const headers = {
+                    'Authorization': `Bearer ${mailtrapToken}`,
+                    'Api-Token': mailtrapToken,
+                    'Content-Type': 'application/json',
+                };
+
+                const bodyPayload = {
+                    from: { email: senderEmail, name: senderName },
+                    to: [{ email: tester.email, name: tester.name || 'Beta Tester' }],
+                    subject: template.subject,
+                    html,
+                    category: 'VIP Beta Invitation',
+                };
+
+                // Helper to attempt sandbox dispatch
+                const dispatchToSandbox = async (targetInboxId: string) => {
+                    const sandboxRes = await fetch(`https://sandbox.api.mailtrap.io/api/send/${targetInboxId}`, {
+                        method: 'POST',
+                        headers,
+                        body: JSON.stringify(bodyPayload),
+                    });
+                    const sandboxData = await sandboxRes.json().catch(() => ({}));
+                    if (sandboxRes.ok && sandboxData.success !== false) {
+                        const messageId = sandboxData.message_ids?.[0] || `mailtrap-${Date.now()}`;
+                        console.log(`[MailService] [Mailtrap Sandbox] Invitation delivered to inbox #${targetInboxId}: ${messageId}`);
+                        return { success: true, messageId };
+                    }
+                    return null;
+                };
+
+                // If explicit inboxId is given, send directly to sandbox
+                if (inboxId) {
+                    const result = await dispatchToSandbox(inboxId);
+                    if (result) return result;
+                }
+
+                // Otherwise, try sending to Live Email Sending API
+                try {
+                    const liveResponse = await fetch('https://send.api.mailtrap.io/api/send', {
+                        method: 'POST',
+                        headers,
+                        body: JSON.stringify(bodyPayload),
+                    });
+                    const liveData = await liveResponse.json().catch(() => ({}));
+
+                    if (liveResponse.ok && (liveData.success !== false)) {
+                        const messageId = liveData.message_ids?.[0] || `mailtrap-${Date.now()}`;
+                        console.log(`[MailService] [Mailtrap Live] Invitation sent to ${tester.email}: ${messageId}`);
+                        return { success: true, messageId };
+                    }
+                } catch (liveErr) {
+                    console.warn('[MailService] Live send attempt failed, checking sandbox:', liveErr);
+                }
+
+                // If live domain is not yet configured, automatically auto-discover user's default sandbox inbox
+                try {
+                    const inboxesRes = await fetch('https://mailtrap.io/api/inboxes', { headers });
+                    if (inboxesRes.ok) {
+                        const inboxes = await inboxesRes.json();
+                        if (Array.isArray(inboxes) && inboxes.length > 0) {
+                            const defaultInbox = inboxes[0].id;
+                            const sandboxResult = await dispatchToSandbox(defaultInbox);
+                            if (sandboxResult) return sandboxResult;
+                        }
+                    }
+                } catch (inboxErr) {
+                    console.warn('[MailService] Auto inbox discovery failed:', inboxErr);
+                }
+
+                console.error('[MailService] [Mailtrap API Error]: Could not deliver via Live or Sandbox API');
+                return { success: false, error: 'Mailtrap API dispatch failed' };
+            }
+
+            // ─── PRIORITY 2: Standard SMTP (Gmail, Custom SMTP) ─────────────────
+            const transporter = this.getTransporter();
             const from = process.env.SMTP_FROM || (process.env.SMTP_USER ? `"${template.appName}" <${process.env.SMTP_USER}>` : `"${template.appName}" <no-reply@newsflow.ai>`);
 
-            // Check if SMTP is configured, else simulate success with logging
             if (!process.env.SMTP_USER) {
                 console.log(`[MailService] [SIMULATED] Invitation email generated for ${tester.email}:`);
                 console.log(`Subject: ${template.subject}`);
@@ -357,7 +437,7 @@ export class MailService {
                 html,
             });
 
-            console.log(`[MailService] Invitation sent to ${tester.email}: ${info.messageId}`);
+            console.log(`[MailService] [SMTP] Invitation sent to ${tester.email}: ${info.messageId}`);
             return { success: true, messageId: info.messageId };
         } catch (err: any) {
             console.error(`[MailService] Error sending invitation to ${tester.email}:`, err);

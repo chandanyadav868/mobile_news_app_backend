@@ -6,13 +6,13 @@
       "model": "qwen/qwen3.8-27b",
       "displayName": "Groq Qwen 3.8 27B",
       "tier": 1,
-      "requestsToday": 44,
-      "promptTokensToday": 25815,
-      "completionTokensToday": 9267,
-      "totalTokensToday": 35082,
-      "lastLatencyMs": 999,
+      "requestsToday": 108,
+      "promptTokensToday": 62735,
+      "completionTokensToday": 22555,
+      "totalTokensToday": 85290,
+      "lastLatencyMs": 935,
       "status": "ready",
-      "lastUsedAt": "2026-09-02T06:51:30.181Z",
+      "lastUsedAt": "2026-09-02T08:18:27.450Z",
       "errorsToday": 0,
       "rateLimitResetAt": null
     },
@@ -20,13 +20,13 @@
       "model": "mistral-small-latest",
       "displayName": "Mistral Small (Serverless)",
       "tier": 2,
-      "requestsToday": 47,
-      "promptTokensToday": 28043,
-      "completionTokensToday": 11305,
-      "totalTokensToday": 39348,
-      "lastLatencyMs": 3102,
+      "requestsToday": 99,
+      "promptTokensToday": 56821,
+      "completionTokensToday": 23612,
+      "totalTokensToday": 80433,
+      "lastLatencyMs": 2968,
       "status": "ready",
-      "lastUsedAt": "2026-09-02T06:49:17.650Z",
+      "lastUsedAt": "2026-09-02T08:18:33.934Z",
       "errorsToday": 0,
       "rateLimitResetAt": null
     },
@@ -48,13 +48,13 @@
       "model": "open-mistral-nemo",
       "displayName": "Mistral NeMo 12B",
       "tier": 2,
-      "requestsToday": 18,
-      "promptTokensToday": 11380,
-      "completionTokensToday": 5795,
-      "totalTokensToday": 17175,
-      "lastLatencyMs": 2921,
+      "requestsToday": 40,
+      "promptTokensToday": 24138,
+      "completionTokensToday": 12660,
+      "totalTokensToday": 36798,
+      "lastLatencyMs": 3210,
       "status": "ready",
-      "lastUsedAt": "2026-09-02T06:48:50.886Z",
+      "lastUsedAt": "2026-09-02T08:11:23.669Z",
       "errorsToday": 0,
       "rateLimitResetAt": null
     },
@@ -62,13 +62,13 @@
       "model": "openai/gpt-oss-20b",
       "displayName": "Groq GPT-OSS 20B",
       "tier": 1,
-      "requestsToday": 22,
-      "promptTokensToday": 13597,
-      "completionTokensToday": 13200,
-      "totalTokensToday": 26797,
-      "lastLatencyMs": 3544,
+      "requestsToday": 44,
+      "promptTokensToday": 25969,
+      "completionTokensToday": 26400,
+      "totalTokensToday": 52369,
+      "lastLatencyMs": 3664,
       "status": "ready",
-      "lastUsedAt": "2026-09-02T06:48:58.667Z",
+      "lastUsedAt": "2026-09-02T08:10:44.065Z",
       "errorsToday": 0,
       "rateLimitResetAt": null
     },
@@ -76,548 +76,547 @@
       "model": "mistral-large-latest",
       "displayName": "Mistral Large (Flagship)",
       "tier": 2,
-      "requestsToday": 2,
-      "promptTokensToday": 1091,
-      "completionTokensToday": 428,
-      "totalTokensToday": 1519,
-      "lastLatencyMs": 4569,
+      "requestsToday": 7,
+      "promptTokensToday": 4085,
+      "completionTokensToday": 1696,
+      "totalTokensToday": 5781,
+      "lastLatencyMs": 4780,
       "status": "ready",
-      "lastUsedAt": "2026-09-02T06:48:26.102Z",
+      "lastUsedAt": "2026-09-02T07:39:33.213Z",
       "errorsToday": 0,
       "rateLimitResetAt": null
     }
   ],
   "funnel": {
-    "rssScannedToday": 109179,
-    "dedupedCandidatesToday": 13494,
-    "llmSummarizedToday": 210,
-    "directSavedToday": 24,
-    "dbInsertedToday": 230,
-    "lastIngestDurationMs": 130800,
-    "lastIngestAt": "2026-09-02T06:49:26.516Z"
+    "rssScannedToday": 184461,
+    "dedupedCandidatesToday": 17842,
+    "llmSummarizedToday": 376,
+    "directSavedToday": 55,
+    "dbInsertedToday": 420,
+    "lastIngestDurationMs": 601990,
+    "lastIngestAt": "2026-09-02T08:00:55.906Z"
   },
   "logs": [
     {
-      "id": "log-1788331890181-a1j3",
-      "timestamp": "2026-09-02T06:51:30.181Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 900,
-      "latencyMs": 999,
-      "status": "success",
-      "message": "Summarized \"Court Orders CBI Probe In Disha Salian Death\" in 999ms (900 tokens)",
-      "details": {
-        "promptTokens": 672,
-        "completionTokens": 228
-      }
-    },
-    {
-      "id": "log-1788331762880-1ri6",
-      "timestamp": "2026-09-02T06:49:22.880Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 945,
-      "latencyMs": 1048,
-      "status": "success",
-      "message": "Summarized \"Chennai Commuters Get Cool Relief\" in 1048ms (945 tokens)",
-      "details": {
-        "promptTokens": 691,
-        "completionTokens": 254
-      }
-    },
-    {
-      "id": "log-1788331761830-g0m9",
-      "timestamp": "2026-09-02T06:49:21.830Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "failed",
-      "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
-      "details": {
-        "articleTitle": "Chennai to Get 11 Air-Conditioned Bus Shelters",
-        "fullError": "Rate limit 429 on Groq Cloud",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788331761828-0zcu",
-      "timestamp": "2026-09-02T06:49:21.828Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1788331757651-03xp",
-      "timestamp": "2026-09-02T06:49:17.651Z",
+      "id": "log-1788337113934-6jya",
+      "timestamp": "2026-09-02T08:18:33.934Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 973,
-      "latencyMs": 3102,
+      "tokens": 655,
+      "latencyMs": 2968,
       "status": "success",
-      "message": "Summarized \"47,000 bottles returned in Chennai pilot\" in 3102ms (973 tokens)",
+      "message": "Summarized \"Nepal demands climate cash from top polluters\" in 2968ms (655 tokens)",
+      "details": {
+        "promptTokens": 432,
+        "completionTokens": 223
+      }
+    },
+    {
+      "id": "log-1788337107450-s7oz",
+      "timestamp": "2026-09-02T08:18:27.450Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 893,
+      "latencyMs": 935,
+      "status": "success",
+      "message": "Summarized \"NEET Goes Digital After Massive Leak\" in 935ms (893 tokens)",
       "details": {
         "promptTokens": 685,
-        "completionTokens": 288
+        "completionTokens": 208
       }
     },
     {
-      "id": "log-1788331750655-zsa8",
-      "timestamp": "2026-09-02T06:49:10.655Z",
+      "id": "log-1788336716896-jljy",
+      "timestamp": "2026-09-02T08:11:56.896Z",
       "type": "ai_request",
       "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 834,
-      "latencyMs": 861,
+      "tokens": 929,
+      "latencyMs": 1310,
       "status": "success",
-      "message": "Summarized \"Chennai Flood Risk Lingers Despite Dry Forecast\" in 861ms (834 tokens)",
+      "message": "Summarized \"Pakistan's Cricket Chaos Explodes\" in 1310ms (929 tokens)",
       "details": {
-        "promptTokens": 641,
-        "completionTokens": 193
-      }
-    },
-    {
-      "id": "log-1788331745885-950i",
-      "timestamp": "2026-09-02T06:49:05.885Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 894,
-      "latencyMs": 2770,
-      "status": "success",
-      "message": "Summarized \"Chennai braces for monsoon fury now\" in 2770ms (894 tokens)",
-      "details": {
-        "promptTokens": 642,
-        "completionTokens": 252
-      }
-    },
-    {
-      "id": "log-1788331743109-jadt",
-      "timestamp": "2026-09-02T06:49:03.109Z",
-      "type": "error",
-      "model": "mistral-large-latest",
-      "status": "failed",
-      "message": "⚠️ [mistral-large-latest] (403) {\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
-      "details": {
-        "articleTitle": "How Best Can Chennai Withstand Extreme Weather Events?",
-        "fullError": "{\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
-        "statusCode": 403
-      }
-    },
-    {
-      "id": "log-1788331738667-8b8k",
-      "timestamp": "2026-09-02T06:48:58.667Z",
-      "type": "ai_request",
-      "model": "groq:openai/gpt-oss-20b",
-      "tokens": 1325,
-      "latencyMs": 3544,
-      "status": "success",
-      "message": "Summarized \"Gauhati HC Directs Panel to Consider Rehabilitation of Joymala, Eight Other Assamese Elephants\" in 3544ms (1325 tokens)",
-      "details": {
-        "promptTokens": 725,
-        "completionTokens": 600
-      }
-    },
-    {
-      "id": "log-1788331730886-m131",
-      "timestamp": "2026-09-02T06:48:50.886Z",
-      "type": "ai_request",
-      "model": "mistral:open-mistral-nemo",
-      "tokens": 919,
-      "latencyMs": 2921,
-      "status": "success",
-      "message": "Summarized \"U.S. and Iran Exchange Blows Again\" in 2921ms (919 tokens)",
-      "details": {
-        "promptTokens": 645,
-        "completionTokens": 274
-      }
-    },
-    {
-      "id": "log-1788331724013-ue4i",
-      "timestamp": "2026-09-02T06:48:44.013Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 857,
-      "latencyMs": 830,
-      "status": "success",
-      "message": "Summarized \"Sonu Sood Brings Hope to Flood Stricken Nepal\" in 830ms (857 tokens)",
-      "details": {
-        "promptTokens": 641,
-        "completionTokens": 216
-      }
-    },
-    {
-      "id": "log-1788331723181-jpm2",
-      "timestamp": "2026-09-02T06:48:43.181Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "failed",
-      "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
-      "details": {
-        "articleTitle": "Sonu Sood Reaches Nepal With Relief Supplies for Flood Victims",
-        "fullError": "Rate limit 429 on Groq Cloud",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788331723178-8p4t",
-      "timestamp": "2026-09-02T06:48:43.178Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1788331717407-i7xw",
-      "timestamp": "2026-09-02T06:48:37.407Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 922,
-      "latencyMs": 2653,
-      "status": "success",
-      "message": "Summarized \"Tirumala cancels SSD tokens, pilgrims stranded!\" in 2653ms (922 tokens)",
-      "details": {
-        "promptTokens": 668,
-        "completionTokens": 254
-      }
-    },
-    {
-      "id": "log-1788331710958-slqg",
-      "timestamp": "2026-09-02T06:48:30.958Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 876,
-      "latencyMs": 926,
-      "status": "success",
-      "message": "Summarized \"Telangana Braces For Morning Rain\" in 926ms (876 tokens)",
-      "details": {
-        "promptTokens": 657,
-        "completionTokens": 219
-      }
-    },
-    {
-      "id": "log-1788331706102-gfuh",
-      "timestamp": "2026-09-02T06:48:26.102Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-large-latest",
-      "tokens": 901,
-      "latencyMs": 4569,
-      "status": "success",
-      "message": "Summarized \"US Strike Shatters Iran Wedding Night\" in 4569ms (901 tokens)",
-      "details": {
-        "promptTokens": 660,
-        "completionTokens": 241
-      }
-    },
-    {
-      "id": "log-1788331697600-dazc",
-      "timestamp": "2026-09-02T06:48:17.600Z",
-      "type": "ai_request",
-      "model": "groq:openai/gpt-oss-20b",
-      "tokens": 1375,
-      "latencyMs": 3347,
-      "status": "success",
-      "message": "Summarized \"Karthi, SJ Suryah Pray at Tiruchendur Temple for Sardar 2\" in 3347ms (1375 tokens)",
-      "details": {
-        "promptTokens": 775,
-        "completionTokens": 600
-      }
-    },
-    {
-      "id": "log-1788331689928-144k",
-      "timestamp": "2026-09-02T06:48:09.928Z",
-      "type": "ai_request",
-      "model": "mistral:open-mistral-nemo",
-      "tokens": 1008,
-      "latencyMs": 3202,
-      "status": "success",
-      "message": "Summarized \"'Love Overboard' Scuttled After Shock One-Season Run\" in 3202ms (1008 tokens)",
-      "details": {
-        "promptTokens": 654,
-        "completionTokens": 354
-      }
-    },
-    {
-      "id": "log-1788331682724-ng9p",
-      "timestamp": "2026-09-02T06:48:02.724Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 1079,
-      "latencyMs": 959,
-      "status": "success",
-      "message": "Summarized \"Power Star Celebrated by State Leaders\" in 959ms (1079 tokens)",
-      "details": {
-        "promptTokens": 836,
-        "completionTokens": 243
-      }
-    },
-    {
-      "id": "log-1788331681762-cy57",
-      "timestamp": "2026-09-02T06:48:01.762Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "failed",
-      "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
-      "details": {
-        "articleTitle": "Power Star Forever in Fan's Hearts, Says AP CM Naidu on Pawan Kalyan’s Birthday",
-        "fullError": "Rate limit 429 on Groq Cloud",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788331681760-k6c7",
-      "timestamp": "2026-09-02T06:48:01.760Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1788331677488-tgfd",
-      "timestamp": "2026-09-02T06:47:57.488Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 946,
-      "latencyMs": 2635,
-      "status": "success",
-      "message": "Summarized \"Jane Fonda breaks down remembering Dolly Parton\" in 2635ms (946 tokens)",
-      "details": {
-        "promptTokens": 693,
-        "completionTokens": 253
-      }
-    },
-    {
-      "id": "log-1788331670756-2x10",
-      "timestamp": "2026-09-02T06:47:50.756Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 938,
-      "latencyMs": 1685,
-      "status": "success",
-      "message": "Summarized \"Nepal Floods Claim Over 1,000 Lives\" in 1685ms (938 tokens)",
-      "details": {
-        "promptTokens": 694,
-        "completionTokens": 244
-      }
-    },
-    {
-      "id": "log-1788331610883-y8ww",
-      "timestamp": "2026-09-02T06:46:50.883Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 1191,
-      "latencyMs": 973,
-      "status": "success",
-      "message": "Summarized \"Hanuman Ansh Shatters Box Office Records\" in 973ms (1191 tokens)",
-      "details": {
-        "promptTokens": 942,
-        "completionTokens": 249
-      }
-    },
-    {
-      "id": "log-1788331605494-5obm",
-      "timestamp": "2026-09-02T06:46:45.494Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 1093,
-      "latencyMs": 3185,
-      "status": "success",
-      "message": "Summarized \"Kerala slams cleric’s women ban call\" in 3185ms (1093 tokens)",
-      "details": {
-        "promptTokens": 828,
-        "completionTokens": 265
-      }
-    },
-    {
-      "id": "log-1788331602306-giih",
-      "timestamp": "2026-09-02T06:46:42.306Z",
-      "type": "error",
-      "model": "mistral-large-latest",
-      "status": "failed",
-      "message": "⚠️ [mistral-large-latest] (403) {\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
-      "details": {
-        "articleTitle": "'केरलम की सोच ऐसी नहीं’: महिलाओं पर मौलवी के बयान पर सतीशन का पलटवार, इस्लामिक इतिहास का क्यों दिया उदाहरण?",
-        "fullError": "{\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
-        "statusCode": 403
-      }
-    },
-    {
-      "id": "log-1788331597532-rctl",
-      "timestamp": "2026-09-02T06:46:37.532Z",
-      "type": "ai_request",
-      "model": "groq:openai/gpt-oss-20b",
-      "tokens": 1069,
-      "latencyMs": 3286,
-      "status": "success",
-      "message": "Summarized \"\"Not Sending Inzamam, Miandad Or Anwar\": Pakistan Great Roasts Board Over Mass Sackings\" in 3286ms (1069 tokens)",
-      "details": {
-        "promptTokens": 469,
-        "completionTokens": 600
-      }
-    },
-    {
-      "id": "log-1788331587157-zqsf",
-      "timestamp": "2026-09-02T06:46:27.157Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 758,
-      "latencyMs": 1098,
-      "status": "success",
-      "message": "Summarized \"Tragedy Strikes Egypt's Red Sea Coast\" in 1098ms (758 tokens)",
-      "details": {
-        "promptTokens": 526,
+        "promptTokens": 697,
         "completionTokens": 232
       }
     },
     {
-      "id": "log-1788331586055-pw4f",
-      "timestamp": "2026-09-02T06:46:26.055Z",
+      "id": "log-1788336702765-iaoy",
+      "timestamp": "2026-09-02T08:11:42.765Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 999,
+      "latencyMs": 3865,
+      "status": "success",
+      "message": "Summarized \"India A faces New Zealand A in three tough four-dayers\" in 3865ms (999 tokens)",
+      "details": {
+        "promptTokens": 705,
+        "completionTokens": 294
+      }
+    },
+    {
+      "id": "log-1788336698897-jwy4",
+      "timestamp": "2026-09-02T08:11:38.897Z",
+      "type": "error",
+      "model": "mistral-large-latest",
+      "status": "failed",
+      "message": "⚠️ [mistral-large-latest] (403) {\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
+      "details": {
+        "articleTitle": "India A to play three four-dayers in New Zealand before WTC Test series",
+        "fullError": "{\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
+        "statusCode": 403
+      }
+    },
+    {
+      "id": "log-1788336683669-hwy4",
+      "timestamp": "2026-09-02T08:11:23.669Z",
+      "type": "ai_request",
+      "model": "mistral:open-mistral-nemo",
+      "tokens": 1010,
+      "latencyMs": 3210,
+      "status": "success",
+      "message": "Summarized \"Jana Sena fans roar for Pawan Kalyan’s birthday\" in 3210ms (1010 tokens)",
+      "details": {
+        "promptTokens": 685,
+        "completionTokens": 325
+      }
+    },
+    {
+      "id": "log-1788336676609-ojrf",
+      "timestamp": "2026-09-02T08:11:16.609Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 861,
+      "latencyMs": 737,
+      "status": "success",
+      "message": "Summarized \"Apple CEO Teases Phenomenal iPhone Launch\" in 737ms (861 tokens)",
+      "details": {
+        "promptTokens": 671,
+        "completionTokens": 190
+      }
+    },
+    {
+      "id": "log-1788336675868-cgxf",
+      "timestamp": "2026-09-02T08:11:15.868Z",
       "type": "rate_limit",
       "model": "openai/gpt-oss-120b",
       "status": "failed",
       "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
       "details": {
-        "articleTitle": "Bus crash kills 16 on Egypt's Red Sea coast",
+        "articleTitle": "Apple CEO Ternus Touts Product Pipeline, ‘Phenomenal’ iPhone Launch in Memo",
         "fullError": "Rate limit 429 on Groq Cloud",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788331586051-jgys",
-      "timestamp": "2026-09-02T06:46:26.051Z",
+      "id": "log-1788336675866-nii1",
+      "timestamp": "2026-09-02T08:11:15.867Z",
       "type": "rate_limit",
       "model": "openai/gpt-oss-120b",
       "status": "rotated",
       "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
     },
     {
-      "id": "log-1788331581467-nle7",
-      "timestamp": "2026-09-02T06:46:21.467Z",
+      "id": "log-1788336671750-ynz0",
+      "timestamp": "2026-09-02T08:11:11.750Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 795,
-      "latencyMs": 2683,
+      "tokens": 945,
+      "latencyMs": 2539,
       "status": "success",
-      "message": "Summarized \"Deadly chloroquine doses spark Naidu probe\" in 2683ms (795 tokens)",
+      "message": "Summarized \"Argentina's future hangs in the balance\" in 2539ms (945 tokens)",
       "details": {
-        "promptTokens": 559,
-        "completionTokens": 236
+        "promptTokens": 696,
+        "completionTokens": 249
       }
     },
     {
-      "id": "log-1788331574884-m6vz",
-      "timestamp": "2026-09-02T06:46:14.884Z",
+      "id": "log-1788336665117-pa3y",
+      "timestamp": "2026-09-02T08:11:05.117Z",
       "type": "ai_request",
       "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 806,
-      "latencyMs": 884,
+      "tokens": 852,
+      "latencyMs": 6135,
       "status": "success",
-      "message": "Summarized \"Bihar Warns Against Flood Fish\" in 884ms (806 tokens)",
+      "message": "Summarized \"Supreme Court Cracks Down On BCI\" in 6135ms (852 tokens)",
       "details": {
-        "promptTokens": 643,
-        "completionTokens": 163
+        "promptTokens": 646,
+        "completionTokens": 206
       }
     },
     {
-      "id": "log-1788331569205-z2zu",
-      "timestamp": "2026-09-02T06:46:09.205Z",
+      "id": "log-1788336652782-p3tk",
+      "timestamp": "2026-09-02T08:10:52.782Z",
       "type": "ai_request",
-      "model": "mistral:mistral-large-latest",
-      "tokens": 618,
-      "latencyMs": 3771,
+      "model": "mistral:mistral-small-latest",
+      "tokens": 979,
+      "latencyMs": 3951,
       "status": "success",
-      "message": "Summarized \"Bengaluru market goes digital with toll fees\" in 3771ms (618 tokens)",
+      "message": "Summarized \"Cyber crook busted in Rs 5.3 crore scam!\" in 3951ms (979 tokens)",
       "details": {
-        "promptTokens": 431,
-        "completionTokens": 187
+        "promptTokens": 697,
+        "completionTokens": 282
       }
     },
     {
-      "id": "log-1788331561924-ozpk",
-      "timestamp": "2026-09-02T06:46:01.924Z",
+      "id": "log-1788336648796-2cdn",
+      "timestamp": "2026-09-02T08:10:48.796Z",
+      "type": "error",
+      "model": "mistral-large-latest",
+      "status": "failed",
+      "message": "⚠️ [mistral-large-latest] (403) {\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
+      "details": {
+        "articleTitle": "Adilabad Police Nab Inter-State Cyber Criminal in Rs 5.3 Cr Fraud",
+        "fullError": "{\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
+        "statusCode": 403
+      }
+    },
+    {
+      "id": "log-1788336644065-go5t",
+      "timestamp": "2026-09-02T08:10:44.065Z",
       "type": "ai_request",
       "model": "groq:openai/gpt-oss-20b",
-      "tokens": 1401,
-      "latencyMs": 4405,
+      "tokens": 1060,
+      "latencyMs": 3664,
       "status": "success",
-      "message": "Summarized \"Jagan Reddy Questions Relocation Of Tribal Students, Condemns Police Action Against Party Leaders\" in 4405ms (1401 tokens)",
+      "message": "Summarized \"Jadavpur University V-C calls for check on wall graffiti, asks students to air views on social media\" in 3664ms (1060 tokens)",
       "details": {
-        "promptTokens": 801,
+        "promptTokens": 460,
         "completionTokens": 600
       }
     },
     {
-      "id": "log-1788331547301-5yvt",
-      "timestamp": "2026-09-02T06:45:47.301Z",
+      "id": "log-1788336636894-a3t8",
+      "timestamp": "2026-09-02T08:10:36.894Z",
       "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 651,
-      "latencyMs": 847,
+      "model": "mistral:open-mistral-nemo",
+      "tokens": 659,
+      "latencyMs": 3634,
       "status": "success",
-      "message": "Summarized \"CBI Takes Over Disha Salian Death Probe\" in 847ms (651 tokens)",
+      "message": "Summarized \"Workers strike after brutal supervisor assault\" in 3634ms (659 tokens)",
       "details": {
-        "promptTokens": 430,
-        "completionTokens": 221
+        "promptTokens": 417,
+        "completionTokens": 242
       }
     },
     {
-      "id": "log-1788331546450-jyz4",
-      "timestamp": "2026-09-02T06:45:46.450Z",
+      "id": "log-1788336629753-4oqa",
+      "timestamp": "2026-09-02T08:10:29.753Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 863,
+      "latencyMs": 729,
+      "status": "success",
+      "message": "Summarized \"Tragic Fire Claims Businessman's Life\" in 729ms (863 tokens)",
+      "details": {
+        "promptTokens": 652,
+        "completionTokens": 211
+      }
+    },
+    {
+      "id": "log-1788336629021-xnhz",
+      "timestamp": "2026-09-02T08:10:29.021Z",
       "type": "rate_limit",
       "model": "openai/gpt-oss-120b",
       "status": "failed",
       "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
       "details": {
-        "articleTitle": "CBI To Probe Sushant Singh Rajput's Ex-Manager Disha Salian's Death Case",
+        "articleTitle": "Elderly businessman burnt to death as car catches fire following crash in Kozhikode",
         "fullError": "Rate limit 429 on Groq Cloud",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788331546445-l8rc",
-      "timestamp": "2026-09-02T06:45:46.445Z",
+      "id": "log-1788336629021-mhnx",
+      "timestamp": "2026-09-02T08:10:29.021Z",
       "type": "rate_limit",
       "model": "openai/gpt-oss-120b",
       "status": "rotated",
       "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
     },
     {
-      "id": "log-1788331542783-ajmx",
-      "timestamp": "2026-09-02T06:45:42.783Z",
+      "id": "log-1788336622561-0tda",
+      "timestamp": "2026-09-02T08:10:22.561Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 909,
-      "latencyMs": 2469,
+      "tokens": 562,
+      "latencyMs": 2866,
       "status": "success",
-      "message": "Summarized \"Four children die after waterfall visit\" in 2469ms (909 tokens)",
+      "message": "Summarized \"Industrial air pollution gaps exposed\" in 2866ms (562 tokens)",
+      "details": {
+        "promptTokens": 406,
+        "completionTokens": 156
+      }
+    },
+    {
+      "id": "log-1788336616184-hhlk",
+      "timestamp": "2026-09-02T08:10:16.184Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 614,
+      "latencyMs": 811,
+      "status": "success",
+      "message": "Summarized \"Jharkhand Workers Injured In Nellore Crash\" in 811ms (614 tokens)",
+      "details": {
+        "promptTokens": 422,
+        "completionTokens": 192
+      }
+    },
+    {
+      "id": "log-1788336043745-phmi",
+      "timestamp": "2026-09-02T08:00:43.745Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 1042,
+      "latencyMs": 3230,
+      "status": "success",
+      "message": "Summarized \"Chief Minister to unleash Godavari's might today\" in 3230ms (1042 tokens)",
+      "details": {
+        "promptTokens": 731,
+        "completionTokens": 311
+      }
+    },
+    {
+      "id": "log-1788336029683-uguk",
+      "timestamp": "2026-09-02T08:00:29.683Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 846,
+      "latencyMs": 2729,
+      "status": "success",
+      "message": "Summarized \"India Launches Massive Insurance Data Overhaul\" in 2729ms (846 tokens)",
+      "details": {
+        "promptTokens": 650,
+        "completionTokens": 196
+      }
+    },
+    {
+      "id": "log-1788336013814-babc",
+      "timestamp": "2026-09-02T08:00:13.814Z",
+      "type": "ai_request",
+      "model": "groq:openai/gpt-oss-20b",
+      "tokens": 1320,
+      "latencyMs": 4332,
+      "status": "success",
+      "message": "Summarized \"Irrigation Board To Prioritise Drinking Water Due to Short Supply in Reservoirs\" in 4332ms (1320 tokens)",
+      "details": {
+        "promptTokens": 720,
+        "completionTokens": 600
+      }
+    },
+    {
+      "id": "log-1788335999520-zy1b",
+      "timestamp": "2026-09-02T07:59:59.520Z",
+      "type": "ai_request",
+      "model": "mistral:open-mistral-nemo",
+      "tokens": 986,
+      "latencyMs": 10232,
+      "status": "success",
+      "message": "Summarized \"BJP Leaders Slam ‘Dictatorial’ Arrest of Telangana Chief\" in 10232ms (986 tokens)",
+      "details": {
+        "promptTokens": 686,
+        "completionTokens": 300
+      }
+    },
+    {
+      "id": "log-1788335979584-ato4",
+      "timestamp": "2026-09-02T07:59:39.584Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 917,
+      "latencyMs": 1343,
+      "status": "success",
+      "message": "Summarized \"Telangana Lawmakers Hide Salaries To Dodge Taxes\" in 1343ms (917 tokens)",
+      "details": {
+        "promptTokens": 690,
+        "completionTokens": 227
+      }
+    },
+    {
+      "id": "log-1788335978236-0v7l",
+      "timestamp": "2026-09-02T07:59:38.236Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "failed",
+      "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
+      "details": {
+        "articleTitle": "Tax Evasion by Legislators Under FGG Lens",
+        "fullError": "Rate limit 429 on Groq Cloud",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788335978234-q3p0",
+      "timestamp": "2026-09-02T07:59:38.234Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1788335971583-lsh4",
+      "timestamp": "2026-09-02T07:59:31.583Z",
+      "type": "ai_request",
+      "model": "mistral:open-mistral-nemo",
+      "tokens": 726,
+      "latencyMs": 10833,
+      "status": "success",
+      "message": "Summarized \"Denmark Shares Grid Wisdom for Amaravati’s Future\" in 10833ms (726 tokens)",
+      "details": {
+        "promptTokens": 432,
+        "completionTokens": 294
+      }
+    },
+    {
+      "id": "log-1788335937834-vlxw",
+      "timestamp": "2026-09-02T07:58:57.834Z",
+      "type": "ai_request",
+      "model": "groq:openai/gpt-oss-20b",
+      "tokens": 1067,
+      "latencyMs": 3737,
+      "status": "success",
+      "message": "Summarized \"Proposal to Set Up Film Studio Near Nandigama\" in 3737ms (1067 tokens)",
+      "details": {
+        "promptTokens": 467,
+        "completionTokens": 600
+      }
+    },
+    {
+      "id": "log-1788335933851-lc5h",
+      "timestamp": "2026-09-02T07:58:53.851Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "failed",
+      "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
+      "details": {
+        "articleTitle": "Proposal to Set Up Film Studio Near Nandigama",
+        "fullError": "Rate limit 429 on Groq Cloud",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788335933850-nr53",
+      "timestamp": "2026-09-02T07:58:53.850Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1788335904028-ejcs",
+      "timestamp": "2026-09-02T07:58:24.028Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 950,
+      "latencyMs": 3212,
+      "status": "success",
+      "message": "Summarized \"Police flex muscles in Andhra sports showdown\" in 3212ms (950 tokens)",
+      "details": {
+        "promptTokens": 675,
+        "completionTokens": 275
+      }
+    },
+    {
+      "id": "log-1788335900813-qkir",
+      "timestamp": "2026-09-02T07:58:20.813Z",
+      "type": "error",
+      "model": "mistral-large-latest",
+      "status": "failed",
+      "message": "⚠️ [mistral-large-latest] (403) {\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
+      "details": {
+        "articleTitle": "Fitness Key to Effective Policing: DGP Harish Kumar Gupta",
+        "fullError": "{\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
+        "statusCode": 403
+      }
+    },
+    {
+      "id": "log-1788335886359-h645",
+      "timestamp": "2026-09-02T07:58:06.359Z",
+      "type": "ai_request",
+      "model": "groq:openai/gpt-oss-20b",
+      "tokens": 1048,
+      "latencyMs": 9121,
+      "status": "success",
+      "message": "Summarized \"Lokesh Aims to Make Mangalagiri First in All Sectors\" in 9121ms (1048 tokens)",
+      "details": {
+        "promptTokens": 448,
+        "completionTokens": 600
+      }
+    },
+    {
+      "id": "log-1788335862524-9t0k",
+      "timestamp": "2026-09-02T07:57:42.524Z",
+      "type": "ai_request",
+      "model": "mistral:open-mistral-nemo",
+      "tokens": 876,
+      "latencyMs": 4983,
+      "status": "success",
+      "message": "Summarized \"**Court Halts AP Local Polls Over Voter Roll Chaos**\" in 4983ms (876 tokens)",
+      "details": {
+        "promptTokens": 569,
+        "completionTokens": 307
+      }
+    },
+    {
+      "id": "log-1788335848709-nxrj",
+      "timestamp": "2026-09-02T07:57:28.709Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 892,
+      "latencyMs": 1582,
+      "status": "success",
+      "message": "Summarized \"Quartz Scandal Rocks Nellore Politics\" in 1582ms (892 tokens)",
       "details": {
         "promptTokens": 681,
-        "completionTokens": 228
+        "completionTokens": 211
       }
     },
     {
-      "id": "log-1788331535226-y9b8",
-      "timestamp": "2026-09-02T06:45:35.226Z",
+      "id": "log-1788335847123-d45y",
+      "timestamp": "2026-09-02T07:57:27.123Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "failed",
+      "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
+      "details": {
+        "articleTitle": "YSRC’s Anil Kumar Seeks Probe Into Chinese Involvement in Nellore Quartz Trade",
+        "fullError": "Rate limit 429 on Groq Cloud",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788335847122-k9ns",
+      "timestamp": "2026-09-02T07:57:27.122Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1788335836333-rqcr",
+      "timestamp": "2026-09-02T07:57:16.333Z",
       "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 619,
-      "latencyMs": 1211,
+      "model": "mistral:mistral-small-latest",
+      "tokens": 645,
+      "latencyMs": 3076,
       "status": "success",
-      "message": "Summarized \"New Law Targets Child Passports\" in 1211ms (619 tokens)",
+      "message": "Summarized \"Mulugu’s Gollalagudi declared national monument\" in 3076ms (645 tokens)",
       "details": {
         "promptTokens": 419,
-        "completionTokens": 200
+        "completionTokens": 226
       }
     },
     {
-      "id": "log-1788331318568-mybj",
-      "timestamp": "2026-09-02T06:41:58.568Z",
+      "id": "log-1788335821723-95p8",
+      "timestamp": "2026-09-02T07:57:01.723Z",
       "type": "ai_request",
       "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 648,
-      "latencyMs": 1116,
+      "tokens": 903,
+      "latencyMs": 5945,
       "status": "success",
-      "message": "Summarized \"CBI Probe Ordered In Disha Salian Case\" in 1116ms (648 tokens)",
+      "message": "Summarized \"Telangana Man Killed In Odesa Strike\" in 5945ms (903 tokens)",
       "details": {
-        "promptTokens": 464,
-        "completionTokens": 184
+        "promptTokens": 681,
+        "completionTokens": 222
       }
     }
   ]
