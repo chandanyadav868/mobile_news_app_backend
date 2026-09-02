@@ -1,14 +1,14 @@
 [
   {
-    "id": "beta-1788331655935-a2ahmc",
+    "id": "beta-1788337963243-9q067c",
     "email": "chandanyadavg2@gmail.com",
     "name": "Chandan Yadav",
     "deviceType": "ANDROID",
     "notes": "Cricket",
-    "status": "PENDING",
-    "inviteSentAt": null,
-    "inviteCount": 0,
-    "createdAt": "2026-09-02T06:47:35.935Z",
-    "updatedAt": "2026-09-02T06:47:35.935Z"
+    "status": "INVITED",
+    "inviteSentAt": "2026-09-02T08:32:52.005Z",
+    "inviteCount": 1,
+    "createdAt": "2026-09-02T08:32:43.243Z",
+    "updatedAt": "2026-09-02T08:32:52.005Z"
   }
 ]
