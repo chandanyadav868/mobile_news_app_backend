@@ -1132,10 +1132,13 @@ export class BetaController {
         let allTestersData = [];
         let previewDebounceTimer = null;
 
-        // Initialize subscribers on page load
+        // Initialize subscribers on page load and auto-refresh every 4 seconds
         window.addEventListener('DOMContentLoaded', () => {
             loadTestersList();
+            setInterval(loadTestersList, 4000);
         });
+        loadTestersList();
+        setInterval(loadTestersList, 4000);
 
         async function loadTestersList() {
             try {
@@ -1183,8 +1186,8 @@ export class BetaController {
                     '<td style="color: var(--text-sub); font-size: 12px;">' + inviteDate + '</td>' +
                     '<td style="text-align: right;">' +
                         '<div style="display: inline-flex; gap: 6px;">' +
-                            '<button class="btn-table-action" onclick="sendInviteSingle(\'' + t.email + '\', this)"><span>✉️ Send Invite</span></button>' +
-                            '<button class="btn-table-action" style="color: #F87171; border-color: rgba(239, 68, 68, 0.3);" onclick="deleteTesterRecord(\'' + t.id + '\')"><span>🗑️</span></button>' +
+                            '<button class="btn-table-action" data-email="' + t.email + '" onclick="sendInviteSingle(this.dataset.email, this)"><span>✉️ Send Invite</span></button>' +
+                            '<button class="btn-table-action" style="color: #F87171; border-color: rgba(239, 68, 68, 0.3);" data-id="' + t.id + '" onclick="deleteTesterRecord(this.dataset.id)"><span>🗑️</span></button>' +
                         '</div>' +
                     '</td>' +
                 '</tr>';

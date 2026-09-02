@@ -291,19 +291,21 @@ export class MailService {
         </div>
         
         <div class="btn-group">
-          ${user.deviceType === 'IOS' ? '' : `
+          ${(user.deviceType === 'IOS' || !template.androidUrl || !template.androidUrl.trim()) ? '' : `
           <a href="${template.androidUrl}" class="btn-primary" target="_blank">
             🤖 Download on Google Play Beta Track
           </a>
           `}
-          ${user.deviceType === 'ANDROID' ? '' : `
+          ${(user.deviceType === 'ANDROID' || !template.iosUrl || !template.iosUrl.trim()) ? '' : `
           <a href="${template.iosUrl}" class="btn-secondary" target="_blank">
             🍎 Join on Apple TestFlight
           </a>
           `}
+          ${(!template.apkDirectUrl || !template.apkDirectUrl.trim()) ? '' : `
           <a href="${template.apkDirectUrl}" class="btn-tertiary" target="_blank">
             📦 Direct APK Download (Android)
           </a>
+          `}
         </div>
       </div>
       
