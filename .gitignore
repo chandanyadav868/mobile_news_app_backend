@@ -24,3 +24,7 @@ yarn-error.log*
 # OS Files
 .DS_Store
 Thumbs.db
+
+# Dynamic Telemetry State
+data/telemetry_state.json
+
