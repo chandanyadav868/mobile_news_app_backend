@@ -4,6 +4,8 @@ import { getCache, setCache } from '../services/cacheService.js';
 import { ingestAllFeeds } from '../services/rssFetcher.js';
 import { logStream } from '../services/logStreamService.js';
 
+const lastKnownGoodFeed: Record<string, any> = {};
+
 /**
  * GET /api/v1/news/feed
  * Returns unified home feed localized by country:
@@ -18,6 +20,7 @@ export async function getFeed(req: Request, res: Response) {
   // 1. Check Redis Cache
   const cached = await getCache<any>(cacheKey);
   if (cached) {
+    lastKnownGoodFeed[country] = cached;
     return res.json({ success: true, source: 'cache', data: cached });
   }
 
@@ -150,6 +153,7 @@ export async function getFeed(req: Request, res: Response) {
     };
 
     // Cache for 3 minutes
+    lastKnownGoodFeed[country] = feedData;
     await setCache(cacheKey, feedData, 180);
 
     res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=120');
@@ -160,10 +164,24 @@ export async function getFeed(req: Request, res: Response) {
       data: feedData,
     });
   } catch (error: any) {
-    console.error('Error in getFeed:', error);
-    return res.status(500).json({
-      success: false,
-      error: 'Failed to generate news feed',
+    console.warn('⚠️ [Backend Database Warning] DB query failed in getFeed, using fallback:', error?.message || error);
+    if (lastKnownGoodFeed[country]) {
+      return res.json({
+        success: true,
+        source: 'memory-fallback',
+        data: lastKnownGoodFeed[country],
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      source: 'graceful-empty',
+      data: {
+        country,
+        heroArticles: [],
+        categoryClusters: [],
+        visualInsights: [],
+        generatedAt: new Date().toISOString(),
+      },
     });
   }
 }
@@ -232,10 +250,19 @@ export async function getCategoryNews(req: Request, res: Response) {
       data: responseData,
     });
   } catch (error: any) {
-    console.error(`Error in getCategoryNews for ${categoryParam}:`, error);
-    return res.status(500).json({
-      success: false,
-      error: `Failed to fetch news for category: ${categoryParam}`,
+    console.warn(`⚠️ [Backend Database Warning] DB query failed in getCategoryNews for ${categoryParam}:`, error?.message || error);
+    return res.status(200).json({
+      success: true,
+      source: 'graceful-empty',
+      data: {
+        category: categoryParam,
+        country,
+        page,
+        limit,
+        totalPages: 1,
+        totalArticles: 0,
+        articles: [],
+      },
     });
   }
 }
