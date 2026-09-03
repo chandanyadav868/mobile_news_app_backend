@@ -12,7 +12,9 @@ import {
   getArticleById,
   createManualArticle,
   updateArticle,
+  searchNews,
 } from '../controllers/news.controller.js';
+import { extractArticle } from '../controllers/articleExtractor.controller.js';
 
 const router = Router();
 
@@ -21,6 +23,9 @@ router.get('/categories', getCategories);
 router.get('/article/:id', getArticleById);
 router.post('/manual', createManualArticle);
 router.put('/article/:id', updateArticle);
+
+router.get('/search', searchNews);
+router.post('/extract', extractArticle);
 
 router.get('/check-new', checkNewArticles);
 router.get('/category/:category', getCategoryNews);

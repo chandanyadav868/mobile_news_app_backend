@@ -6,55 +6,55 @@
       "model": "qwen/qwen3.8-27b",
       "displayName": "Groq Qwen 3.8 27B",
       "tier": 1,
-      "requestsToday": 134,
-      "promptTokensToday": 73085,
-      "completionTokensToday": 27798,
-      "totalTokensToday": 100883,
-      "lastLatencyMs": 981,
-      "status": "ready",
-      "lastUsedAt": "2026-09-03T08:28:22.474Z",
-      "errorsToday": 0,
-      "rateLimitResetAt": null
+      "requestsToday": 183,
+      "promptTokensToday": 98220,
+      "completionTokensToday": 38118,
+      "totalTokensToday": 136338,
+      "lastLatencyMs": 841,
+      "status": "rate_limited",
+      "lastUsedAt": "2026-09-03T10:25:44.817Z",
+      "errorsToday": 50,
+      "rateLimitResetAt": "2026-09-03T10:27:07.152Z"
     },
     {
       "model": "mistral-small-latest",
       "displayName": "Mistral Small (Serverless)",
       "tier": 2,
-      "requestsToday": 93,
-      "promptTokensToday": 52030,
-      "completionTokensToday": 21599,
-      "totalTokensToday": 73629,
-      "lastLatencyMs": 2440,
-      "status": "ready",
-      "lastUsedAt": "2026-09-03T08:28:28.429Z",
-      "errorsToday": 6,
-      "rateLimitResetAt": "2026-09-03T08:28:04.820Z"
+      "requestsToday": 181,
+      "promptTokensToday": 98662,
+      "completionTokensToday": 41331,
+      "totalTokensToday": 139993,
+      "lastLatencyMs": 2502,
+      "status": "rate_limited",
+      "lastUsedAt": "2026-09-03T10:26:33.295Z",
+      "errorsToday": 10,
+      "rateLimitResetAt": "2026-09-03T10:27:07.593Z"
     },
     {
       "model": "openai/gpt-oss-120b",
       "displayName": "Groq GPT-OSS 120B",
       "tier": 1,
-      "requestsToday": 31,
-      "promptTokensToday": 17984,
-      "completionTokensToday": 18421,
-      "totalTokensToday": 36405,
-      "lastLatencyMs": 5402,
+      "requestsToday": 32,
+      "promptTokensToday": 18436,
+      "completionTokensToday": 19021,
+      "totalTokensToday": 37457,
+      "lastLatencyMs": 6027,
       "status": "rate_limited",
-      "lastUsedAt": "2026-09-03T07:30:11.081Z",
-      "errorsToday": 42,
-      "rateLimitResetAt": "2026-09-03T08:29:02.160Z"
+      "lastUsedAt": "2026-09-03T09:59:15.554Z",
+      "errorsToday": 52,
+      "rateLimitResetAt": "2026-09-03T10:27:06.978Z"
     },
     {
       "model": "open-mistral-nemo",
       "displayName": "Mistral NeMo 12B",
       "tier": 2,
-      "requestsToday": 56,
-      "promptTokensToday": 31874,
-      "completionTokensToday": 18194,
-      "totalTokensToday": 50068,
-      "lastLatencyMs": 3139,
+      "requestsToday": 102,
+      "promptTokensToday": 56639,
+      "completionTokensToday": 32801,
+      "totalTokensToday": 89440,
+      "lastLatencyMs": 2445,
       "status": "ready",
-      "lastUsedAt": "2026-09-03T08:28:01.287Z",
+      "lastUsedAt": "2026-09-03T10:26:46.950Z",
       "errorsToday": 0,
       "rateLimitResetAt": null
     },
@@ -62,535 +62,495 @@
       "model": "openai/gpt-oss-20b",
       "displayName": "Groq GPT-OSS 20B",
       "tier": 1,
-      "requestsToday": 36,
-      "promptTokensToday": 21251,
-      "completionTokensToday": 21574,
-      "totalTokensToday": 42825,
-      "lastLatencyMs": 1189,
+      "requestsToday": 37,
+      "promptTokensToday": 21732,
+      "completionTokensToday": 22174,
+      "totalTokensToday": 43906,
+      "lastLatencyMs": 5017,
       "status": "rate_limited",
-      "lastUsedAt": "2026-09-03T08:11:26.260Z",
-      "errorsToday": 28,
-      "rateLimitResetAt": "2026-09-03T08:28:38.021Z"
+      "lastUsedAt": "2026-09-03T10:06:50.085Z",
+      "errorsToday": 52,
+      "rateLimitResetAt": "2026-09-03T10:27:07.234Z"
     },
     {
       "model": "mistral-large-latest",
       "displayName": "Mistral Large (Flagship)",
       "tier": 2,
-      "requestsToday": 20,
-      "promptTokensToday": 12436,
-      "completionTokensToday": 5183,
-      "totalTokensToday": 17619,
-      "lastLatencyMs": 4954,
-      "status": "error",
-      "lastUsedAt": "2026-09-03T08:22:45.597Z",
-      "errorsToday": 8,
+      "requestsToday": 31,
+      "promptTokensToday": 17896,
+      "completionTokensToday": 7926,
+      "totalTokensToday": 25822,
+      "lastLatencyMs": 5036,
+      "status": "ready",
+      "lastUsedAt": "2026-09-03T10:26:20.277Z",
+      "errorsToday": 6,
       "rateLimitResetAt": null
     }
   ],
   "funnel": {
-    "rssScannedToday": 197885,
-    "dedupedCandidatesToday": 11153,
-    "llmSummarizedToday": 370,
-    "directSavedToday": 60,
-    "dbInsertedToday": 415,
-    "lastIngestDurationMs": 182963,
-    "lastIngestAt": "2026-09-03T08:23:03.255Z"
+    "rssScannedToday": 297287,
+    "dedupedCandidatesToday": 16486,
+    "llmSummarizedToday": 566,
+    "directSavedToday": 111,
+    "dbInsertedToday": 670,
+    "lastIngestDurationMs": 127771,
+    "lastIngestAt": "2026-09-03T10:27:08.229Z"
   },
   "logs": [
     {
-      "id": "log-1788424112160-kcnq",
-      "timestamp": "2026-09-03T08:28:32.160Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "failed",
-      "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
-      "details": {
-        "articleTitle": "Is Hass Creamier Than Indian Avocado? Taste, Texture, And More Explained",
-        "fullError": "Rate limit 429 on Groq Cloud",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788424112160-it3k",
-      "timestamp": "2026-09-03T08:28:32.160Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1788424108429-anqd",
-      "timestamp": "2026-09-03T08:28:28.429Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 595,
-      "latencyMs": 2440,
-      "status": "success",
-      "message": "Summarized \"Triple Pacific hurricanes rage in historic El Niño\" in 2440ms (595 tokens)",
-      "details": {
-        "promptTokens": 412,
-        "completionTokens": 183
-      }
-    },
-    {
-      "id": "log-1788424102474-lrr5",
-      "timestamp": "2026-09-03T08:28:22.474Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 960,
-      "latencyMs": 981,
-      "status": "success",
-      "message": "Summarized \"Teenagers Crack Cereal Nitrogen Code\" in 981ms (960 tokens)",
-      "details": {
-        "promptTokens": 740,
-        "completionTokens": 220
-      }
-    },
-    {
-      "id": "log-1788424095425-y1bu",
-      "timestamp": "2026-09-03T08:28:15.425Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 602,
-      "latencyMs": 2254,
-      "status": "success",
-      "message": "Summarized \"Spain denies Morocco migrant plot claims\" in 2254ms (602 tokens)",
-      "details": {
-        "promptTokens": 428,
-        "completionTokens": 174
-      }
-    },
-    {
-      "id": "log-1788424093165-km8q",
-      "timestamp": "2026-09-03T08:28:13.165Z",
-      "type": "error",
-      "model": "mistral-large-latest",
-      "status": "failed",
-      "message": "⚠️ [mistral-large-latest] (403) {\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
-      "details": {
-        "articleTitle": "Spanish PM Sanchez says no 'solid proof' Morocco planned Ceuta migrant rush",
-        "fullError": "{\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
-        "statusCode": 403
-      }
-    },
-    {
-      "id": "log-1788424089002-fiy0",
-      "timestamp": "2026-09-03T08:28:09.002Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 868,
-      "latencyMs": 980,
-      "status": "success",
-      "message": "Summarized \"Iran Targets Kuwait In Major Escalation\" in 980ms (868 tokens)",
-      "details": {
-        "promptTokens": 654,
-        "completionTokens": 214
-      }
-    },
-    {
-      "id": "log-1788424088021-v3uc",
-      "timestamp": "2026-09-03T08:28:08.021Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
-      "status": "failed",
-      "message": "⚠️ [openai/gpt-oss-20b] (429) Rate limit 429 on Groq Cloud",
-      "details": {
-        "articleTitle": "Iran Fires Missiles And Drones At Kuwait Amid Escalating Conflict",
-        "fullError": "Rate limit 429 on Groq Cloud",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788424088021-60au",
-      "timestamp": "2026-09-03T08:28:08.021Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1788424081287-rdik",
-      "timestamp": "2026-09-03T08:28:01.287Z",
+      "id": "log-1788431206950-vgin",
+      "timestamp": "2026-09-03T10:26:46.950Z",
       "type": "ai_request",
       "model": "mistral:open-mistral-nemo",
-      "tokens": 661,
-      "latencyMs": 3139,
+      "tokens": 677,
+      "latencyMs": 2445,
       "status": "success",
-      "message": "Summarized \"Ganesh steps aside, Kalyan poised for landslide win\" in 3139ms (661 tokens)",
+      "message": "Summarized \"Venus mission delayed by rocket snag\" in 2445ms (677 tokens)",
       "details": {
-        "promptTokens": 417,
-        "completionTokens": 244
+        "promptTokens": 426,
+        "completionTokens": 251
       }
     },
     {
-      "id": "log-1788424066628-ul2u",
-      "timestamp": "2026-09-03T08:27:46.628Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 867,
-      "latencyMs": 711,
-      "status": "success",
-      "message": "Summarized \"Chennai Gets World Class Olympic City\" in 711ms (867 tokens)",
-      "details": {
-        "promptTokens": 662,
-        "completionTokens": 205
-      }
-    },
-    {
-      "id": "log-1788424065915-bmzt",
-      "timestamp": "2026-09-03T08:27:45.915Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "failed",
-      "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
-      "details": {
-        "articleTitle": "CM Vijay Announces World-Class Olympic City in Chennai",
-        "fullError": "Rate limit 429 on Groq Cloud",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788424065914-xkb2",
-      "timestamp": "2026-09-03T08:27:45.914Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1788424058846-ro3l",
-      "timestamp": "2026-09-03T08:27:38.846Z",
+      "id": "log-1788431200982-2k47",
+      "timestamp": "2026-09-03T10:26:40.982Z",
       "type": "ai_request",
       "model": "mistral:open-mistral-nemo",
-      "tokens": 1100,
-      "latencyMs": 4022,
+      "tokens": 761,
+      "latencyMs": 3385,
       "status": "success",
-      "message": "Summarized \"**Lost fortune found: ₹29 lakh treasure recovered by RPF**\" in 4022ms (1100 tokens)",
+      "message": "Summarized \"**NBA Slams Clippers Over Kawhi’s Cap-Circumvention Scheme**\" in 3385ms (761 tokens)",
       "details": {
-        "promptTokens": 725,
-        "completionTokens": 375
+        "promptTokens": 423,
+        "completionTokens": 338
       }
     },
     {
-      "id": "log-1788424054822-for0",
-      "timestamp": "2026-09-03T08:27:34.822Z",
+      "id": "log-1788431197594-f1mj",
+      "timestamp": "2026-09-03T10:26:37.594Z",
       "type": "rate_limit",
       "model": "mistral-small-latest",
       "status": "failed",
       "message": "⚠️ [mistral-small-latest] (429) Rate limit 429 on Mistral AI",
       "details": {
-        "articleTitle": "Lost bag with valuables worth ₹29 lakh recovered by RPF in Bengaluru",
+        "articleTitle": "The NBA Sent A Clear Message With Clippers’ Kawhi Leonard Circumvention Ruling",
         "fullError": "Rate limit 429 on Mistral AI",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788424054820-m1lu",
-      "timestamp": "2026-09-03T08:27:34.820Z",
+      "id": "log-1788431197593-bk22",
+      "timestamp": "2026-09-03T10:26:37.593Z",
       "type": "rate_limit",
       "model": "mistral-small-latest",
       "status": "rotated",
       "message": "Rate limit reached on mistral-small-latest (429). Automatically rotated to next tier model."
     },
     {
-      "id": "log-1788424050114-av0c",
-      "timestamp": "2026-09-03T08:27:30.114Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 651,
-      "latencyMs": 764,
-      "status": "success",
-      "message": "Summarized \"Malaria Outbreak Hits Andhra Villagers\" in 764ms (651 tokens)",
-      "details": {
-        "promptTokens": 453,
-        "completionTokens": 198
-      }
-    },
-    {
-      "id": "log-1788423779655-e96u",
-      "timestamp": "2026-09-03T08:22:59.655Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 611,
-      "latencyMs": 922,
-      "status": "success",
-      "message": "Summarized \"Purdue Opens 2026 Season Against Indiana State\" in 922ms (611 tokens)",
-      "details": {
-        "promptTokens": 417,
-        "completionTokens": 194
-      }
-    },
-    {
-      "id": "log-1788423778731-hz3w",
-      "timestamp": "2026-09-03T08:22:58.731Z",
+      "id": "log-1788431197235-egtw",
+      "timestamp": "2026-09-03T10:26:37.235Z",
       "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
+      "model": "openai/gpt-oss-20b",
       "status": "failed",
-      "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
+      "message": "⚠️ [openai/gpt-oss-20b] (429) Rate limit 429 on Groq Cloud",
       "details": {
-        "articleTitle": "Purdue football schedule vs. Indiana State: Kickoff, where to watch, tickets, weather",
+        "articleTitle": "The NBA Sent A Clear Message With Clippers’ Kawhi Leonard Circumvention Ruling",
         "fullError": "Rate limit 429 on Groq Cloud",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788423778730-m8ny",
-      "timestamp": "2026-09-03T08:22:58.730Z",
+      "id": "log-1788431197234-paiv",
+      "timestamp": "2026-09-03T10:26:37.234Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-20b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1788431197153-qfyw",
+      "timestamp": "2026-09-03T10:26:37.153Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.8-27b",
+      "status": "failed",
+      "message": "⚠️ [qwen/qwen3.8-27b] (429) Rate limit 429 on Groq Cloud",
+      "details": {
+        "articleTitle": "The NBA Sent A Clear Message With Clippers’ Kawhi Leonard Circumvention Ruling",
+        "fullError": "Rate limit 429 on Groq Cloud",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788431197152-epiu",
+      "timestamp": "2026-09-03T10:26:37.152Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.8-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1788431196979-pj9j",
+      "timestamp": "2026-09-03T10:26:36.979Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "failed",
+      "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
+      "details": {
+        "articleTitle": "The NBA Sent A Clear Message With Clippers’ Kawhi Leonard Circumvention Ruling",
+        "fullError": "Rate limit 429 on Groq Cloud",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788431196978-atcx",
+      "timestamp": "2026-09-03T10:26:36.978Z",
       "type": "rate_limit",
       "model": "openai/gpt-oss-120b",
       "status": "rotated",
       "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
     },
     {
-      "id": "log-1788423775052-dbjo",
-      "timestamp": "2026-09-03T08:22:55.052Z",
+      "id": "log-1788431193295-5wdr",
+      "timestamp": "2026-09-03T10:26:33.295Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 631,
+      "latencyMs": 2502,
+      "status": "success",
+      "message": "Summarized \"Cradlewise secures $12M for baby tech boom\" in 2502ms (631 tokens)",
+      "details": {
+        "promptTokens": 416,
+        "completionTokens": 215
+      }
+    },
+    {
+      "id": "log-1788431187287-rdqf",
+      "timestamp": "2026-09-03T10:26:27.287Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
       "tokens": 647,
-      "latencyMs": 2439,
+      "latencyMs": 2585,
       "status": "success",
-      "message": "Summarized \"Serie A crowns 2026's best!\" in 2439ms (647 tokens)",
+      "message": "Summarized \"India locks horns with 100 GW nuclear power dream\" in 2585ms (647 tokens)",
       "details": {
-        "promptTokens": 436,
-        "completionTokens": 211
+        "promptTokens": 424,
+        "completionTokens": 223
       }
     },
     {
-      "id": "log-1788423765597-aunc",
-      "timestamp": "2026-09-03T08:22:45.597Z",
+      "id": "log-1788431184696-3da4",
+      "timestamp": "2026-09-03T10:26:24.696Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-20b",
+      "status": "failed",
+      "message": "⚠️ [openai/gpt-oss-20b] (429) Rate limit 429 on Groq Cloud",
+      "details": {
+        "articleTitle": "Australia to Uzbekistan: India widens uranium push for 100 GW nuclear goal",
+        "fullError": "Rate limit 429 on Groq Cloud",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788431184694-5d58",
+      "timestamp": "2026-09-03T10:26:24.694Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-20b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1788431184588-p5j4",
+      "timestamp": "2026-09-03T10:26:24.588Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "failed",
+      "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
+      "details": {
+        "articleTitle": "Australia to Uzbekistan: India widens uranium push for 100 GW nuclear goal",
+        "fullError": "Rate limit 429 on Groq Cloud",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788431184588-k8ia",
+      "timestamp": "2026-09-03T10:26:24.588Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1788431184122-2a0a",
+      "timestamp": "2026-09-03T10:26:24.122Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.8-27b",
+      "status": "failed",
+      "message": "⚠️ [qwen/qwen3.8-27b] (429) Rate limit 429 on Groq Cloud",
+      "details": {
+        "articleTitle": "Australia to Uzbekistan: India widens uranium push for 100 GW nuclear goal",
+        "fullError": "Rate limit 429 on Groq Cloud",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788431184122-5rav",
+      "timestamp": "2026-09-03T10:26:24.122Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.8-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1788431180277-6kok",
+      "timestamp": "2026-09-03T10:26:20.277Z",
       "type": "ai_request",
       "model": "mistral:mistral-large-latest",
-      "tokens": 648,
-      "latencyMs": 4954,
+      "tokens": 682,
+      "latencyMs": 5036,
       "status": "success",
-      "message": "Summarized \"Shock Upset Rocks Heavyweight Boxing\" in 4954ms (648 tokens)",
+      "message": "Summarized \"Feminist icon Gloria Steinem dies at 92\" in 5036ms (682 tokens)",
       "details": {
-        "promptTokens": 411,
-        "completionTokens": 237
+        "promptTokens": 420,
+        "completionTokens": 262
       }
     },
     {
-      "id": "log-1788423754388-guk3",
-      "timestamp": "2026-09-03T08:22:34.388Z",
+      "id": "log-1788431171713-mtwn",
+      "timestamp": "2026-09-03T10:26:11.713Z",
       "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 598,
-      "latencyMs": 713,
+      "model": "mistral:mistral-small-latest",
+      "tokens": 899,
+      "latencyMs": 2767,
       "status": "success",
-      "message": "Summarized \"Lamar Jackson: Defenses Are Not Ready\" in 713ms (598 tokens)",
+      "message": "Summarized \"Judge crushes Trump’s birthright bid!\" in 2767ms (899 tokens)",
       "details": {
-        "promptTokens": 414,
-        "completionTokens": 184
+        "promptTokens": 655,
+        "completionTokens": 244
       }
     },
     {
-      "id": "log-1788423753673-6bm1",
-      "timestamp": "2026-09-03T08:22:33.673Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
-      "status": "failed",
-      "message": "⚠️ [openai/gpt-oss-20b] (429) Rate limit 429 on Groq Cloud",
-      "details": {
-        "articleTitle": "Lamar Jackson on Ravens' new offense: Defenses aren't prepared for what's in store",
-        "fullError": "Rate limit 429 on Groq Cloud",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788423753671-7kt2",
-      "timestamp": "2026-09-03T08:22:33.671Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1788423747113-lh0f",
-      "timestamp": "2026-09-03T08:22:27.113Z",
-      "type": "ai_request",
-      "model": "mistral:open-mistral-nemo",
-      "tokens": 732,
-      "latencyMs": 2679,
-      "status": "success",
-      "message": "Summarized \"Girona locks in Xocolates Torras deal through 2028\" in 2679ms (732 tokens)",
-      "details": {
-        "promptTokens": 439,
-        "completionTokens": 293
-      }
-    },
-    {
-      "id": "log-1788423740920-fyym",
-      "timestamp": "2026-09-03T08:22:20.920Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 639,
-      "latencyMs": 778,
-      "status": "success",
-      "message": "Summarized \"Hooda Returns To Baroda After Five Years\" in 778ms (639 tokens)",
-      "details": {
-        "promptTokens": 449,
-        "completionTokens": 190
-      }
-    },
-    {
-      "id": "log-1788423740140-jc66",
-      "timestamp": "2026-09-03T08:22:20.140Z",
+      "id": "log-1788431168942-sq8a",
+      "timestamp": "2026-09-03T10:26:08.942Z",
       "type": "rate_limit",
       "model": "openai/gpt-oss-120b",
       "status": "failed",
       "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
       "details": {
-        "articleTitle": "Five years after Krunal Pandya row, Deepak Hooda set to play for Baroda",
+        "articleTitle": "Judge blocks new Trump bid against birthright citizenship – US politics live",
         "fullError": "Rate limit 429 on Groq Cloud",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788423740140-vpjc",
-      "timestamp": "2026-09-03T08:22:20.140Z",
+      "id": "log-1788431168940-b7jt",
+      "timestamp": "2026-09-03T10:26:08.940Z",
       "type": "rate_limit",
       "model": "openai/gpt-oss-120b",
       "status": "rotated",
       "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
     },
     {
-      "id": "log-1788423736509-gr9e",
-      "timestamp": "2026-09-03T08:22:16.509Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 944,
-      "latencyMs": 2866,
-      "status": "success",
-      "message": "Summarized \"Samson-Sooryavanshi India opening dream team?\" in 2866ms (944 tokens)",
-      "details": {
-        "promptTokens": 692,
-        "completionTokens": 252
-      }
-    },
-    {
-      "id": "log-1788423729486-y5n3",
-      "timestamp": "2026-09-03T08:22:09.486Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 829,
-      "latencyMs": 1189,
-      "status": "success",
-      "message": "Summarized \"Missing Farmer ID Blocks Six Thousand Rupees\" in 1189ms (829 tokens)",
-      "details": {
-        "promptTokens": 617,
-        "completionTokens": 212
-      }
-    },
-    {
-      "id": "log-1788423716764-oju7",
-      "timestamp": "2026-09-03T08:21:56.764Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 822,
-      "latencyMs": 3158,
-      "status": "success",
-      "message": "Summarized \"SC blasts BCI over student crackdown\" in 3158ms (822 tokens)",
-      "details": {
-        "promptTokens": 613,
-        "completionTokens": 209
-      }
-    },
-    {
-      "id": "log-1788423713601-u2n8",
-      "timestamp": "2026-09-03T08:21:53.601Z",
-      "type": "error",
-      "model": "mistral-large-latest",
-      "status": "failed",
-      "message": "⚠️ [mistral-large-latest] (403) {\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
-      "details": {
-        "articleTitle": "CJI-NALSAR विवाद: SC ने रद्द किया BCI का फैसला, कहा- कोई अधिकार नहीं - ABP News",
-        "fullError": "{\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
-        "statusCode": 403
-      }
-    },
-    {
-      "id": "log-1788423707444-3vdg",
-      "timestamp": "2026-09-03T08:21:47.444Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 593,
-      "latencyMs": 671,
-      "status": "success",
-      "message": "Summarized \"Doctors Shocked By False Pregnancy Discovery\" in 671ms (593 tokens)",
-      "details": {
-        "promptTokens": 441,
-        "completionTokens": 152
-      }
-    },
-    {
-      "id": "log-1788423706770-30ht",
-      "timestamp": "2026-09-03T08:21:46.770Z",
+      "id": "log-1788431168838-95b2",
+      "timestamp": "2026-09-03T10:26:08.838Z",
       "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
+      "model": "qwen/qwen3.8-27b",
       "status": "failed",
-      "message": "⚠️ [openai/gpt-oss-20b] (429) Rate limit 429 on Groq Cloud",
+      "message": "⚠️ [qwen/qwen3.8-27b] (429) Rate limit 429 on Groq Cloud",
       "details": {
-        "articleTitle": "डिलीवरी का अजीब मामला : डॉक्टरों को ऑपरेशन के दौरान पता चला कि महिला प्रेग्नेंट ही नहीं थी - BBC",
+        "articleTitle": "Judge blocks new Trump bid against birthright citizenship – US politics live",
         "fullError": "Rate limit 429 on Groq Cloud",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788423706769-2hy6",
-      "timestamp": "2026-09-03T08:21:46.769Z",
+      "id": "log-1788431168837-2knj",
+      "timestamp": "2026-09-03T10:26:08.837Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.8-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1788431168461-zhyc",
+      "timestamp": "2026-09-03T10:26:08.461Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-20b",
+      "status": "failed",
+      "message": "⚠️ [openai/gpt-oss-20b] (429) Rate limit 429 on Groq Cloud",
+      "details": {
+        "articleTitle": "Judge blocks new Trump bid against birthright citizenship – US politics live",
+        "fullError": "Rate limit 429 on Groq Cloud",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788431168460-2scb",
+      "timestamp": "2026-09-03T10:26:08.460Z",
       "type": "rate_limit",
       "model": "openai/gpt-oss-20b",
       "status": "rotated",
       "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
     },
     {
-      "id": "log-1788423699311-1lgu",
-      "timestamp": "2026-09-03T08:21:39.311Z",
+      "id": "log-1788431160803-6kh1",
+      "timestamp": "2026-09-03T10:26:00.803Z",
       "type": "ai_request",
-      "model": "mistral:open-mistral-nemo",
-      "tokens": 1192,
-      "latencyMs": 3767,
+      "model": "mistral:mistral-small-latest",
+      "tokens": 776,
+      "latencyMs": 2923,
       "status": "success",
-      "message": "Summarized \"अंकित बालियान हत्याकांड: शार्प शूटरों का विदेश भागने का षड्यंत्र उजागर\" in 3767ms (1192 tokens)",
+      "message": "Summarized \"Sharpeville survivors sue South Africa\" in 2923ms (776 tokens)",
       "details": {
-        "promptTokens": 819,
-        "completionTokens": 373
+        "promptTokens": 552,
+        "completionTokens": 224
       }
     },
     {
-      "id": "log-1788423689058-dprh",
-      "timestamp": "2026-09-03T08:21:29.058Z",
-      "type": "ai_request",
-      "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 833,
-      "latencyMs": 737,
-      "status": "success",
-      "message": "Summarized \"BCCI Review Meeting Sparks Major Changes\" in 737ms (833 tokens)",
-      "details": {
-        "promptTokens": 649,
-        "completionTokens": 184
-      }
-    },
-    {
-      "id": "log-1788423688320-fvzk",
-      "timestamp": "2026-09-03T08:21:28.320Z",
+      "id": "log-1788431157879-04he",
+      "timestamp": "2026-09-03T10:25:57.879Z",
       "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
+      "model": "openai/gpt-oss-20b",
       "status": "failed",
-      "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
+      "message": "⚠️ [openai/gpt-oss-20b] (429) Rate limit 429 on Groq Cloud",
       "details": {
-        "articleTitle": "बीसीसीआई का मंथन: समीक्षा बैठक के लिए मुख्यालय पहुंचे गिल-श्रेयस और कोच गंभीर, लिए जा सकते हैं बड़े फैसले",
+        "articleTitle": "Victims sue South African government over 1961 Sharpeville massacre that left 91 dead",
         "fullError": "Rate limit 429 on Groq Cloud",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788423688319-bc8r",
-      "timestamp": "2026-09-03T08:21:28.319Z",
+      "id": "log-1788431157878-c1mo",
+      "timestamp": "2026-09-03T10:25:57.878Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-20b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1788431156377-38mv",
+      "timestamp": "2026-09-03T10:25:56.377Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.8-27b",
+      "status": "failed",
+      "message": "⚠️ [qwen/qwen3.8-27b] (429) Rate limit 429 on Groq Cloud",
+      "details": {
+        "articleTitle": "Victims sue South African government over 1961 Sharpeville massacre that left 91 dead",
+        "fullError": "Rate limit 429 on Groq Cloud",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788431156377-0sbu",
+      "timestamp": "2026-09-03T10:25:56.377Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.8-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1788431156099-eda4",
+      "timestamp": "2026-09-03T10:25:56.099Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "failed",
+      "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
+      "details": {
+        "articleTitle": "Victims sue South African government over 1961 Sharpeville massacre that left 91 dead",
+        "fullError": "Rate limit 429 on Groq Cloud",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788431156096-obww",
+      "timestamp": "2026-09-03T10:25:56.096Z",
       "type": "rate_limit",
       "model": "openai/gpt-oss-120b",
       "status": "rotated",
       "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1788431152323-h7s4",
+      "timestamp": "2026-09-03T10:25:52.323Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 964,
+      "latencyMs": 2891,
+      "status": "success",
+      "message": "Summarized \"Kirstie Allsopp rushed to hospital after fall\" in 2891ms (964 tokens)",
+      "details": {
+        "promptTokens": 682,
+        "completionTokens": 282
+      }
+    },
+    {
+      "id": "log-1788431144817-5taf",
+      "timestamp": "2026-09-03T10:25:44.817Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 596,
+      "latencyMs": 841,
+      "status": "success",
+      "message": "Summarized \"AOC Backs Florida Senate Challenger\" in 841ms (596 tokens)",
+      "details": {
+        "promptTokens": 424,
+        "completionTokens": 172
+      }
+    },
+    {
+      "id": "log-1788430927799-yb0n",
+      "timestamp": "2026-09-03T10:22:07.799Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 638,
+      "latencyMs": 2803,
+      "status": "success",
+      "message": "Summarized \"Musk’s PAC drops $800K in midterm blitz\" in 2803ms (638 tokens)",
+      "details": {
+        "promptTokens": 418,
+        "completionTokens": 220
+      }
+    },
+    {
+      "id": "log-1788430924992-6z92",
+      "timestamp": "2026-09-03T10:22:04.992Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-20b",
+      "status": "failed",
+      "message": "⚠️ [openai/gpt-oss-20b] (429) Rate limit 429 on Groq Cloud",
+      "details": {
+        "articleTitle": "Elon Musk’s America PAC Discloses First Tranche Of Spending For The Midterms",
+        "fullError": "Rate limit 429 on Groq Cloud",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788430924991-x73q",
+      "timestamp": "2026-09-03T10:22:04.991Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-20b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1788430924914-tkbl",
+      "timestamp": "2026-09-03T10:22:04.914Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.8-27b",
+      "status": "failed",
+      "message": "⚠️ [qwen/qwen3.8-27b] (429) Rate limit 429 on Groq Cloud",
+      "details": {
+        "articleTitle": "Elon Musk’s America PAC Discloses First Tranche Of Spending For The Midterms",
+        "fullError": "Rate limit 429 on Groq Cloud",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788430924913-gv2t",
+      "timestamp": "2026-09-03T10:22:04.913Z",
+      "type": "rate_limit",
+      "model": "qwen/qwen3.8-27b",
+      "status": "rotated",
+      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
     }
   ]
 }

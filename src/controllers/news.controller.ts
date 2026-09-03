@@ -576,3 +576,98 @@ export async function updateArticle(req: Request, res: Response) {
     return res.status(500).json({ success: false, error: error.message });
   }
 }
+
+/**
+ * GET /api/v1/news/search
+ * High-speed full-text search across PostgreSQL articles with Redis caching
+ */
+export async function searchNews(req: Request, res: Response) {
+  try {
+    const q = ((req.query.q as string) || '').trim();
+    const category = ((req.query.category as string) || '').trim();
+    const limit = Math.min(50, Math.max(5, parseInt(req.query.limit as string) || 25));
+
+    if (!q) {
+      return res.json({
+        success: true,
+        count: 0,
+        data: [],
+      });
+    }
+
+    const cleanQ = q.replace(/[#&"']/g, ' ').replace(/\s+/g, ' ').trim();
+    const cacheKey = `news:search:${cleanQ.toLowerCase()}:${category.toLowerCase()}:${limit}`;
+
+    const cached = await getCache<any[]>(cacheKey);
+    if (cached) {
+      return res.json({
+        success: true,
+        source: 'cache',
+        count: cached.length,
+        data: cached,
+      });
+    }
+
+    // Split compound terms into individual search tokens for maximum match recall
+    const tokens = cleanQ.split(' ').filter((t) => t.length > 1);
+
+    const tokenClauses = tokens.map((token) => ({
+      OR: [
+        { title: { contains: token, mode: 'insensitive' as const } },
+        { summary: { contains: token, mode: 'insensitive' as const } },
+        { rawContent: { contains: token, mode: 'insensitive' as const } },
+        { category: { contains: token, mode: 'insensitive' as const } },
+      ],
+    }));
+
+    const whereClause: any = {
+      AND: [
+        tokenClauses.length > 0
+          ? { OR: tokenClauses }
+          : { title: { contains: cleanQ, mode: 'insensitive' as const } },
+      ],
+    };
+
+    if (category && category.toLowerCase() !== 'all') {
+      whereClause.AND.push({
+        category: { equals: category, mode: 'insensitive' as const },
+      });
+    }
+
+    const articles = await prisma.article.findMany({
+      where: whereClause,
+      orderBy: { publishedAt: 'desc' },
+      take: limit,
+    });
+
+    const formattedArticles = articles.map((art) => ({
+      id: art.id,
+      title: art.title,
+      summary: art.summary,
+      content: art.rawContent || art.summary,
+      image: art.imageUrl,
+      category: art.category,
+      source: art.source || 'NewsFlow Verified',
+      pubDate: art.publishedAt?.toISOString(),
+      link: art.url || `https://newsflow.app/story/${art.id}`,
+      country: art.country,
+    }));
+
+    // Cache results for 120s
+    await setCache(cacheKey, formattedArticles, 120);
+
+    return res.json({
+      success: true,
+      source: 'database',
+      count: formattedArticles.length,
+      data: formattedArticles,
+    });
+  } catch (error: any) {
+    console.error('Error in searchNews:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Search query failed',
+    });
+  }
+}
+
