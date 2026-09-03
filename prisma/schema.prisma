@@ -152,6 +152,8 @@ model TimelineTopic {
   title       String
   category    String
   description String?
+  leadImage   String?
+  isPinned    Boolean         @default(false)
   events      TimelineEvent[]
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
@@ -165,7 +167,9 @@ model TimelineEvent {
   topic     TimelineTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
   title     String
   date      String
+  timeAgo   String?
   snippet   String
+  image     String?
   source    String
   sourceUrl String
   order     Int           @default(0)

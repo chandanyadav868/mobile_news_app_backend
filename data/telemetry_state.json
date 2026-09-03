@@ -1,18 +1,18 @@
 {
-  "trackedDate": "2026-09-02",
+  "trackedDate": "2026-09-03",
   "aiEnabled": true,
   "models": [
     {
       "model": "qwen/qwen3.8-27b",
       "displayName": "Groq Qwen 3.8 27B",
       "tier": 1,
-      "requestsToday": 311,
-      "promptTokensToday": 171969,
-      "completionTokensToday": 64860,
-      "totalTokensToday": 236829,
-      "lastLatencyMs": 870,
+      "requestsToday": 134,
+      "promptTokensToday": 73085,
+      "completionTokensToday": 27798,
+      "totalTokensToday": 100883,
+      "lastLatencyMs": 981,
       "status": "ready",
-      "lastUsedAt": "2026-09-02T18:01:51.425Z",
+      "lastUsedAt": "2026-09-03T08:28:22.474Z",
       "errorsToday": 0,
       "rateLimitResetAt": null
     },
@@ -20,41 +20,41 @@
       "model": "mistral-small-latest",
       "displayName": "Mistral Small (Serverless)",
       "tier": 2,
-      "requestsToday": 453,
-      "promptTokensToday": 257265,
-      "completionTokensToday": 104988,
-      "totalTokensToday": 362253,
-      "lastLatencyMs": 3024,
+      "requestsToday": 93,
+      "promptTokensToday": 52030,
+      "completionTokensToday": 21599,
+      "totalTokensToday": 73629,
+      "lastLatencyMs": 2440,
       "status": "ready",
-      "lastUsedAt": "2026-09-02T17:38:17.275Z",
-      "errorsToday": 0,
-      "rateLimitResetAt": null
+      "lastUsedAt": "2026-09-03T08:28:28.429Z",
+      "errorsToday": 6,
+      "rateLimitResetAt": "2026-09-03T08:28:04.820Z"
     },
     {
       "model": "openai/gpt-oss-120b",
       "displayName": "Groq GPT-OSS 120B",
       "tier": 1,
-      "requestsToday": 27,
-      "promptTokensToday": 16259,
-      "completionTokensToday": 16173,
-      "totalTokensToday": 32432,
-      "lastLatencyMs": 5927,
-      "status": "ready",
-      "lastUsedAt": "2026-09-02T16:50:13.615Z",
-      "errorsToday": 0,
-      "rateLimitResetAt": null
+      "requestsToday": 31,
+      "promptTokensToday": 17984,
+      "completionTokensToday": 18421,
+      "totalTokensToday": 36405,
+      "lastLatencyMs": 5402,
+      "status": "rate_limited",
+      "lastUsedAt": "2026-09-03T07:30:11.081Z",
+      "errorsToday": 42,
+      "rateLimitResetAt": "2026-09-03T08:29:02.160Z"
     },
     {
       "model": "open-mistral-nemo",
       "displayName": "Mistral NeMo 12B",
       "tier": 2,
-      "requestsToday": 141,
-      "promptTokensToday": 78624,
-      "completionTokensToday": 41409,
-      "totalTokensToday": 120033,
-      "lastLatencyMs": 3296,
+      "requestsToday": 56,
+      "promptTokensToday": 31874,
+      "completionTokensToday": 18194,
+      "totalTokensToday": 50068,
+      "lastLatencyMs": 3139,
       "status": "ready",
-      "lastUsedAt": "2026-09-02T17:36:48.848Z",
+      "lastUsedAt": "2026-09-03T08:28:01.287Z",
       "errorsToday": 0,
       "rateLimitResetAt": null
     },
@@ -62,495 +62,535 @@
       "model": "openai/gpt-oss-20b",
       "displayName": "Groq GPT-OSS 20B",
       "tier": 1,
-      "requestsToday": 52,
-      "promptTokensToday": 30489,
-      "completionTokensToday": 31200,
-      "totalTokensToday": 61689,
-      "lastLatencyMs": 4232,
-      "status": "ready",
-      "lastUsedAt": "2026-09-02T16:56:07.215Z",
-      "errorsToday": 0,
-      "rateLimitResetAt": null
+      "requestsToday": 36,
+      "promptTokensToday": 21251,
+      "completionTokensToday": 21574,
+      "totalTokensToday": 42825,
+      "lastLatencyMs": 1189,
+      "status": "rate_limited",
+      "lastUsedAt": "2026-09-03T08:11:26.260Z",
+      "errorsToday": 28,
+      "rateLimitResetAt": "2026-09-03T08:28:38.021Z"
     },
     {
       "model": "mistral-large-latest",
       "displayName": "Mistral Large (Flagship)",
       "tier": 2,
-      "requestsToday": 41,
-      "promptTokensToday": 22144,
-      "completionTokensToday": 9964,
-      "totalTokensToday": 32108,
-      "lastLatencyMs": 54669,
-      "status": "ready",
-      "lastUsedAt": "2026-09-02T17:37:54.752Z",
-      "errorsToday": 0,
+      "requestsToday": 20,
+      "promptTokensToday": 12436,
+      "completionTokensToday": 5183,
+      "totalTokensToday": 17619,
+      "lastLatencyMs": 4954,
+      "status": "error",
+      "lastUsedAt": "2026-09-03T08:22:45.597Z",
+      "errorsToday": 8,
       "rateLimitResetAt": null
     }
   ],
   "funnel": {
-    "rssScannedToday": 538067,
-    "dedupedCandidatesToday": 44026,
-    "llmSummarizedToday": 1083,
-    "directSavedToday": 182,
-    "dbInsertedToday": 1250,
-    "lastIngestDurationMs": 205179,
-    "lastIngestAt": "2026-09-02T17:38:20.840Z"
+    "rssScannedToday": 197885,
+    "dedupedCandidatesToday": 11153,
+    "llmSummarizedToday": 370,
+    "directSavedToday": 60,
+    "dbInsertedToday": 415,
+    "lastIngestDurationMs": 182963,
+    "lastIngestAt": "2026-09-03T08:23:03.255Z"
   },
   "logs": [
     {
-      "id": "log-1788372111425-syrf",
-      "timestamp": "2026-09-02T18:01:51.425Z",
+      "id": "log-1788424112160-kcnq",
+      "timestamp": "2026-09-03T08:28:32.160Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "failed",
+      "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
+      "details": {
+        "articleTitle": "Is Hass Creamier Than Indian Avocado? Taste, Texture, And More Explained",
+        "fullError": "Rate limit 429 on Groq Cloud",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788424112160-it3k",
+      "timestamp": "2026-09-03T08:28:32.160Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1788424108429-anqd",
+      "timestamp": "2026-09-03T08:28:28.429Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 595,
+      "latencyMs": 2440,
+      "status": "success",
+      "message": "Summarized \"Triple Pacific hurricanes rage in historic El Niño\" in 2440ms (595 tokens)",
+      "details": {
+        "promptTokens": 412,
+        "completionTokens": 183
+      }
+    },
+    {
+      "id": "log-1788424102474-lrr5",
+      "timestamp": "2026-09-03T08:28:22.474Z",
       "type": "ai_request",
       "model": "groq:qwen/qwen3.8-27b",
-      "tokens": 783,
-      "latencyMs": 870,
+      "tokens": 960,
+      "latencyMs": 981,
       "status": "success",
-      "message": "Summarized \"Truck Fire Sparks Panic In Ranipet\" in 870ms (783 tokens)",
+      "message": "Summarized \"Teenagers Crack Cereal Nitrogen Code\" in 981ms (960 tokens)",
       "details": {
-        "promptTokens": 584,
-        "completionTokens": 199
+        "promptTokens": 740,
+        "completionTokens": 220
       }
     },
     {
-      "id": "log-1788370697275-d06w",
-      "timestamp": "2026-09-02T17:38:17.275Z",
+      "id": "log-1788424095425-y1bu",
+      "timestamp": "2026-09-03T08:28:15.425Z",
       "type": "ai_request",
       "model": "mistral:mistral-small-latest",
-      "tokens": 1075,
-      "latencyMs": 3024,
+      "tokens": 602,
+      "latencyMs": 2254,
       "status": "success",
-      "message": "Summarized \"Andhra Pradesh races to 100% literacy by 2027\" in 3024ms (1075 tokens)",
+      "message": "Summarized \"Spain denies Morocco migrant plot claims\" in 2254ms (602 tokens)",
       "details": {
-        "promptTokens": 723,
-        "completionTokens": 352
+        "promptTokens": 428,
+        "completionTokens": 174
       }
     },
     {
-      "id": "log-1788370694249-gvc9",
-      "timestamp": "2026-09-02T17:38:14.249Z",
+      "id": "log-1788424093165-km8q",
+      "timestamp": "2026-09-03T08:28:13.165Z",
+      "type": "error",
+      "model": "mistral-large-latest",
+      "status": "failed",
+      "message": "⚠️ [mistral-large-latest] (403) {\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
+      "details": {
+        "articleTitle": "Spanish PM Sanchez says no 'solid proof' Morocco planned Ceuta migrant rush",
+        "fullError": "{\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
+        "statusCode": 403
+      }
+    },
+    {
+      "id": "log-1788424089002-fiy0",
+      "timestamp": "2026-09-03T08:28:09.002Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 868,
+      "latencyMs": 980,
+      "status": "success",
+      "message": "Summarized \"Iran Targets Kuwait In Major Escalation\" in 980ms (868 tokens)",
+      "details": {
+        "promptTokens": 654,
+        "completionTokens": 214
+      }
+    },
+    {
+      "id": "log-1788424088021-v3uc",
+      "timestamp": "2026-09-03T08:28:08.021Z",
       "type": "rate_limit",
       "model": "openai/gpt-oss-20b",
       "status": "failed",
       "message": "⚠️ [openai/gpt-oss-20b] (429) Rate limit 429 on Groq Cloud",
       "details": {
-        "articleTitle": "Akshara Andhra on Track to Achieve 100% Literacy",
+        "articleTitle": "Iran Fires Missiles And Drones At Kuwait Amid Escalating Conflict",
         "fullError": "Rate limit 429 on Groq Cloud",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788370694249-l7ng",
-      "timestamp": "2026-09-02T17:38:14.249Z",
+      "id": "log-1788424088021-60au",
+      "timestamp": "2026-09-03T08:28:08.021Z",
       "type": "rate_limit",
       "model": "openai/gpt-oss-20b",
       "status": "rotated",
       "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
     },
     {
-      "id": "log-1788370694145-fpza",
-      "timestamp": "2026-09-02T17:38:14.145Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.8-27b",
-      "status": "failed",
-      "message": "⚠️ [qwen/qwen3.8-27b] (429) Rate limit 429 on Groq Cloud",
-      "details": {
-        "articleTitle": "Akshara Andhra on Track to Achieve 100% Literacy",
-        "fullError": "Rate limit 429 on Groq Cloud",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788370694143-nqmw",
-      "timestamp": "2026-09-02T17:38:14.143Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.8-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1788370693922-mnko",
-      "timestamp": "2026-09-02T17:38:13.922Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "failed",
-      "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
-      "details": {
-        "articleTitle": "Akshara Andhra on Track to Achieve 100% Literacy",
-        "fullError": "Rate limit 429 on Groq Cloud",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788370693920-ngd6",
-      "timestamp": "2026-09-02T17:38:13.920Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1788370689384-j5gm",
-      "timestamp": "2026-09-02T17:38:09.384Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 880,
-      "latencyMs": 2526,
-      "status": "success",
-      "message": "Summarized \"AP One app puts 150 services in your pocket\" in 2526ms (880 tokens)",
-      "details": {
-        "promptTokens": 662,
-        "completionTokens": 218
-      }
-    },
-    {
-      "id": "log-1788370682544-46t9",
-      "timestamp": "2026-09-02T17:38:02.544Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 1205,
-      "latencyMs": 2914,
-      "status": "success",
-      "message": "Summarized \"Andhra Pradesh tax bonanza surges 18% to Rs 25,450 crore\" in 2914ms (1205 tokens)",
-      "details": {
-        "promptTokens": 842,
-        "completionTokens": 363
-      }
-    },
-    {
-      "id": "log-1788370679627-pvxj",
-      "timestamp": "2026-09-02T17:37:59.627Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
-      "status": "failed",
-      "message": "⚠️ [openai/gpt-oss-20b] (429) Rate limit 429 on Groq Cloud",
-      "details": {
-        "articleTitle": "AP Tax Collections Surge 18% to Rs 25,450 Crore Till August",
-        "fullError": "Rate limit 429 on Groq Cloud",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788370679626-mnro",
-      "timestamp": "2026-09-02T17:37:59.626Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1788370679514-4sql",
-      "timestamp": "2026-09-02T17:37:59.514Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "failed",
-      "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
-      "details": {
-        "articleTitle": "AP Tax Collections Surge 18% to Rs 25,450 Crore Till August",
-        "fullError": "Rate limit 429 on Groq Cloud",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788370679512-s7jq",
-      "timestamp": "2026-09-02T17:37:59.512Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1788370679293-rqus",
-      "timestamp": "2026-09-02T17:37:59.293Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.8-27b",
-      "status": "failed",
-      "message": "⚠️ [qwen/qwen3.8-27b] (429) Rate limit 429 on Groq Cloud",
-      "details": {
-        "articleTitle": "AP Tax Collections Surge 18% to Rs 25,450 Crore Till August",
-        "fullError": "Rate limit 429 on Groq Cloud",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788370679292-e5ja",
-      "timestamp": "2026-09-02T17:37:59.292Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.8-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1788370674752-2atb",
-      "timestamp": "2026-09-02T17:37:54.752Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-large-latest",
-      "tokens": 1023,
-      "latencyMs": 54669,
-      "status": "success",
-      "message": "Summarized \"YSRC Feud Explodes Into Alleged Assault\" in 54669ms (1023 tokens)",
-      "details": {
-        "promptTokens": 712,
-        "completionTokens": 311
-      }
-    },
-    {
-      "id": "log-1788370616022-aoob",
-      "timestamp": "2026-09-02T17:36:56.022Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 976,
-      "latencyMs": 2627,
-      "status": "success",
-      "message": "Summarized \"Hyderabad drone smashes world speed record\" in 2627ms (976 tokens)",
-      "details": {
-        "promptTokens": 711,
-        "completionTokens": 265
-      }
-    },
-    {
-      "id": "log-1788370613390-vo5w",
-      "timestamp": "2026-09-02T17:36:53.390Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "failed",
-      "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
-      "details": {
-        "articleTitle": "Hyderabad Defence Startup Develops Record-Breaking Drone Interceptor at 498 kmph",
-        "fullError": "Rate limit 429 on Groq Cloud",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788370613389-vr9c",
-      "timestamp": "2026-09-02T17:36:53.389Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-120b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1788370613308-txes",
-      "timestamp": "2026-09-02T17:36:53.308Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.8-27b",
-      "status": "failed",
-      "message": "⚠️ [qwen/qwen3.8-27b] (429) Rate limit 429 on Groq Cloud",
-      "details": {
-        "articleTitle": "Hyderabad Defence Startup Develops Record-Breaking Drone Interceptor at 498 kmph",
-        "fullError": "Rate limit 429 on Groq Cloud",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788370613307-200w",
-      "timestamp": "2026-09-02T17:36:53.307Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.8-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1788370613156-mme1",
-      "timestamp": "2026-09-02T17:36:53.156Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
-      "status": "failed",
-      "message": "⚠️ [openai/gpt-oss-20b] (429) Rate limit 429 on Groq Cloud",
-      "details": {
-        "articleTitle": "Hyderabad Defence Startup Develops Record-Breaking Drone Interceptor at 498 kmph",
-        "fullError": "Rate limit 429 on Groq Cloud",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788370613156-wsen",
-      "timestamp": "2026-09-02T17:36:53.156Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1788370608848-09x7",
-      "timestamp": "2026-09-02T17:36:48.848Z",
+      "id": "log-1788424081287-rdik",
+      "timestamp": "2026-09-03T08:28:01.287Z",
       "type": "ai_request",
       "model": "mistral:open-mistral-nemo",
-      "tokens": 1023,
-      "latencyMs": 3296,
+      "tokens": 661,
+      "latencyMs": 3139,
       "status": "success",
-      "message": "Summarized \"Bhavana Reddy electrifies Europe with India’s first Kuchipudi debuts\" in 3296ms (1023 tokens)",
+      "message": "Summarized \"Ganesh steps aside, Kalyan poised for landslide win\" in 3139ms (661 tokens)",
       "details": {
-        "promptTokens": 681,
-        "completionTokens": 342
+        "promptTokens": 417,
+        "completionTokens": 244
       }
     },
     {
-      "id": "log-1788370601418-nfyj",
-      "timestamp": "2026-09-02T17:36:41.418Z",
+      "id": "log-1788424066628-ul2u",
+      "timestamp": "2026-09-03T08:27:46.628Z",
       "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 881,
-      "latencyMs": 2455,
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 867,
+      "latencyMs": 711,
       "status": "success",
-      "message": "Summarized \"Trump warns Iran: Strike back harder now!\" in 2455ms (881 tokens)",
+      "message": "Summarized \"Chennai Gets World Class Olympic City\" in 711ms (867 tokens)",
       "details": {
-        "promptTokens": 633,
-        "completionTokens": 248
+        "promptTokens": 662,
+        "completionTokens": 205
       }
     },
     {
-      "id": "log-1788370598961-cc12",
-      "timestamp": "2026-09-02T17:36:38.961Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
-      "status": "failed",
-      "message": "⚠️ [openai/gpt-oss-20b] (429) Rate limit 429 on Groq Cloud",
-      "details": {
-        "articleTitle": "Live: Trump Claims Hormuz Control; Iran Warns Of New Strategy",
-        "fullError": "Rate limit 429 on Groq Cloud",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788370598960-btq7",
-      "timestamp": "2026-09-02T17:36:38.960Z",
-      "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
-      "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1788370598879-tpz6",
-      "timestamp": "2026-09-02T17:36:38.879Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.8-27b",
-      "status": "failed",
-      "message": "⚠️ [qwen/qwen3.8-27b] (429) Rate limit 429 on Groq Cloud",
-      "details": {
-        "articleTitle": "Live: Trump Claims Hormuz Control; Iran Warns Of New Strategy",
-        "fullError": "Rate limit 429 on Groq Cloud",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788370598878-vth7",
-      "timestamp": "2026-09-02T17:36:38.878Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.8-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1788370598688-z3hk",
-      "timestamp": "2026-09-02T17:36:38.688Z",
+      "id": "log-1788424065915-bmzt",
+      "timestamp": "2026-09-03T08:27:45.915Z",
       "type": "rate_limit",
       "model": "openai/gpt-oss-120b",
       "status": "failed",
       "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
       "details": {
-        "articleTitle": "Live: Trump Claims Hormuz Control; Iran Warns Of New Strategy",
+        "articleTitle": "CM Vijay Announces World-Class Olympic City in Chennai",
         "fullError": "Rate limit 429 on Groq Cloud",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788370598687-ztbt",
-      "timestamp": "2026-09-02T17:36:38.687Z",
+      "id": "log-1788424065914-xkb2",
+      "timestamp": "2026-09-03T08:27:45.914Z",
       "type": "rate_limit",
       "model": "openai/gpt-oss-120b",
       "status": "rotated",
       "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
     },
     {
-      "id": "log-1788370594140-z5ze",
-      "timestamp": "2026-09-02T17:36:34.140Z",
+      "id": "log-1788424058846-ro3l",
+      "timestamp": "2026-09-03T08:27:38.846Z",
       "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 946,
-      "latencyMs": 2400,
+      "model": "mistral:open-mistral-nemo",
+      "tokens": 1100,
+      "latencyMs": 4022,
       "status": "success",
-      "message": "Summarized \"Critical bustard habitats mapped in Deccan\" in 2400ms (946 tokens)",
+      "message": "Summarized \"**Lost fortune found: ₹29 lakh treasure recovered by RPF**\" in 4022ms (1100 tokens)",
       "details": {
-        "promptTokens": 684,
-        "completionTokens": 262
+        "promptTokens": 725,
+        "completionTokens": 375
       }
     },
     {
-      "id": "log-1788370586846-rc8f",
-      "timestamp": "2026-09-02T17:36:26.846Z",
-      "type": "ai_request",
-      "model": "mistral:mistral-small-latest",
-      "tokens": 919,
-      "latencyMs": 2666,
-      "status": "success",
-      "message": "Summarized \"Darjeeling railway shed collapses, eight hurt\" in 2666ms (919 tokens)",
-      "details": {
-        "promptTokens": 678,
-        "completionTokens": 241
-      }
-    },
-    {
-      "id": "log-1788370584178-ilrr",
-      "timestamp": "2026-09-02T17:36:24.178Z",
+      "id": "log-1788424054822-for0",
+      "timestamp": "2026-09-03T08:27:34.822Z",
       "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
+      "model": "mistral-small-latest",
       "status": "failed",
-      "message": "⚠️ [openai/gpt-oss-20b] (429) Rate limit 429 on Groq Cloud",
+      "message": "⚠️ [mistral-small-latest] (429) Rate limit 429 on Mistral AI",
       "details": {
-        "articleTitle": "Eight Injured As Darjeeling Railway Locoshed Collapses",
-        "fullError": "Rate limit 429 on Groq Cloud",
+        "articleTitle": "Lost bag with valuables worth ₹29 lakh recovered by RPF in Bengaluru",
+        "fullError": "Rate limit 429 on Mistral AI",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788370584178-jd9b",
-      "timestamp": "2026-09-02T17:36:24.178Z",
+      "id": "log-1788424054820-m1lu",
+      "timestamp": "2026-09-03T08:27:34.820Z",
       "type": "rate_limit",
-      "model": "openai/gpt-oss-20b",
+      "model": "mistral-small-latest",
       "status": "rotated",
-      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
+      "message": "Rate limit reached on mistral-small-latest (429). Automatically rotated to next tier model."
     },
     {
-      "id": "log-1788370584040-qclm",
-      "timestamp": "2026-09-02T17:36:24.040Z",
+      "id": "log-1788424050114-av0c",
+      "timestamp": "2026-09-03T08:27:30.114Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 651,
+      "latencyMs": 764,
+      "status": "success",
+      "message": "Summarized \"Malaria Outbreak Hits Andhra Villagers\" in 764ms (651 tokens)",
+      "details": {
+        "promptTokens": 453,
+        "completionTokens": 198
+      }
+    },
+    {
+      "id": "log-1788423779655-e96u",
+      "timestamp": "2026-09-03T08:22:59.655Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 611,
+      "latencyMs": 922,
+      "status": "success",
+      "message": "Summarized \"Purdue Opens 2026 Season Against Indiana State\" in 922ms (611 tokens)",
+      "details": {
+        "promptTokens": 417,
+        "completionTokens": 194
+      }
+    },
+    {
+      "id": "log-1788423778731-hz3w",
+      "timestamp": "2026-09-03T08:22:58.731Z",
       "type": "rate_limit",
       "model": "openai/gpt-oss-120b",
       "status": "failed",
       "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
       "details": {
-        "articleTitle": "Eight Injured As Darjeeling Railway Locoshed Collapses",
+        "articleTitle": "Purdue football schedule vs. Indiana State: Kickoff, where to watch, tickets, weather",
         "fullError": "Rate limit 429 on Groq Cloud",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788370584039-9fkd",
-      "timestamp": "2026-09-02T17:36:24.039Z",
+      "id": "log-1788423778730-m8ny",
+      "timestamp": "2026-09-03T08:22:58.730Z",
       "type": "rate_limit",
       "model": "openai/gpt-oss-120b",
       "status": "rotated",
       "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
     },
     {
-      "id": "log-1788370583829-mtgk",
-      "timestamp": "2026-09-02T17:36:23.829Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.8-27b",
-      "status": "failed",
-      "message": "⚠️ [qwen/qwen3.8-27b] (429) Rate limit 429 on Groq Cloud",
+      "id": "log-1788423775052-dbjo",
+      "timestamp": "2026-09-03T08:22:55.052Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 647,
+      "latencyMs": 2439,
+      "status": "success",
+      "message": "Summarized \"Serie A crowns 2026's best!\" in 2439ms (647 tokens)",
       "details": {
-        "articleTitle": "Eight Injured As Darjeeling Railway Locoshed Collapses",
+        "promptTokens": 436,
+        "completionTokens": 211
+      }
+    },
+    {
+      "id": "log-1788423765597-aunc",
+      "timestamp": "2026-09-03T08:22:45.597Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-large-latest",
+      "tokens": 648,
+      "latencyMs": 4954,
+      "status": "success",
+      "message": "Summarized \"Shock Upset Rocks Heavyweight Boxing\" in 4954ms (648 tokens)",
+      "details": {
+        "promptTokens": 411,
+        "completionTokens": 237
+      }
+    },
+    {
+      "id": "log-1788423754388-guk3",
+      "timestamp": "2026-09-03T08:22:34.388Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 598,
+      "latencyMs": 713,
+      "status": "success",
+      "message": "Summarized \"Lamar Jackson: Defenses Are Not Ready\" in 713ms (598 tokens)",
+      "details": {
+        "promptTokens": 414,
+        "completionTokens": 184
+      }
+    },
+    {
+      "id": "log-1788423753673-6bm1",
+      "timestamp": "2026-09-03T08:22:33.673Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-20b",
+      "status": "failed",
+      "message": "⚠️ [openai/gpt-oss-20b] (429) Rate limit 429 on Groq Cloud",
+      "details": {
+        "articleTitle": "Lamar Jackson on Ravens' new offense: Defenses aren't prepared for what's in store",
         "fullError": "Rate limit 429 on Groq Cloud",
         "statusCode": 429
       }
     },
     {
-      "id": "log-1788370583829-41zf",
-      "timestamp": "2026-09-02T17:36:23.829Z",
+      "id": "log-1788423753671-7kt2",
+      "timestamp": "2026-09-03T08:22:33.671Z",
       "type": "rate_limit",
-      "model": "qwen/qwen3.8-27b",
+      "model": "openai/gpt-oss-20b",
       "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
+      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1788423747113-lh0f",
+      "timestamp": "2026-09-03T08:22:27.113Z",
+      "type": "ai_request",
+      "model": "mistral:open-mistral-nemo",
+      "tokens": 732,
+      "latencyMs": 2679,
+      "status": "success",
+      "message": "Summarized \"Girona locks in Xocolates Torras deal through 2028\" in 2679ms (732 tokens)",
+      "details": {
+        "promptTokens": 439,
+        "completionTokens": 293
+      }
+    },
+    {
+      "id": "log-1788423740920-fyym",
+      "timestamp": "2026-09-03T08:22:20.920Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 639,
+      "latencyMs": 778,
+      "status": "success",
+      "message": "Summarized \"Hooda Returns To Baroda After Five Years\" in 778ms (639 tokens)",
+      "details": {
+        "promptTokens": 449,
+        "completionTokens": 190
+      }
+    },
+    {
+      "id": "log-1788423740140-jc66",
+      "timestamp": "2026-09-03T08:22:20.140Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "failed",
+      "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
+      "details": {
+        "articleTitle": "Five years after Krunal Pandya row, Deepak Hooda set to play for Baroda",
+        "fullError": "Rate limit 429 on Groq Cloud",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788423740140-vpjc",
+      "timestamp": "2026-09-03T08:22:20.140Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1788423736509-gr9e",
+      "timestamp": "2026-09-03T08:22:16.509Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 944,
+      "latencyMs": 2866,
+      "status": "success",
+      "message": "Summarized \"Samson-Sooryavanshi India opening dream team?\" in 2866ms (944 tokens)",
+      "details": {
+        "promptTokens": 692,
+        "completionTokens": 252
+      }
+    },
+    {
+      "id": "log-1788423729486-y5n3",
+      "timestamp": "2026-09-03T08:22:09.486Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 829,
+      "latencyMs": 1189,
+      "status": "success",
+      "message": "Summarized \"Missing Farmer ID Blocks Six Thousand Rupees\" in 1189ms (829 tokens)",
+      "details": {
+        "promptTokens": 617,
+        "completionTokens": 212
+      }
+    },
+    {
+      "id": "log-1788423716764-oju7",
+      "timestamp": "2026-09-03T08:21:56.764Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 822,
+      "latencyMs": 3158,
+      "status": "success",
+      "message": "Summarized \"SC blasts BCI over student crackdown\" in 3158ms (822 tokens)",
+      "details": {
+        "promptTokens": 613,
+        "completionTokens": 209
+      }
+    },
+    {
+      "id": "log-1788423713601-u2n8",
+      "timestamp": "2026-09-03T08:21:53.601Z",
+      "type": "error",
+      "model": "mistral-large-latest",
+      "status": "failed",
+      "message": "⚠️ [mistral-large-latest] (403) {\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
+      "details": {
+        "articleTitle": "CJI-NALSAR विवाद: SC ने रद्द किया BCI का फैसला, कहा- कोई अधिकार नहीं - ABP News",
+        "fullError": "{\"object\":\"error\",\"message\":\"This model is not available in your subscription tier\",\"type\":\"tier_not_allowed\",\"param\":nu",
+        "statusCode": 403
+      }
+    },
+    {
+      "id": "log-1788423707444-3vdg",
+      "timestamp": "2026-09-03T08:21:47.444Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 593,
+      "latencyMs": 671,
+      "status": "success",
+      "message": "Summarized \"Doctors Shocked By False Pregnancy Discovery\" in 671ms (593 tokens)",
+      "details": {
+        "promptTokens": 441,
+        "completionTokens": 152
+      }
+    },
+    {
+      "id": "log-1788423706770-30ht",
+      "timestamp": "2026-09-03T08:21:46.770Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-20b",
+      "status": "failed",
+      "message": "⚠️ [openai/gpt-oss-20b] (429) Rate limit 429 on Groq Cloud",
+      "details": {
+        "articleTitle": "डिलीवरी का अजीब मामला : डॉक्टरों को ऑपरेशन के दौरान पता चला कि महिला प्रेग्नेंट ही नहीं थी - BBC",
+        "fullError": "Rate limit 429 on Groq Cloud",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788423706769-2hy6",
+      "timestamp": "2026-09-03T08:21:46.769Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-20b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
+    },
+    {
+      "id": "log-1788423699311-1lgu",
+      "timestamp": "2026-09-03T08:21:39.311Z",
+      "type": "ai_request",
+      "model": "mistral:open-mistral-nemo",
+      "tokens": 1192,
+      "latencyMs": 3767,
+      "status": "success",
+      "message": "Summarized \"अंकित बालियान हत्याकांड: शार्प शूटरों का विदेश भागने का षड्यंत्र उजागर\" in 3767ms (1192 tokens)",
+      "details": {
+        "promptTokens": 819,
+        "completionTokens": 373
+      }
+    },
+    {
+      "id": "log-1788423689058-dprh",
+      "timestamp": "2026-09-03T08:21:29.058Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 833,
+      "latencyMs": 737,
+      "status": "success",
+      "message": "Summarized \"BCCI Review Meeting Sparks Major Changes\" in 737ms (833 tokens)",
+      "details": {
+        "promptTokens": 649,
+        "completionTokens": 184
+      }
+    },
+    {
+      "id": "log-1788423688320-fvzk",
+      "timestamp": "2026-09-03T08:21:28.320Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "failed",
+      "message": "⚠️ [openai/gpt-oss-120b] (429) Rate limit 429 on Groq Cloud",
+      "details": {
+        "articleTitle": "बीसीसीआई का मंथन: समीक्षा बैठक के लिए मुख्यालय पहुंचे गिल-श्रेयस और कोच गंभीर, लिए जा सकते हैं बड़े फैसले",
+        "fullError": "Rate limit 429 on Groq Cloud",
+        "statusCode": 429
+      }
+    },
+    {
+      "id": "log-1788423688319-bc8r",
+      "timestamp": "2026-09-03T08:21:28.319Z",
+      "type": "rate_limit",
+      "model": "openai/gpt-oss-120b",
+      "status": "rotated",
+      "message": "Rate limit reached on openai/gpt-oss-120b (429). Automatically rotated to next tier model."
     }
   ]
 }
