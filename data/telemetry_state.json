@@ -6,29 +6,29 @@
       "model": "qwen/qwen3.8-27b",
       "displayName": "Groq Qwen 3.8 27B",
       "tier": 1,
-      "requestsToday": 183,
-      "promptTokensToday": 98220,
-      "completionTokensToday": 38118,
-      "totalTokensToday": 136338,
-      "lastLatencyMs": 841,
-      "status": "rate_limited",
-      "lastUsedAt": "2026-09-03T10:25:44.817Z",
-      "errorsToday": 50,
-      "rateLimitResetAt": "2026-09-03T10:27:07.152Z"
+      "requestsToday": 184,
+      "promptTokensToday": 98891,
+      "completionTokensToday": 38336,
+      "totalTokensToday": 137227,
+      "lastLatencyMs": 1208,
+      "status": "ready",
+      "lastUsedAt": "2026-09-03T17:09:05.606Z",
+      "errorsToday": 0,
+      "rateLimitResetAt": null
     },
     {
       "model": "mistral-small-latest",
       "displayName": "Mistral Small (Serverless)",
       "tier": 2,
-      "requestsToday": 181,
-      "promptTokensToday": 98662,
-      "completionTokensToday": 41331,
-      "totalTokensToday": 139993,
-      "lastLatencyMs": 2502,
-      "status": "rate_limited",
-      "lastUsedAt": "2026-09-03T10:26:33.295Z",
-      "errorsToday": 10,
-      "rateLimitResetAt": "2026-09-03T10:27:07.593Z"
+      "requestsToday": 182,
+      "promptTokensToday": 99077,
+      "completionTokensToday": 41540,
+      "totalTokensToday": 140617,
+      "lastLatencyMs": 2934,
+      "status": "ready",
+      "lastUsedAt": "2026-09-03T17:09:12.057Z",
+      "errorsToday": 0,
+      "rateLimitResetAt": null
     },
     {
       "model": "openai/gpt-oss-120b",
@@ -39,10 +39,10 @@
       "completionTokensToday": 19021,
       "totalTokensToday": 37457,
       "lastLatencyMs": 6027,
-      "status": "rate_limited",
+      "status": "ready",
       "lastUsedAt": "2026-09-03T09:59:15.554Z",
-      "errorsToday": 52,
-      "rateLimitResetAt": "2026-09-03T10:27:06.978Z"
+      "errorsToday": 0,
+      "rateLimitResetAt": null
     },
     {
       "model": "open-mistral-nemo",
@@ -67,10 +67,10 @@
       "completionTokensToday": 22174,
       "totalTokensToday": 43906,
       "lastLatencyMs": 5017,
-      "status": "rate_limited",
+      "status": "ready",
       "lastUsedAt": "2026-09-03T10:06:50.085Z",
-      "errorsToday": 52,
-      "rateLimitResetAt": "2026-09-03T10:27:07.234Z"
+      "errorsToday": 0,
+      "rateLimitResetAt": null
     },
     {
       "model": "mistral-large-latest",
@@ -83,20 +83,48 @@
       "lastLatencyMs": 5036,
       "status": "ready",
       "lastUsedAt": "2026-09-03T10:26:20.277Z",
-      "errorsToday": 6,
+      "errorsToday": 0,
       "rateLimitResetAt": null
     }
   ],
   "funnel": {
-    "rssScannedToday": 297287,
-    "dedupedCandidatesToday": 16486,
-    "llmSummarizedToday": 566,
+    "rssScannedToday": 303344,
+    "dedupedCandidatesToday": 18356,
+    "llmSummarizedToday": 568,
     "directSavedToday": 111,
     "dbInsertedToday": 670,
     "lastIngestDurationMs": 127771,
     "lastIngestAt": "2026-09-03T10:27:08.229Z"
   },
   "logs": [
+    {
+      "id": "log-1788455352057-z19a",
+      "timestamp": "2026-09-03T17:09:12.057Z",
+      "type": "ai_request",
+      "model": "mistral:mistral-small-latest",
+      "tokens": 624,
+      "latencyMs": 2934,
+      "status": "success",
+      "message": "Summarized \"BJP slams Jharkhand exam tender chaos\" in 2934ms (624 tokens)",
+      "details": {
+        "promptTokens": 415,
+        "completionTokens": 209
+      }
+    },
+    {
+      "id": "log-1788455345606-2ja7",
+      "timestamp": "2026-09-03T17:09:05.606Z",
+      "type": "ai_request",
+      "model": "groq:qwen/qwen3.8-27b",
+      "tokens": 889,
+      "latencyMs": 1208,
+      "status": "success",
+      "message": "Summarized \"Tribal University Partners With IIT Hyderabad\" in 1208ms (889 tokens)",
+      "details": {
+        "promptTokens": 671,
+        "completionTokens": 218
+      }
+    },
     {
       "id": "log-1788431206950-vgin",
       "timestamp": "2026-09-03T10:26:46.950Z",
@@ -530,27 +558,6 @@
       "model": "openai/gpt-oss-20b",
       "status": "rotated",
       "message": "Rate limit reached on openai/gpt-oss-20b (429). Automatically rotated to next tier model."
-    },
-    {
-      "id": "log-1788430924914-tkbl",
-      "timestamp": "2026-09-03T10:22:04.914Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.8-27b",
-      "status": "failed",
-      "message": "⚠️ [qwen/qwen3.8-27b] (429) Rate limit 429 on Groq Cloud",
-      "details": {
-        "articleTitle": "Elon Musk’s America PAC Discloses First Tranche Of Spending For The Midterms",
-        "fullError": "Rate limit 429 on Groq Cloud",
-        "statusCode": 429
-      }
-    },
-    {
-      "id": "log-1788430924913-gv2t",
-      "timestamp": "2026-09-03T10:22:04.913Z",
-      "type": "rate_limit",
-      "model": "qwen/qwen3.8-27b",
-      "status": "rotated",
-      "message": "Rate limit reached on qwen/qwen3.8-27b (429). Automatically rotated to next tier model."
     }
   ]
 }
