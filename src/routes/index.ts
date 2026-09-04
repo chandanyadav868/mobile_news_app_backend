@@ -7,11 +7,13 @@ import feedRoutes from './feed.routes.js';
 import speechRoutes from './speech.routes.js';
 import pdfRoutes from './pdf.routes.js';
 import cmsRoutes from './cms.routes.js';
+import authRoutes from './auth.routes.js';
 import { DashboardController } from '../controllers/dashboardController.js';
 import { BetaController } from '../controllers/betaController.js';
 
 const router = Router();
 
+router.use('/auth', authRoutes);
 router.use('/cms', cmsRoutes);
 router.use('/news', newsRoutes);
 router.use('/feeds', feedRoutes);

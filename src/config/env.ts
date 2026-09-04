@@ -20,6 +20,8 @@ const envSchema = z.object({
   CLOUDFLARE_API_TOKEN: z.string().optional().default(''),
   CLOUDFLARE_ACCOUNT_ID: z.string().optional().default(''),
   CLOUDFLARE_BASE_URL: z.string().default('https://api.cloudflare.com/client/v4/accounts'),
+  JWT_SECRET: z.string().default('newsflow_super_secret_jwt_key_2026'),
+  GOOGLE_WEB_CLIENT_ID: z.string().optional().default(''),
 });
 
 export const env = envSchema.parse(process.env);

@@ -489,4 +489,232 @@ export class MailService {
             return { success: false, error: err?.message || 'Failed to dispatch email' };
         }
     }
+
+    /**
+     * Dispatch 6-digit password reset OTP email
+     */
+    public static async sendPasswordResetOtp(params: {
+        email: string;
+        name?: string | null;
+        otp: string;
+    }): Promise<{ success: boolean; messageId?: string; error?: string }> {
+        const { email, name, otp } = params;
+        const userName = name?.trim() || 'NewsFlow Reader';
+        const subject = `🔐 ${otp} is your NewsFlow password reset code`;
+
+        const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${subject}</title>
+  <style>
+    body {
+      margin: 0; padding: 0; background-color: #0B0F19;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #E2E8F0; -webkit-font-smoothing: antialiased;
+    }
+    .wrapper { width: 100%; background-color: #0B0F19; padding: 36px 12px; }
+    .container {
+      max-width: 540px; margin: 0 auto; background: #131B2E;
+      border-radius: 20px; overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+    .header-bar {
+      background: linear-gradient(135deg, #EF4444, #DC2626);
+      padding: 24px; text-align: center;
+    }
+    .header-title {
+      font-size: 20px; font-weight: 800; color: #FFFFFF; margin: 0;
+      letter-spacing: -0.02em;
+    }
+    .content-box { padding: 32px 28px; }
+    .badge {
+      display: inline-block; background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4); color: #F87171;
+      font-size: 11px; font-weight: 800; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 5px 12px; border-radius: 9999px;
+      margin-bottom: 16px;
+    }
+    .headline { font-size: 22px; font-weight: 800; color: #FFFFFF; margin: 0 0 12px 0; }
+    .intro { font-size: 14px; line-height: 1.6; color: #94A3B8; margin: 0 0 20px 0; }
+    .otp-box {
+      background: #090D16; border: 2px dashed #EF4444;
+      border-radius: 16px; padding: 22px 16px; text-align: center;
+      margin: 24px 0;
+    }
+    .otp-label {
+      font-size: 11px; font-weight: 800; color: #F87171;
+      text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 6px;
+    }
+    .otp-code {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 38px; font-weight: 900; letter-spacing: 0.28em;
+      color: #FFFFFF; text-shadow: 0 2px 10px rgba(239, 68, 68, 0.5);
+    }
+    .otp-timer { font-size: 12px; color: #64748B; margin-top: 8px; }
+    .notice {
+      background: rgba(30, 41, 59, 0.6); border-radius: 12px;
+      padding: 14px 16px; border: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 12px; line-height: 1.5; color: #CBD5E1; margin: 20px 0;
+    }
+    .footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 18px 24px; text-align: center; font-size: 11px;
+      color: #64748B; line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="container">
+      <div class="header-bar">
+        <h1 class="header-title">⚡ NewsFlow Security</h1>
+      </div>
+      <div class="content-box">
+        <span class="badge">🔒 PASSWORD RESET VERIFICATION</span>
+        <h2 class="headline">Reset Your Password</h2>
+        <p class="intro">
+          Hi <strong>${userName}</strong>,<br>
+          We received a request to reset your NewsFlow password. Enter this 6-digit code in the app to continue:
+        </p>
+        
+        <div class="otp-box">
+          <div class="otp-label">One-Time Verification Code</div>
+          <div class="otp-code">${otp}</div>
+          <div class="otp-timer">⏰ Expires in 10 minutes</div>
+        </div>
+
+        <div class="notice">
+          <strong>Security Advisory:</strong> If you did not request a password reset, you can safely disregard this email. Your password will remain unchanged.
+        </div>
+      </div>
+      <div class="footer">
+        © 2026 NewsFlow AI Inc. • Automated Security Dispatch • Do not reply to this email.
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
+
+        try {
+            dotenv.config();
+
+            // 1. Mailtrap API Token Dispatch
+            const mailtrapToken = (process.env.MAILTRAP_API_TOKEN || '').trim();
+            if (mailtrapToken) {
+                const inboxId = (process.env.MAILTRAP_INBOX_ID || '').trim();
+                let senderEmail = (process.env.MAILTRAP_SENDER_EMAIL || '').trim();
+                if (!senderEmail || senderEmail.includes('demomailtrap')) {
+                    senderEmail = 'no-reply@humantalking.com';
+                }
+                const senderName = 'NewsFlow Security';
+
+                // Explicit sandbox or live SDK
+                if (inboxId) {
+                    try {
+                        const sandboxRes = await fetch(`https://sandbox.api.mailtrap.io/api/send/${inboxId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${mailtrapToken}`,
+                                'Api-Token': mailtrapToken,
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                from: { email: senderEmail, name: senderName },
+                                to: [{ email, name: userName }],
+                                subject,
+                                html,
+                                category: 'Password Reset OTP',
+                            }),
+                        });
+                        if (sandboxRes.ok) {
+                            return { success: true, messageId: `mailtrap-otp-${Date.now()}` };
+                        }
+                    } catch (e: any) {
+                        console.warn('[MailService] Sandbox OTP send failed:', e?.message);
+                    }
+                }
+
+                // Attempt live MailtrapClient
+                try {
+                    const client = new MailtrapClient({ token: mailtrapToken });
+                    const result = await client.send({
+                        from: { email: senderEmail, name: senderName },
+                        to: [{ email, name: userName }],
+                        subject,
+                        html,
+                        category: 'Password Reset OTP',
+                    });
+                    if (result && result.success) {
+                        console.log(`[MailService] [OTP] Sent via Mailtrap Live SDK to ${email}`);
+                        return { success: true, messageId: result.message_ids?.[0] };
+                    }
+                } catch (liveErr: any) {
+                    console.warn('[MailService] Mailtrap Live OTP send failed, trying auto-sandbox:', liveErr?.message);
+                }
+
+                // Fallback auto-sandbox discovery
+                try {
+                    const inboxesRes = await fetch('https://mailtrap.io/api/inboxes', {
+                        headers: {
+                            'Authorization': `Bearer ${mailtrapToken}`,
+                            'Api-Token': mailtrapToken,
+                        },
+                    });
+                    if (inboxesRes.ok) {
+                        const inboxes = await inboxesRes.json();
+                        if (Array.isArray(inboxes) && inboxes.length > 0) {
+                            const defaultInboxId = inboxes[0].id;
+                            const res = await fetch(`https://sandbox.api.mailtrap.io/api/send/${defaultInboxId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${mailtrapToken}`,
+                                    'Api-Token': mailtrapToken,
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    from: { email: senderEmail, name: senderName },
+                                    to: [{ email, name: userName }],
+                                    subject,
+                                    html,
+                                    category: 'Password Reset OTP',
+                                }),
+                            });
+                            if (res.ok) {
+                                console.log(`[MailService] [OTP] Delivered to sandbox inbox #${defaultInboxId}`);
+                                return { success: true, messageId: `sandbox-otp-${Date.now()}` };
+                            }
+                        }
+                    }
+                } catch (autoErr: any) {
+                    console.warn('[MailService] Auto inbox discovery failed for OTP:', autoErr?.message);
+                }
+            }
+
+            // 2. SMTP Transport Fallback
+            const transporter = this.getTransporter();
+            const from = process.env.SMTP_FROM || (process.env.SMTP_USER ? `"NewsFlow Security" <${process.env.SMTP_USER}>` : `"NewsFlow Security" <no-reply@newsflow.ai>`);
+
+            if (!process.env.SMTP_USER && !mailtrapToken) {
+                console.log(`[MailService] [SIMULATED OTP] Code for ${email}: ${otp}`);
+                return { success: true, messageId: `simulated-otp-${Date.now()}` };
+            }
+
+            const info = await transporter.sendMail({
+                from,
+                to: email,
+                subject,
+                html,
+            });
+
+            console.log(`[MailService] [SMTP OTP] Delivered to ${email}: ${info.messageId}`);
+            return { success: true, messageId: info.messageId };
+        } catch (err: any) {
+            console.error(`[MailService] Failed to send OTP to ${email}:`, err);
+            return { success: false, error: err?.message || 'Failed to dispatch email' };
+        }
+    }
 }
+

@@ -234,3 +234,34 @@ model BetaTester {
   @@index([email])
 }
 
+// ==========================================
+// 6. MOBILE APP USERS & AUTHENTICATION
+// ==========================================
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+}
+
+model User {
+  id                   String       @id @default(uuid())
+  email                String       @unique
+  passwordHash         String?      // Nullable for users authenticated exclusively via Google
+  name                 String
+  avatarUrl            String?
+  authProvider         AuthProvider @default(LOCAL)
+  googleId             String?      @unique
+  isEmailVerified      Boolean      @default(false)
+  tokenVersion         Int          @default(0) // Incremented to instantly revoke all active sessions
+  lastLoginAt          DateTime?
+  
+  // Mobile app data & preferences
+  bookmarkedArticleIds String[]     @default([])
+  readingHistoryCount  Int          @default(0)
+  
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+
+  @@index([email])
+  @@index([googleId])
+}
+
