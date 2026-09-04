@@ -16,6 +16,7 @@ const memoryOtpStore = new Map<string, { otpHash: string; attempts: number; expi
 export interface JwtUserPayload {
     userId: string;
     email: string;
+    status: string;
     tokenVersion: number;
 }
 
@@ -45,10 +46,11 @@ export class AuthService {
     /**
      * Generate 30-day Access Token for mobile session
      */
-    public static generateAccessToken(user: { id: string; email: string; tokenVersion: number }): string {
+    public static generateAccessToken(user: { id: string; email: string; status?: string; tokenVersion: number }): string {
         const payload: JwtUserPayload = {
             userId: user.id,
             email: user.email.toLowerCase(),
+            status: user.status || 'USER',
             tokenVersion: user.tokenVersion,
         };
         return jwt.sign(payload, JWT_SECRET, { expiresIn: '30d' });

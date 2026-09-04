@@ -8,12 +8,14 @@ import speechRoutes from './speech.routes.js';
 import pdfRoutes from './pdf.routes.js';
 import cmsRoutes from './cms.routes.js';
 import authRoutes from './auth.routes.js';
+import adminUsersRoutes from './adminUsers.routes.js';
 import { DashboardController } from '../controllers/dashboardController.js';
 import { BetaController } from '../controllers/betaController.js';
 
 const router = Router();
 
 router.use('/auth', authRoutes);
+router.use('/admin/users', adminUsersRoutes);
 router.use('/cms', cmsRoutes);
 router.use('/news', newsRoutes);
 router.use('/feeds', feedRoutes);

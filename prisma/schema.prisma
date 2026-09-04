@@ -250,6 +250,7 @@ model User {
   avatarUrl            String?
   authProvider         AuthProvider @default(LOCAL)
   googleId             String?      @unique
+  status               String       @default("USER") // "USER" | "ADMIN"
   isEmailVerified      Boolean      @default(false)
   tokenVersion         Int          @default(0) // Incremented to instantly revoke all active sessions
   lastLoginAt          DateTime?
@@ -263,5 +264,6 @@ model User {
 
   @@index([email])
   @@index([googleId])
+  @@index([status])
 }
 

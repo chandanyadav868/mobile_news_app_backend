@@ -58,6 +58,7 @@ export class AuthController {
                     name: trimmedName,
                     passwordHash,
                     authProvider: 'LOCAL',
+                    status: 'USER',
                     lastLoginAt: new Date(),
                 },
                 select: {
@@ -66,6 +67,7 @@ export class AuthController {
                     name: true,
                     avatarUrl: true,
                     authProvider: true,
+                    status: true,
                     isEmailVerified: true,
                     tokenVersion: true,
                     createdAt: true,
@@ -84,6 +86,7 @@ export class AuthController {
                     name: user.name,
                     avatarUrl: user.avatarUrl,
                     authProvider: user.authProvider,
+                    status: user.status,
                     isEmailVerified: user.isEmailVerified,
                 },
             });
@@ -159,6 +162,7 @@ export class AuthController {
                     name: user.name,
                     avatarUrl: user.avatarUrl,
                     authProvider: user.authProvider,
+                    status: user.status,
                     isEmailVerified: user.isEmailVerified,
                 },
             });
@@ -346,6 +350,7 @@ export class AuthController {
                     name: true,
                     avatarUrl: true,
                     authProvider: true,
+                    status: true,
                     isEmailVerified: true,
                     tokenVersion: true,
                 },
@@ -367,6 +372,7 @@ export class AuthController {
                     name: updatedUser.name,
                     avatarUrl: updatedUser.avatarUrl,
                     authProvider: updatedUser.authProvider,
+                    status: updatedUser.status,
                     isEmailVerified: updatedUser.isEmailVerified,
                 },
             });
@@ -452,6 +458,7 @@ export class AuthController {
                     name: user.name,
                     avatarUrl: user.avatarUrl,
                     authProvider: user.authProvider,
+                    status: user.status,
                     isEmailVerified: user.isEmailVerified,
                 },
             });

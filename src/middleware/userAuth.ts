@@ -8,6 +8,7 @@ export interface AuthenticatedUser {
     name: string;
     avatarUrl: string | null;
     authProvider: string;
+    status: string;
     isEmailVerified: boolean;
     tokenVersion: number;
 }
@@ -44,6 +45,7 @@ export async function authenticateUser(req: AuthenticatedRequest, res: Response,
                 name: true,
                 avatarUrl: true,
                 authProvider: true,
+                status: true,
                 isEmailVerified: true,
                 tokenVersion: true,
             },
@@ -74,3 +76,14 @@ export async function authenticateUser(req: AuthenticatedRequest, res: Response,
         });
     }
 }
+
+export function requireAdminUser(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    if (!req.user || req.user.status !== 'ADMIN') {
+        return res.status(403).json({
+            success: false,
+            error: 'Access restricted. Administrator privileges required.',
+        });
+    }
+    next();
+}
+

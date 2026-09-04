@@ -14,6 +14,7 @@ import { renderDatabaseAdmin } from './controllers/admin.controller.js';
 import { DashboardController } from './controllers/dashboardController.js';
 import { CmsDashboardController } from './controllers/cmsDashboard.controller.js';
 import { BetaController } from './controllers/betaController.js';
+import { AdminUsersController } from './controllers/adminUsers.controller.js';
 
 import { CmsSeedService } from './services/cmsSeedService.js';
 
@@ -59,6 +60,8 @@ app.get('/admin/cms', CmsDashboardController.renderPortal);
 app.get('/dashboard', DashboardController.renderDashboard);
 app.get('/admin/telemetry', DashboardController.renderDashboard);
 app.get('/admin/database', renderDatabaseAdmin);
+app.get('/admin/users', AdminUsersController.renderAdminUsersPortal);
+app.get('/users-admin', AdminUsersController.renderAdminUsersPortal);
 
 // Apply rate limiting to API routes
 app.use('/api', apiRateLimiter);
