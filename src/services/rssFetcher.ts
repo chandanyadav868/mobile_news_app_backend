@@ -61,7 +61,40 @@ interface ParsedArticle {
 function isRichRssItem(summary: string | null, imageUrl: string | null): boolean {
   if (!summary || summary.length < 120) return false;
   if (!imageUrl || imageUrl.includes('placeholder')) return false;
+  // Tiny thumbnails (<200px) are not rich: trigger full OG image extraction
+  if (imageUrl.includes('width=140') || imageUrl.includes('/tmb/') || imageUrl.includes('/240/')) return false;
   return true;
+}
+
+export function upgradeImageUrlToHighRes(url: string | null): string | null {
+  if (!url) return null;
+  let clean = url.trim();
+
+  // 1. Decode HTML entities (The Verge, Vox, etc.)
+  clean = clean.replace(/&#038;/g, '&').replace(/&amp;/g, '&');
+
+  // 2. Phys.org / ScienceX: 1.6KB tiny thumbnail (/tmb/) -> 800px full image (/800w/)
+  if (clean.includes('scx1.b-cdn.net') && clean.includes('/tmb/')) {
+    clean = clean.replace('/tmb/', '/800w/');
+  }
+
+  // 3. BBC News CDN: 240px tiny thumbnail -> 976px HD photo
+  if (clean.includes('ichef.bbci.co.uk') && clean.includes('/240/')) {
+    clean = clean.replace('/240/', '/976/');
+  }
+
+  // 4. Google User Content: upgrade low-res size query to high-res
+  if (clean.includes('googleusercontent.com')) {
+    clean = clean.replace(/=w\d+(-h\d+)?(-c)?/, '=w1200');
+    clean = clean.replace(/=s\d+(-c)?/, '=s1200');
+  }
+
+  // 5. The Verge / Vox: strip tiny crop parameter
+  if (clean.includes('platform.theverge.com') && clean.includes('crop=')) {
+    clean = clean.replace(/&crop=[^&]+/, '').replace(/\?crop=[^&]+&?/, '?');
+  }
+
+  return clean;
 }
 
 export function generateArticleHash(url: string): string {
@@ -289,7 +322,13 @@ export async function fetchSingleFeed(
       const rawMedia = (item as any).mediaContent;
       if (rawMedia) {
         if (Array.isArray(rawMedia)) {
-          const found = rawMedia.find((m: any) => m?.$?.url && isValidImageUrl(m.$.url));
+          // Sort by width descending to always pick the highest-resolution media (e.g. 700/1200px vs 140px)
+          const sorted = [...rawMedia].sort((a, b) => {
+            const wA = parseInt(a?.$?.width || '0', 10);
+            const wB = parseInt(b?.$?.width || '0', 10);
+            return wB - wA;
+          });
+          const found = sorted.find((m: any) => m?.$?.url && isValidImageUrl(m.$.url));
           if (found) imageUrl = found.$.url.trim();
         } else if (rawMedia?.$?.url && isValidImageUrl(rawMedia.$.url)) {
           imageUrl = rawMedia.$.url.trim();
@@ -300,7 +339,12 @@ export async function fetchSingleFeed(
         const rawThumb = (item as any).mediaThumbnail;
         if (rawThumb) {
           if (Array.isArray(rawThumb)) {
-            const found = rawThumb.find((m: any) => m?.$?.url && isValidImageUrl(m.$.url));
+            const sorted = [...rawThumb].sort((a, b) => {
+              const wA = parseInt(a?.$?.width || '0', 10);
+              const wB = parseInt(b?.$?.width || '0', 10);
+              return wB - wA;
+            });
+            const found = sorted.find((m: any) => m?.$?.url && isValidImageUrl(m.$.url));
             if (found) imageUrl = found.$.url.trim();
           } else if (rawThumb?.$?.url && isValidImageUrl(rawThumb.$.url)) {
             imageUrl = rawThumb.$.url.trim();
@@ -315,6 +359,9 @@ export async function fetchSingleFeed(
       if (!imageUrl) {
         imageUrl = extractItemImage(itemXml);
       }
+
+      // Upgrade to crystal clear high-resolution asset
+      imageUrl = upgradeImageUrlToHighRes(imageUrl);
 
       const rawItem = item as any;
       const title = decodeEntities(rawItem.title || '') || 'Untitled Story';
