@@ -13,6 +13,7 @@ import {
   createManualArticle,
   updateArticle,
   searchNews,
+  resolveImages,
 } from '../controllers/news.controller.js';
 import { extractArticle } from '../controllers/articleExtractor.controller.js';
 
@@ -26,6 +27,7 @@ router.put('/article/:id', updateArticle);
 
 router.get('/search', searchNews);
 router.post('/extract', extractArticle);
+router.post('/resolve-images', resolveImages);
 
 router.get('/check-new', checkNewArticles);
 router.get('/category/:category', getCategoryNews);

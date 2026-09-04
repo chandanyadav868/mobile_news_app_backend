@@ -28,6 +28,14 @@ const CHROME_HEADERS = {
 const parser = new Parser({
   timeout: 10000,
   headers: CHROME_HEADERS,
+  customFields: {
+    item: [
+      ['media:content', 'mediaContent'],
+      ['media:thumbnail', 'mediaThumbnail'],
+      ['enclosure', 'enclosure'],
+      ['image', 'imageTag'],
+    ],
+  },
 });
 
 export // Mutex lock to prevent duplicate overlapping scraping runs from maxing CPU
@@ -92,7 +100,16 @@ function isValidImageUrl(url: string): boolean {
   if (!url) return false;
   const lower = url.toLowerCase().trim();
   if (!lower.startsWith('http')) return false;
-  if (lower.includes('1.gif') || lower.includes('pixel') || lower.includes('beacon')) return false;
+  if (
+    lower.includes('1.gif') ||
+    lower.includes('pixel') ||
+    lower.includes('beacon') ||
+    lower.includes('og-image.png') ||
+    lower.includes('placeholder') ||
+    lower.includes('site-logo')
+  ) {
+    return false;
+  }
   return true;
 }
 
@@ -266,13 +283,43 @@ export async function fetchSingleFeed(
       if (!link || !link.startsWith('http')) return;
 
       const itemXml = itemXmlBlocks[index] || '';
-      const imageUrl =
-        extractItemImage(itemXml) ||
-        (item.enclosure?.url && isValidImageUrl(item.enclosure.url) ? item.enclosure.url : null);
 
-      const title = decodeEntities(item.title || '') || 'Untitled Story';
-      const summary = decodeEntities(item.contentSnippet || item.content || item.summary || item.description || '');
-      const rawContent = item.content || item['content:encoded'] || item.description || '';
+      // 1. High-reliability extraction from parsed custom fields (The Hindu, NDTV, Times of India, etc.)
+      let imageUrl: string | null = null;
+      const rawMedia = (item as any).mediaContent;
+      if (rawMedia) {
+        if (Array.isArray(rawMedia)) {
+          const found = rawMedia.find((m: any) => m?.$?.url && isValidImageUrl(m.$.url));
+          if (found) imageUrl = found.$.url.trim();
+        } else if (rawMedia?.$?.url && isValidImageUrl(rawMedia.$.url)) {
+          imageUrl = rawMedia.$.url.trim();
+        }
+      }
+
+      if (!imageUrl) {
+        const rawThumb = (item as any).mediaThumbnail;
+        if (rawThumb) {
+          if (Array.isArray(rawThumb)) {
+            const found = rawThumb.find((m: any) => m?.$?.url && isValidImageUrl(m.$.url));
+            if (found) imageUrl = found.$.url.trim();
+          } else if (rawThumb?.$?.url && isValidImageUrl(rawThumb.$.url)) {
+            imageUrl = rawThumb.$.url.trim();
+          }
+        }
+      }
+
+      if (!imageUrl && item.enclosure?.url && isValidImageUrl(item.enclosure.url)) {
+        imageUrl = item.enclosure.url.trim();
+      }
+
+      if (!imageUrl) {
+        imageUrl = extractItemImage(itemXml);
+      }
+
+      const rawItem = item as any;
+      const title = decodeEntities(rawItem.title || '') || 'Untitled Story';
+      const summary = decodeEntities(rawItem.contentSnippet || rawItem.content || rawItem.summary || rawItem.description || '');
+      const rawContent = rawItem.content || rawItem['content:encoded'] || rawItem.description || '';
 
       const hash = generateArticleHash(link);
       const publishedAt = item.pubDate && !isNaN(Date.parse(item.pubDate)) ? new Date(item.pubDate) : new Date();

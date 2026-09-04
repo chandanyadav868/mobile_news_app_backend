@@ -3,6 +3,7 @@ import { prisma } from '../config/db.js';
 import { getCache, setCache } from '../services/cacheService.js';
 import { ingestAllFeeds } from '../services/rssFetcher.js';
 import { logStream } from '../services/logStreamService.js';
+import { batchResolveImages } from '../services/lightweightImageResolver.js';
 
 const lastKnownGoodFeed: Record<string, any> = {};
 
@@ -694,6 +695,32 @@ export async function searchNews(req: Request, res: Response) {
     return res.status(500).json({
       success: false,
       error: 'Search query failed',
+    });
+  }
+}
+
+/**
+ * POST /api/v1/news/resolve-images
+ * Lightweight endpoint to resolve real publisher OpenGraph/Twitter images for candidate article URLs.
+ * Throttled concurrency & Redis cached (7-day TTL). Zero JSDOM overhead!
+ */
+export async function resolveImages(req: Request, res: Response) {
+  try {
+    const { urls } = req.body;
+    if (!urls || !Array.isArray(urls)) {
+      return res.status(400).json({ success: false, error: 'urls array is required' });
+    }
+
+    const images = await batchResolveImages(urls);
+    return res.json({
+      success: true,
+      data: images,
+    });
+  } catch (error: any) {
+    console.error('Error in resolveImages:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to resolve images',
     });
   }
 }
