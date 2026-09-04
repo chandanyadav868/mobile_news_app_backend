@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { clearCache } from '../services/cacheService.js';
+import { invalidateFeedCache } from '../services/cacheService.js';
 
 const prisma = new PrismaClient();
 
@@ -32,8 +32,7 @@ async function main() {
 
   // 4. Flush Redis feed & category caches
   try {
-    await clearCache('news:feed:*');
-    await clearCache('news:category:*');
+    await invalidateFeedCache();
     console.log('🧹 [Cache Cleared] Cleared stale feed and category caches in Redis.');
   } catch (e) {
     console.warn('Cache clear note:', e);
