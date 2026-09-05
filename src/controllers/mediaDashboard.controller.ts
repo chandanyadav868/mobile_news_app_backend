@@ -81,7 +81,7 @@ export class MediaDashboardController {
               Imgproxy Docker ${stats.imgproxyOnline ? 'Live (:8080)' : 'Standalone'}
             </span>
           </div>
-          <p class="text-sm text-gray-400">Track real vs WebP compressed sizes, benchmark bandwidth savings, and manage media assets</p>
+          <p class="text-sm text-gray-400">Track real vs WebP compressed sizes for editor uploads & visual stories (RSS feeds excluded)</p>
         </div>
       </div>
       
@@ -95,8 +95,8 @@ export class MediaDashboardController {
         <a href="/admin/users" class="px-4 py-2 text-xs font-medium text-gray-300 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors border border-gray-700 flex items-center gap-2">
           <i class="fa-solid fa-users"></i> Users
         </a>
-        <button onclick="syncDatabase()" class="px-4 py-2 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors shadow-lg shadow-indigo-600/30 flex items-center gap-2">
-          <i class="fa-solid fa-arrows-rotate" id="sync-icon"></i> Sync DB Images
+        <button onclick="syncDatabase()" class="px-4 py-2 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors shadow-lg shadow-indigo-600/30 flex items-center gap-2" title="Sync visual insight stories & editor uploads (RSS excluded)">
+          <i class="fa-solid fa-arrows-rotate" id="sync-icon"></i> Sync Visual Stories
         </button>
       </div>
     </header>

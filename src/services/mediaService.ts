@@ -49,7 +49,11 @@ export class MediaService {
     try {
       if (fs.existsSync(REGISTRY_FILE)) {
         const raw = fs.readFileSync(REGISTRY_FILE, 'utf-8');
-        this.registry = JSON.parse(raw);
+        const parsed = JSON.parse(raw);
+        // Exclude any RSS-extracted article images - strictly keep manual uploads, editor creations, and visual stories
+        this.registry = Array.isArray(parsed) ? parsed.filter((m: MediaItem) => m.source !== 'ARTICLE') : [];
+        // Persist cleaned registry without RSS items
+        this.saveRegistry();
       } else {
         this.registry = [];
       }
@@ -342,38 +346,11 @@ export class MediaService {
     let added = 0;
 
     try {
-      // 1. Articles with images
-      const articles = await prisma.article.findMany({
-        where: { imageUrl: { not: null } },
-        take: 100,
-        orderBy: { publishedAt: 'desc' },
-        select: { id: true, title: true, imageUrl: true, category: true, publishedAt: true },
-      });
+      // NOTE: Automated RSS articles are STRICTLY EXCLUDED!
+      // Images from RSS feeds are only held as external URLs and never uploaded or tracked here.
+      // Only Visual Insights and manually authored Editor stories are synchronized.
 
-      for (const art of articles) {
-        if (!art.imageUrl || !art.imageUrl.startsWith('http')) continue;
-        if (this.registry.some((m) => m.originalUrl === art.imageUrl)) continue;
-
-        const { originalSize, compressedSize } = await this.benchmarkImage(art.imageUrl);
-        this.registry.push({
-          id: `art-${art.id.slice(0, 8)}`,
-          title: art.title,
-          altText: `${art.category} Article Cover`,
-          originalUrl: art.imageUrl,
-          compressedUrl: this.buildImgproxyUrl(art.imageUrl),
-          originalSize,
-          compressedSize,
-          mimeType: 'image/jpeg',
-          format: 'JPEG',
-          isLocal: false,
-          source: 'ARTICLE',
-          createdAt: art.publishedAt ? art.publishedAt.toISOString() : new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        });
-        added++;
-      }
-
-      // 2. Visual Insight Stories
+      // 1. Visual Insight Stories (Authored in Visual Builder)
       const insights = await prisma.insightStory.findMany({
         take: 30,
         orderBy: { createdAt: 'desc' },

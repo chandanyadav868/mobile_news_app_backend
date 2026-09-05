@@ -1,0 +1,47 @@
+[
+  {
+    "id": "ins-4fd97f73",
+    "title": "QUANTUM COMPUTING: BEYOND THE CLASSICAL SILICON HORIZON",
+    "altText": "Insight Story Cover",
+    "originalUrl": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&q=80",
+    "compressedUrl": "http://127.0.0.1:8080/unsafe/rs:fit:800:0:0:0/q:80/plain/https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&q=80@webp",
+    "originalSize": 93483,
+    "compressedSize": 84201,
+    "mimeType": "image/jpeg",
+    "format": "JPEG",
+    "isLocal": false,
+    "source": "INSIGHT",
+    "createdAt": "2026-08-23T15:19:51.316Z",
+    "updatedAt": "2026-09-05T10:30:28.965Z"
+  },
+  {
+    "id": "ins-378d8f97",
+    "title": "THE PSYCHOLOGY OF ATTENTION: HOW MODERN APPS CAPTURE FOCUS",
+    "altText": "Insight Story Cover",
+    "originalUrl": "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=800&q=80",
+    "compressedUrl": "http://127.0.0.1:8080/unsafe/rs:fit:800:0:0:0/q:80/plain/https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=800&q=80@webp",
+    "originalSize": 81979,
+    "compressedSize": 49909,
+    "mimeType": "image/jpeg",
+    "format": "JPEG",
+    "isLocal": false,
+    "source": "INSIGHT",
+    "createdAt": "2026-08-23T15:19:51.293Z",
+    "updatedAt": "2026-09-05T10:30:32.012Z"
+  },
+  {
+    "id": "slide-378d8f-2",
+    "title": "THE PSYCHOLOGY OF ATTENTION: HOW MODERN APPS CAPTURE FOCUS (Slide 2)",
+    "altText": "Visual Story Slide",
+    "originalUrl": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&q=80",
+    "compressedUrl": "http://127.0.0.1:8080/unsafe/rs:fit:800:0:0:0/q:80/plain/https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&q=80@webp",
+    "originalSize": 57984,
+    "compressedSize": 45786,
+    "mimeType": "image/jpeg",
+    "format": "JPEG",
+    "isLocal": false,
+    "source": "INSIGHT",
+    "createdAt": "2026-08-23T15:19:51.293Z",
+    "updatedAt": "2026-09-05T10:30:32.506Z"
+  }
+]
