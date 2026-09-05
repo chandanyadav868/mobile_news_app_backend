@@ -1,15 +1,15 @@
-version: '3.8'
-
 services:
   # ─── PostgreSQL 16 Database ──────────────────────────────────────────────────
   postgres:
     image: postgres:16-alpine
-    container_name: newsflow-postgres
+    container_name: newsflow_postgres
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-newsflow_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-newsflow_secret_password}
       POSTGRES_DB: ${POSTGRES_DB:-newsflow_db}
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -23,9 +23,11 @@ services:
   # ─── Redis 7 High-Speed In-Memory Cache ─────────────────────────────────────
   redis:
     image: redis:7-alpine
-    container_name: newsflow-redis
+    container_name: newsflow_redis
     restart: always
     command: [ "redis-server", "--appendonly", "yes" ]
+    ports:
+      - "6379:6379"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -36,12 +38,36 @@ services:
     networks:
       - newsflow-network
 
+  # ─── Imgproxy (Ultra-Lightweight On-The-Fly WebP Converter & Resizer) ─────────
+  imgproxy:
+    image: darthsim/imgproxy:latest
+    container_name: newsflow_imgproxy
+    restart: always
+    environment:
+      IMGPROXY_BIND: ":8080"
+      IMGPROXY_READ_TIMEOUT: 10
+      IMGPROXY_WRITE_TIMEOUT: 10
+      IMGPROXY_DOWNLOAD_TIMEOUT: 10
+      IMGPROXY_CONCURRENCY: 10
+      IMGPROXY_MAX_SRC_RESOLUTION: 50
+      IMGPROXY_ENFORCE_WEBP: "true"
+      IMGPROXY_DEVELOPMENT_ERRORS_MODE: "true"
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: [ "CMD-SHELL", "imgproxy healthcheck || exit 0" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - newsflow-network
+
   # ─── NewsFlow Production Backend Server ──────────────────────────────────────
   api:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: newsflow-api
+    container_name: newsflow_api
     restart: always
     depends_on:
       postgres:
@@ -53,6 +79,7 @@ services:
       PORT: 4000
       DATABASE_URL: postgresql://${POSTGRES_USER:-newsflow_user}:${POSTGRES_PASSWORD:-newsflow_secret_password}@postgres:5432/${POSTGRES_DB:-newsflow_db}?schema=public
       REDIS_URL: redis://redis:6379
+      IMGPROXY_URL: http://imgproxy:8080
       CORS_ORIGIN: "*"
       RSS_INGEST_INTERVAL_MINUTES: 5
       READABILITY_MAX_CONCURRENCY: 3
@@ -66,7 +93,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: newsflow-studio
+    container_name: newsflow_studio
     restart: always
     command: [ "npx", "prisma", "studio", "--port", "5555", "--browser", "none" ]
     depends_on:
