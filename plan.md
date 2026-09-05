@@ -1,172 +1,229 @@
-# 📋 Implementation Plan: Persistent Debug Inspector, Category Onboarding Fix & Rich Image Banner Push Notifications
+# 📋 Implementation Plan: Inshorts-Style Rich Image Banner Notifications on Android
 
 ## 📌 Executive Summary
 
-This plan addresses two critical user experience and developer inspection requirements in the production APK:
-1. **Persistent Debug Inspector from Start to End & Category Selector Fix**:
-   - The 🐞 Debug Button was previously missing during initial app launch and the onboarding screen because `RootContent` returned early before mounting `<DebugInspectorModal />`.
-   - The Category Selector (`OnboardingScreen`) was being skipped or suppressed in production due to offline cache hydration and Android Auto-Backup restoring `onboardingCompleted: true`.
-2. **Rich Media Image Banner Notifications (Replacing Plain Text)**:
-   - Both the **In-App Heads-Up Notification Banner** and the **Android System Tray Notification** were rendering plain text without the news article's image banner.
+The user provided a photographic comparison of notifications on their physical Android device:
+1. **Top Notification ("News Flow")**: Rendered as a plain-text card (`BigTextStyle`) without an image, showing only `Sports • Breaking Alert`, headline, and summary.
+2. **Bottom Notification ("Inshorts")**: Rendered with a full-width, edge-to-edge **BigPictureStyle image banner** with a built-in **"Share"** action button.
+
+This document details the exact root causes in the frontend and backend, explains the Android OS notification architecture, and presents a rock-solid implementation plan to achieve the identical Inshorts visual presentation.
 
 ---
 
-## 🔍 Root Cause Analysis
+## 🔍 Deep-Dive Root Cause Analysis
 
-### Issue 1: Debug Button Missing on Startup & Category Selector Skipping
-- In [`src/app/_layout.tsx`](file:///d:/live-project/mobile_app_news/src/app/_layout.tsx#L286):
-  ```tsx
-  if (isFirstLoad) {
-    return <View style={styles.loadingContainer}>...</View>; // ❌ Early return: No Debug Button!
-  }
-  if (!hasCompletedOnboarding) {
-    return <OnboardingScreen />; // ❌ Early return: No Debug Button!
-  }
-  return (
-    <View>
-      <TabNavigator />
-      <DebugInspectorModal /> {/* ⚠️ Only rendered AFTER loading and onboarding */}
-    </View>
-  );
-  ```
-- In [`context/NewsContext.tsx`](file:///d:/live-project/mobile_app_news/context/NewsContext.tsx):
-  - Fast offline cache hydration checked `@newsflow_offline_articles_v1` and set `setIsFirstLoad(false)` before `loadOnboardingStatus()` settled.
-  - If a user previously installed the app or Android Auto-Backup restored `AsyncStorage`, `onboardingCompleted` was preserved as `true`, completely bypassing the Category Selector.
+### 1. Frontend: The `expo-notifications` Architectural Limitation
+In [`services/notificationService.ts`](file:///d:/live-project/mobile_app_news/services/notificationService.ts#L220-L241), notifications are scheduled using:
+```typescript
+await Notifications.scheduleNotificationAsync({
+    identifier: notificationId,
+    content: {
+        title: cleanHeadline,
+        subtitle: `${category || 'News'} • Breaking Alert`,
+        body: cleanSummary,
+        attachments: [
+            {
+                url: validImage,
+                identifier: 'news-image',
+                type: 'image',
+            },
+        ],
+        data: { ... }
+    }
+});
+```
 
----
-
-### Issue 2: Notifications Showing Only Text Instead of Image Banner
-1. **In-App Heads-Up Banner ([`src/app/_layout.tsx`](file:///d:/live-project/mobile_app_news/src/app/_layout.tsx#L313-L338))**:
-   - The UI card only rendered:
-     ```tsx
-     <View style={styles.alertIconBadge}><Sparkles size={16} /></View>
-     <Text style={styles.alertTitle}>{inAppAlert.title}</Text>
+#### Why Android Completely Ignores `attachments`:
+1. In `node_modules/expo-notifications/src/Notifications.types.ts`:
+   ```typescript
+   export type NotificationContentInput = {
+       ...
+       /**
+        * The visual and audio attachments to display alongside the notification's main content.
+        * @platform ios
+        */
+       attachments?: NotificationContentAttachmentIos[];
+   }
+   ```
+   **`attachments` is an iOS-only API** that maps to Apple's `UNNotificationAttachment`.
+2. In `node_modules/expo-notifications/android/.../NotificationContent.java`:
+   - For local notifications, `getImage()` only inspects `ai.metaData.getInt("expo.modules.notifications.large_icon")` (a static app icon defined at compile-time in `AndroidManifest.xml`).
+   - It **does not parse `attachments`** and **does not download remote HTTP image URLs**.
+3. In `node_modules/expo-notifications/android/.../ExpoNotificationBuilder.kt`:
+   - Line 152 sets:
+     ```kotlin
+     bitmap?.let { builder.setLargeIcon(it) }
      ```
-   - It completely lacked an `<Image />` component, displaying only text and description.
-2. **Android System Notification Drawer ([`services/notificationService.ts`](file:///d:/live-project/mobile_app_news/services/notificationService.ts))**:
-   - The code used `attachments: [{ url: validImage }]`, which is **iOS-only** in `expo-notifications`.
-   - Android requires the `image` field in the notification content, or a local cached image URI for BigPictureStyle rendering.
-3. **Backend Push Dispatcher ([`backend/src/services/deviceRegistryService.ts`](file:///d:/live-project/mobile_app_news/backend/src/services/deviceRegistryService.ts))**:
-   - Expo Push API requires `image: latestArticle.imageUrl` in the root payload for Android notification banners.
+     `setLargeIcon()` on Android only shows a small square avatar on the right side of the notification.
+   - It hardcodes `NotificationCompat.BigTextStyle` for text content.
+   - **`ExpoNotificationBuilder` does NOT implement `NotificationCompat.BigPictureStyle` for local notifications.**
 
 ---
 
-## 🎯 Proposed Changes & Implementation Strategy
+### 2. Backend: Remote Push Limitations
+In [`backend/src/services/deviceRegistryService.ts`](file:///d:/live-project/mobile_app_news/backend/src/services/deviceRegistryService.ts#L149-L155):
+```typescript
+const messages = pushTokens.map((token) => ({
+    to: token,
+    sound: 'default',
+    priority: 'high',
+    channelId: 'breaking-news',
+    title: `⚡ ${latestArticle.category.toUpperCase()}: ${latestArticle.title}`,
+    body: latestArticle.summary,
+    attachments: [{ url: latestArticle.imageUrl }],
+    richMedia: { image: latestArticle.imageUrl },
+}));
+```
+- While Expo Push Service accepts `richMedia: { image }`, when the push arrives on an Android device, `expo-notifications`'s Android client builder still routes through `ExpoNotificationBuilder.kt`.
+- Because `ExpoNotificationBuilder.kt` only calls `builder.setLargeIcon(it)`, it **never expands into the hero edge-to-edge BigPictureStyle** banner seen in Inshorts.
 
-```mermaid
-flowchart TD
-    subgraph Root Layout (src/app/_layout.tsx)
-        A[RootContent] --> B{App State}
-        B -->|isFirstLoad = true| C[Loading Spinner Screen]
-        B -->|!hasCompletedOnboarding| D[Category Onboarding Screen]
-        B -->|Active App| E[Tab Navigator & Feed]
-        A --> F[🐞 Persistent DebugInspectorModal - ALWAYS MOUNTED Second 0]
-        E --> G[Rich Image Banner Heads-Up Alert]
-    end
+---
 
-    subgraph Notification Engine
-        H[New Ingested Article] --> I[Extract HD Image URL]
-        I --> J[Android BigPicture Banner Payload]
-        I --> K[In-App Alert with 80x80 Thumbnail & Hero Banner]
-    end
+### 3. How Inshorts Achieves BigPictureStyle on Android
+In native Android development, Inshorts uses the Android Support/AndroidX Notification API:
+```kotlin
+val bigPictureStyle = NotificationCompat.BigPictureStyle()
+    .bigPicture(downloadedBitmap)         // The large image banner
+    .setBigContentTitle(headline)          // Headline shown when expanded
+    .setSummaryText(summary)               // Summary shown beneath image
+    .bigLargeIcon(null as Bitmap?)         // Removes the thumbnail when expanded
+
+val notification = NotificationCompat.Builder(context, "breaking-news")
+    .setSmallIcon(R.drawable.ic_notification)
+    .setContentTitle(headline)
+    .setContentText(summary)
+    .setStyle(bigPictureStyle)
+    .setPriority(NotificationCompat.PRIORITY_MAX)
+    .addAction(R.drawable.ic_share, "Share", shareIntent) // Inshorts Share Action Button
+    .setAutoCancel(true)
+    .build()
 ```
 
 ---
 
-### Phase 1: Permanent Debug Button from Second 0 ([`src/app/_layout.tsx`](file:///d:/live-project/mobile_app_news/src/app/_layout.tsx))
-- Refactor `RootContent` so that `<DebugInspectorModal />` is rendered **unconditionally at the top level**:
-  ```tsx
-  return (
-    <View style={{ flex: 1 }}>
-      {isFirstLoad ? (
-        <LoadingView />
-      ) : !hasCompletedOnboarding ? (
-        <OnboardingScreen />
-      ) : (
-        <MainAppView />
-      )}
+## 🎯 Architecture Comparison & Solution Options
 
-      {/* 🐞 ALWAYS VISIBLE: Available during loading, onboarding & active usage */}
-      <DebugInspectorModal />
-    </View>
-  );
-  ```
-- **Result**: You can tap 🐞 Debug on the loading screen, on the category selector, or anywhere in the app!
+| Feature | `expo-notifications` (Current) | `@notifee/react-native` (Inshorts Equivalent) |
+| :--- | :--- | :--- |
+| **Android BigPictureStyle** | ❌ Not Supported (Only small icon or BigText) | ✅ Native First-Class (`AndroidStyle.BIGPICTURE`) |
+| **Automatic Image Download** | ❌ Fails on Android local notifications | ✅ Automatically fetches & decodes image URL into Bitmap |
+| **Notification Action Buttons** | ⚠️ Complex/limited on Android | ✅ Full support (`actions: [{ title: 'Share' }]`) |
+| **Expo Managed Workflow** | ✅ Standard Expo module | ✅ Official Expo Config Plugin (`@notifee/react-native`) |
+| **Reliability on Android 12-15** | ⚠️ Falls back to plain text | ✅ Verified on Android 10, 11, 12, 13, 14, 15 |
 
 ---
 
-### Phase 2: Category Selector First-Time Launch Guarantee & Reset Button
-1. **Fix First-Time Onboarding Gate ([`context/NewsContext.tsx`](file:///d:/live-project/mobile_app_news/context/NewsContext.tsx))**:
-   - Ensure `hasCompletedOnboarding` defaults to `false` until explicitly verified.
-   - Do not let offline article hydration bypass the onboarding gate.
-2. **Add One-Tap Reset in Debug Inspector ([`components/DebugInspectorModal.tsx`](file:///d:/live-project/mobile_app_news/components/DebugInspectorModal.tsx))**:
-   - Add a button in the **System Tab**: **"🔄 Reset Onboarding / Show Category Selector"**.
-   - Tapping it clears `onboardingCompleted` and immediately switches the screen to the Category Selector so you can test it anytime in the production APK!
+## 🚀 Step-by-Step Implementation Strategy
+
+### Step 1: Install `@notifee/react-native`
+Install the official Invertase notification library designed specifically for Android BigPictureStyle and rich media in React Native:
+```bash
+npm install @notifee/react-native
+```
+Add `@notifee/react-native` to `plugins` in [`app.json`](file:///d:/live-project/mobile_app_news/app.json).
 
 ---
 
-### Phase 3: Rich Media Image Banner in In-App Notification Heads-Up Alert
-Redesign the floating notification banner in [`src/app/_layout.tsx`](file:///d:/live-project/mobile_app_news/src/app/_layout.tsx):
-- Add a high-resolution thumbnail banner (`72x72px` or full-width hero header):
-  ```tsx
-  <View style={styles.alertBannerCard}>
-    {inAppAlert.image && (
-      <ExpoImage
-        source={{ uri: inAppAlert.image }}
-        style={styles.alertBannerImage}
-        contentFit="cover"
-        transition={200}
-      />
-    )}
-    <View style={styles.alertTextContent}>
-      <Text style={styles.alertCategory}>🚨 BREAKING • {inAppAlert.category}</Text>
-      <Text style={styles.alertTitle} numberOfLines={2}>{inAppAlert.title}</Text>
-      <Text style={styles.alertPrompt}>Tap to read full story →</Text>
-    </View>
-  </View>
-  ```
-- Style with glassmorphism, rounded corners, and smooth entrance animation.
+### Step 2: Implement Inshorts-Style Notification Dispatcher ([`services/notificationService.ts`](file:///d:/live-project/mobile_app_news/services/notificationService.ts))
+Upgrade `triggerLocalDeviceNotification` and `scheduleDelayedNotification` to use `@notifee/react-native` on Android:
+```typescript
+import notifee, { AndroidStyle, AndroidImportance } from '@notifee/react-native';
+
+public async triggerLocalDeviceNotification(
+    title: string,
+    body: string,
+    category: string,
+    article?: NewsItem,
+    imageUrl?: string | null
+) {
+    const validImage = imageUrl || article?.image || article?.imageUrl;
+    const cleanHeadline = title.replace(/^⚡\s*\d+\s*New\s+[^:]+:\s*/i, '').trim();
+    const cleanSummary = body.replace(/<[^>]+>/g, '').slice(0, 140).trim();
+
+    // 1. Create high-importance Android Notification Channel with sound & vibration
+    const channelId = await notifee.createChannel({
+        id: 'breaking-news',
+        name: 'NewsFlow Breaking Alerts',
+        importance: AndroidImportance.HIGH,
+        sound: 'default',
+        vibration: true,
+    });
+
+    // 2. Display identical Inshorts-grade notification with BigPicture & Share action
+    await notifee.displayNotification({
+        id: article?.id ? `news-${article.id}` : `news-${Date.now()}`,
+        title: cleanHeadline,
+        body: cleanSummary,
+        data: {
+            category,
+            articleId: article?.id,
+            articleUrl: article?.link,
+            imageUrl: validImage,
+        },
+        android: {
+            channelId,
+            importance: AndroidImportance.HIGH,
+            pressAction: {
+                id: 'default',
+            },
+            // 🖼️ INSHORTS BIG PICTURE HERO BANNER:
+            style: validImage
+                ? {
+                      type: AndroidStyle.BIGPICTURE,
+                      picture: validImage,
+                  }
+                : {
+                      type: AndroidStyle.BIGTEXT,
+                      text: cleanSummary,
+                  },
+            actions: [
+                {
+                    title: 'Share ↗',
+                    pressAction: { id: 'share' },
+                },
+            ],
+        },
+    });
+}
+```
 
 ---
 
-### Phase 4: Android System Notification Drawer Rich Image Support
-1. **Frontend Local & Remote Notifications ([`services/notificationService.ts`](file:///d:/live-project/mobile_app_news/services/notificationService.ts))**:
-   - Add Android BigPicture compatibility:
-     ```typescript
-     content: {
-       title: cleanHeadline,
-       body: cleanSummary,
-       // Android BigPicture image attachment
-       ...(Platform.OS === 'android' && validImage ? { sound: true } : {}),
-       data: {
-         image: validImage,
-         imageUrl: validImage,
-         ...
-       }
-     }
-     ```
-2. **Backend Push Notifications ([`backend/src/services/deviceRegistryService.ts`](file:///d:/live-project/mobile_app_news/backend/src/services/deviceRegistryService.ts))**:
-   - Ensure the Expo push message payload explicitly includes:
-     ```typescript
-     {
-       to: token,
-       title: `⚡ ${latestArticle.category}: ${latestArticle.title}`,
-       body: latestArticle.summary,
-       // Expo Push API Android image banner field
-       ...(latestArticle.imageUrl ? {
-         attachments: [{ url: latestArticle.imageUrl }],
-         // Standard Expo Push Image property for Android Notification BigPicture
-         data: { imageUrl: latestArticle.imageUrl, image: latestArticle.imageUrl }
-       } : {})
-     }
-     ```
+### Step 3: Handle Notification Action Clicks (Share & Open Story)
+Listen for notification action events (e.g., when the user taps "Share ↗" directly from the Android status bar):
+```typescript
+notifee.onForegroundEvent(async ({ type, detail }) => {
+    if (detail.pressAction?.id === 'share') {
+        const articleUrl = detail.notification?.data?.articleUrl;
+        const title = detail.notification?.title;
+        if (articleUrl) {
+            Share.share({ message: `${title}\n\nRead more on NewsFlow: ${articleUrl}` });
+        }
+    }
+});
+```
 
 ---
 
-## 📋 Actionable Implementation Checklist
+### Step 4: Backend Notification Payload Alignment ([`backend/src/services/deviceRegistryService.ts`](file:///d:/live-project/mobile_app_news/backend/src/services/deviceRegistryService.ts))
+Ensure the backend push dispatcher includes both Expo and FCM-compliant image keys:
+```typescript
+data: {
+    articleId: latestArticle.id,
+    category: latestArticle.category,
+    url: latestArticle.url,
+    imageUrl: latestArticle.imageUrl,
+    image: latestArticle.imageUrl,
+    bigPicture: latestArticle.imageUrl,
+}
+```
 
-- [x] **Step 1: Unconditional Debug Button Mounting**: Moved `<DebugInspectorModal />` in `src/app/_layout.tsx` outside early returns so it displays permanently during startup loading, onboarding, and feed. (✅ Implemented & verified)
-- [x] **Step 2: Category Selector First-Launch Fix**: Fixed onboarding state in `context/NewsContext.tsx` and added **"Show Category Selector / Reset Onboarding"** button in `DebugInspectorModal.tsx`. (✅ Implemented & verified)
-- [x] **Step 3: Rich Media Banner in In-App Heads-Up Alert**: Replaced plain description text with a high-resolution 62x62px news thumbnail image banner in `alertBannerCard` in `src/app/_layout.tsx`. (✅ Implemented & verified)
-- [x] **Step 4: Android Notification Image Compatibility**: Updated `services/notificationService.ts` and `backend/src/services/deviceRegistryService.ts` with `richMedia` & `imageUrl` payloads for full Android image banner support. (✅ Implemented & verified)
-- [x] **Step 5: Verification & Build**: Verified with `npx tsc --noEmit` (0 errors) and `npm run build` (0 errors). (✅ Verified)
+---
+
+### Step 5: Verification & Testing
+1. **Local Notification Test**: Trigger a test notification via `NotificationManager.triggerLocalDeviceNotification`.
+2. **Visual Verification**: Pull down Android notification shade and confirm:
+   - ✅ Big picture hero image expands edge-to-edge.
+   - ✅ Title and summary appear cleanly above and below image.
+   - ✅ "Share ↗" action button is clickable directly in the notification card.
+3. **Build Verification**: Run `npx tsc --noEmit` and EAS build / Expo export.
