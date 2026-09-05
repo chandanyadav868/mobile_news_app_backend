@@ -10,6 +10,7 @@ import { logStream } from './logStreamService.js';
 import UniversalLlmService from './universalLlmService.js';
 import TelemetryService from './telemetryService.js';
 import { broadcastIngestPushToConnectedDevices } from './deviceRegistryService.js';
+import { pushArticleToRingBuffer } from './redisFeedService.js';
 
 const CHROME_HEADERS = {
   'User-Agent':
@@ -635,9 +636,11 @@ export async function ingestAllFeeds(): Promise<{
           });
           insertedCount += result.count;
           TelemetryService.incrementFunnel('dbInserted', result.count);
-          const saveMsg = `💾 [PostgreSQL Sync] Saved ${insertedCount}/${newArticles.length} AI-summarized articles to database...`;
-          console.log(`📥 [DB Sync] ${saveMsg}`);
-          logStream.emitLog('save', saveMsg);
+          // Push into Redis ring buffers (capped at 20) for instant sub-millisecond serving
+          for (const item of currentChunk) {
+            pushArticleToRingBuffer(item).catch(() => {});
+          }
+
           currentChunk = [];
         }
       }

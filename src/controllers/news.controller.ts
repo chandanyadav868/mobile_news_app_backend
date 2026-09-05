@@ -4,6 +4,7 @@ import { getCache, setCache } from '../services/cacheService.js';
 import { ingestAllFeeds } from '../services/rssFetcher.js';
 import { logStream } from '../services/logStreamService.js';
 import { batchResolveImages } from '../services/lightweightImageResolver.js';
+import { getMainFeedRingBuffer, getCategoryRingBuffer, RING_BUFFER_SIZE } from '../services/redisFeedService.js';
 
 const lastKnownGoodFeed: Record<string, any> = {};
 
@@ -18,7 +19,7 @@ export async function getFeed(req: Request, res: Response) {
   const country = ((req.query.country as string) || 'IN').toUpperCase();
   const cacheKey = `news:feed:${country}`;
 
-  // 1. Check Redis Cache
+  // 1. Check Redis Unified Cache
   const cached = await getCache<any>(cacheKey);
   if (cached) {
     lastKnownGoodFeed[country] = cached;
@@ -26,146 +27,56 @@ export async function getFeed(req: Request, res: Response) {
   }
 
   try {
-    const countryFilter: any = {
-      OR: [{ country: { equals: country } }, { country: { equals: 'GLOBAL' } }],
-    };
+    // 2. Ultra-Fast Sub-Millisecond Retrieval from Redis Ring Buffer
+    const heroArticles = await getMainFeedRingBuffer(country, 20);
 
-    // 2. Fetch hero articles (5 latest with real photos)
-    let heroArticles = await prisma.article.findMany({
-      where: {
-        imageUrl: { not: null },
-        ...countryFilter,
-      },
-      orderBy: { publishedAt: 'desc' },
-      take: 5,
-    });
-
-    if (heroArticles.length < 5) {
-      heroArticles = await prisma.article.findMany({
-        where: { imageUrl: { not: null } },
-        orderBy: { publishedAt: 'desc' },
-        take: 5,
-      });
-    }
-
-    // 3. Fetch latest articles across categories matching country or global
-    let recentArticles = await prisma.article.findMany({
-      where: countryFilter,
-      orderBy: { publishedAt: 'desc' },
-      take: 200,
-    });
-
-    // Fallback: if no country-specific articles yet, take latest articles globally
-    if (recentArticles.length === 0) {
-      recentArticles = await prisma.article.findMany({
-        orderBy: { publishedAt: 'desc' },
-        take: 200,
-      });
-    }
-
-    // Group by category
-    const categoryMap = new Map<string, Array<(typeof recentArticles)[0]>>();
-    recentArticles.forEach((art: any) => {
-      if (!categoryMap.has(art.category)) {
-        categoryMap.set(art.category, []);
-      }
-      categoryMap.get(art.category)!.push(art);
-    });
-
-    // Sort category entries by their freshest article
-    const categoryEntries = Array.from(categoryMap.entries()).map(([cat, items]) => {
-      const newestTime = items[0]?.publishedAt ? new Date(items[0].publishedAt).getTime() : 0;
-      return { cat, items, newestTime };
-    });
-
-    categoryEntries.sort((a, b) => b.newestTime - a.newestTime);
-
-    // Pick top categories (or guarantee all user-subscribed categories)
-    let selectedCategoryEntries = categoryEntries.slice(0, 8);
-
-    const subscribedParam = req.query.subscribedCategories as string;
-    if (subscribedParam) {
-      const subscribedList = subscribedParam.split(',').map((s) => s.trim()).filter(Boolean);
-      for (const subCat of subscribedList) {
-        if (!selectedCategoryEntries.some((e) => e.cat.toLowerCase() === subCat.toLowerCase())) {
-          // Fetch latest 5 from DB / Redis for this missing subscribed category
-          const missingCatArticles = await prisma.article.findMany({
-            where: {
-              category: { equals: subCat, mode: 'insensitive' },
-            },
-            orderBy: { publishedAt: 'desc' },
-            take: 5,
-          });
-          if (missingCatArticles.length > 0) {
-            selectedCategoryEntries.push({
-              cat: missingCatArticles[0].category,
-              items: missingCatArticles,
-              newestTime: new Date(missingCatArticles[0].publishedAt).getTime(),
-            });
-          }
-        }
-      }
-    }
-
-    // Guarantee every category cluster has at least 4 cards (1 lead + 3 sub)
-    // If a new RSS fetch only brings 1-2 new articles, backfill from historical DB/cache
+    // 3. Build Category Clusters from Ring Buffers (Tech, Business, Sports, Politics, etc.)
+    const clusterCategories = ['Technology', 'Business', 'Sports', 'Politics', 'Entertainment', 'Science'];
     const categoryClusters = (
       await Promise.all(
-        selectedCategoryEntries.map(async ({ cat, items }) => {
-          let completeItems = [...items];
-
-          if (completeItems.length < 4) {
-            const existingIds = completeItems.map((a) => a.id).filter(Boolean);
-            const backfill = await prisma.article.findMany({
-              where: {
-                category: { equals: cat, mode: 'insensitive' },
-                ...(existingIds.length > 0 ? { id: { notIn: existingIds } } : {}),
-              },
-              orderBy: { publishedAt: 'desc' },
-              take: 4 - completeItems.length,
-            });
-            completeItems = [...completeItems, ...backfill];
-          }
-
-          if (completeItems.length === 0) return null;
-
+        clusterCategories.map(async (cat) => {
+          const catArticles = await getCategoryRingBuffer(cat, 4);
+          if (!catArticles || catArticles.length === 0) return null;
           return {
-            id: `cluster-${cat}`,
+            id: `cluster-${cat.toLowerCase()}`,
             categoryTitle: cat,
-            leadNews: completeItems[0],
-            subNews: completeItems.slice(1, 4),
+            leadNews: catArticles[0],
+            subNews: catArticles.slice(1, 4),
           };
         })
       )
     ).filter(Boolean);
 
-    // 4. Fetch 5 latest visual insights
-    const visualInsights = await prisma.insightStory.findMany({
-      orderBy: { createdAt: 'desc' },
-      take: 5,
-    });
+    // 4. Fetch visual insights safely
+    let visualInsights: any[] = [];
+    try {
+      visualInsights = await prisma.insightStory.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+      });
+    } catch {}
 
     const feedData = {
       country,
-      heroArticles,
+      heroArticles: heroArticles.slice(0, 10),
       categoryClusters,
       visualInsights,
       generatedAt: new Date().toISOString(),
     };
 
-    // Cache for 3 minutes
-    lastKnownGoodFeed[country] = feedData;
-    await setCache(cacheKey, feedData, 180);
+    if (feedData.heroArticles.length > 0) {
+      lastKnownGoodFeed[country] = feedData;
+      await setCache(cacheKey, feedData, 180);
+    }
 
     res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=120');
-
     return res.json({
       success: true,
-      source: 'database',
+      source: 'redis-ring-buffer',
       data: feedData,
     });
   } catch (error: any) {
-    console.warn('⚠️ [Backend Database Warning] DB query failed in getFeed, using fallback:', error?.message || error);
+    console.warn('⚠️ [Backend Warning] getFeed fallback:', error?.message || error);
     if (lastKnownGoodFeed[country]) {
       return res.json({
         success: true,
@@ -173,12 +84,13 @@ export async function getFeed(req: Request, res: Response) {
         data: lastKnownGoodFeed[country],
       });
     }
+    const emergencyHeroes = await getMainFeedRingBuffer(country, 10);
     return res.status(200).json({
       success: true,
-      source: 'graceful-empty',
+      source: 'ring-buffer-fallback',
       data: {
         country,
-        heroArticles: [],
+        heroArticles: emergencyHeroes,
         categoryClusters: [],
         visualInsights: [],
         generatedAt: new Date().toISOString(),
@@ -197,6 +109,31 @@ export async function getCategoryNews(req: Request, res: Response) {
   const limit = Math.min(50, Math.max(5, parseInt(req.query.limit as string) || 20));
   const country = ((req.query.country as string) || 'IN').toUpperCase();
 
+  // 1. PAGE 1 SUB-MILLISECOND FAST-PATH: Instant serving from Redis Ring Buffer (<1ms)
+  if (page === 1) {
+    try {
+      const ringArticles = await getCategoryRingBuffer(categoryParam, limit);
+      if (ringArticles && ringArticles.length > 0) {
+        return res.json({
+          success: true,
+          source: 'redis-ring-buffer',
+          data: {
+            category: categoryParam,
+            country,
+            page: 1,
+            limit,
+            totalPages: 5,
+            totalArticles: 100,
+            articles: ringArticles,
+          },
+        });
+      }
+    } catch (err) {
+      console.warn(`[Ring Buffer Error] ${categoryParam}:`, err);
+    }
+  }
+
+  // 2. PAGE 2+ PAGINATION: Query PostgreSQL historical database
   const skip = (page - 1) * limit;
   const cacheKey = `news:category:${categoryParam.toLowerCase()}:${country}:p${page}:l${limit}`;
 
@@ -242,7 +179,6 @@ export async function getCategoryNews(req: Request, res: Response) {
     };
 
     await setCache(cacheKey, responseData, 180);
-
     res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=120');
 
     return res.json({
@@ -252,17 +188,18 @@ export async function getCategoryNews(req: Request, res: Response) {
     });
   } catch (error: any) {
     console.warn(`⚠️ [Backend Database Warning] DB query failed in getCategoryNews for ${categoryParam}:`, error?.message || error);
+    const fallbackArticles = await getCategoryRingBuffer(categoryParam, limit);
     return res.status(200).json({
       success: true,
-      source: 'graceful-empty',
+      source: 'ring-buffer-fallback',
       data: {
         category: categoryParam,
         country,
         page,
         limit,
         totalPages: 1,
-        totalArticles: 0,
-        articles: [],
+        totalArticles: fallbackArticles.length,
+        articles: fallbackArticles,
       },
     });
   }

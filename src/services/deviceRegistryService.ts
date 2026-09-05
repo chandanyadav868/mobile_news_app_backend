@@ -2,6 +2,7 @@ import axios from 'axios';
 import { redis, checkRedisHealth } from '../config/redis.js';
 import { prisma } from '../config/db.js';
 import { logStream } from './logStreamService.js';
+import { subscribeDeviceToCategories } from './redisFeedService.js';
 
 export interface DeviceRegistryData {
   pushToken: string;
@@ -36,6 +37,7 @@ export async function registerDeviceInRedis(
       await redis.expire(REDIS_DEVICE_KEY, 14 * 86400);
       console.log(`⚡ [Redis Device Registry] Registered device ${pushToken.slice(0, 18)}... with ${deviceData.categories.length} categories.`);
     }
+    await subscribeDeviceToCategories(pushToken, deviceData.categories);
   } catch (err: any) {
     console.warn('[Redis Device Registry Warning] Failed to store in Redis:', err.message);
   }
