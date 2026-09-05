@@ -4,6 +4,7 @@ import {
   getCategoryNews,
   triggerManualIngest,
   checkNewArticles,
+  streamNewsUpdates,
   streamIngestLogs,
   getRecentLogs,
   translateNewsArticle,
@@ -29,6 +30,7 @@ router.get('/search', searchNews);
 router.post('/extract', extractArticle);
 router.post('/resolve-images', resolveImages);
 
+router.get('/stream-updates', streamNewsUpdates);
 router.get('/check-new', checkNewArticles);
 router.get('/category/:category', getCategoryNews);
 router.post('/refresh', triggerManualIngest);

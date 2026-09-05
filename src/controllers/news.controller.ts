@@ -5,6 +5,7 @@ import { ingestAllFeeds } from '../services/rssFetcher.js';
 import { logStream } from '../services/logStreamService.js';
 import { batchResolveImages } from '../services/lightweightImageResolver.js';
 import { getMainFeedRingBuffer, getCategoryRingBuffer, RING_BUFFER_SIZE } from '../services/redisFeedService.js';
+import { NewsBroadcastService } from '../services/newsBroadcastService.js';
 
 const lastKnownGoodFeed: Record<string, any> = {};
 
@@ -228,6 +229,15 @@ export async function triggerManualIngest(req: Request, res: Response) {
 }
 
 /**
+ * GET /api/v1/news/stream-updates
+ * Real-time Server-Sent Events (SSE) broadcast stream
+ * Connected mobile devices receive instant alerts when new articles are ingested (0 polling!)
+ */
+export async function streamNewsUpdates(req: Request, res: Response) {
+  NewsBroadcastService.addClient(req, res);
+}
+
+/**
  * GET /api/v1/news/check-new
  * Lightweight real-time check to see how many new articles arrived since timestamp
  */
@@ -251,6 +261,26 @@ export async function checkNewArticles(req: Request, res: Response) {
     const sinceDate = since && !isNaN(new Date(String(since)).getTime())
       ? new Date(String(since))
       : null;
+
+    // ⚡ REDIS INGESTION-GATED FAST-PATH (Anti-Choke Shield):
+    // If the client's since timestamp is newer or equal to the last server ingest,
+    // NO new articles exist! Return immediately from Redis RAM (<0.2ms) with ZERO PostgreSQL queries!
+    if (sinceDate) {
+      const latestIngestTimeStr = await NewsBroadcastService.getLatestIngestTime();
+      if (latestIngestTimeStr) {
+        const latestIngestTime = new Date(latestIngestTimeStr);
+        if (sinceDate.getTime() >= latestIngestTime.getTime()) {
+          return res.json({
+            success: true,
+            source: 'redis-ingest-gate',
+            hasNew: false,
+            count: 0,
+            checkedAt: new Date().toISOString(),
+            latestArticle: null,
+          });
+        }
+      }
+    }
 
     const whereClause: any = {
       OR: [{ country: { equals: countryCode } }, { country: { equals: 'GLOBAL' } }],

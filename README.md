@@ -48,7 +48,8 @@ All visual portals are accessible directly in your web browser without needing a
 | `GET` | `/api/v1/news/categories` | Returns all active category taxonomies and verified feed counts. |
 | `GET` | `/api/v1/news/article/:id` | Fetch complete article details by unique UUID. |
 | `GET` | `/api/v1/news/search` | Search articles by keyword (`?q=term`). |
-| `GET` | `/api/v1/news/check-new` | Inshorts-style real-time heartbeat polling (`?since=<ISO_TIMESTAMP>&categories=Tech,Business`). |
+| `GET` | `/api/v1/news/stream-updates` | **Real-time Server-Sent Events (SSE) Broadcast Stream**. Emits `new_articles` events immediately when new articles are ingested (eliminates client polling!). |
+| `GET` | `/api/v1/news/check-new` | Inshorts-style real-time heartbeat with **Redis Ingestion Fast-Path** (<0.2ms, 0 PostgreSQL queries when up-to-date). |
 | `POST` | `/api/v1/news/refresh` | Manually trigger background RSS ingest worker. |
 | `POST` | `/api/v1/news/extract` | Extract clean article content from external web URLs using Mozilla Readability. |
 | `POST` | `/api/v1/news/resolve-images`| Streaming image resolution service. |

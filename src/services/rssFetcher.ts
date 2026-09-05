@@ -11,6 +11,7 @@ import UniversalLlmService from './universalLlmService.js';
 import TelemetryService from './telemetryService.js';
 import { broadcastIngestPushToConnectedDevices } from './deviceRegistryService.js';
 import { pushArticleToRingBuffer } from './redisFeedService.js';
+import { NewsBroadcastService } from './newsBroadcastService.js';
 
 const CHROME_HEADERS = {
   'User-Agent':
@@ -665,6 +666,21 @@ export async function ingestAllFeeds(): Promise<{
           imageUrl: latestInserted.imageUrl,
           url: latestInserted.url,
         }).catch((e) => console.warn('[Push Broadcast Error]:', e.message));
+
+        // 📡 Real-Time Server Broadcast: Notify all connected mobile clients over SSE & Redis
+        NewsBroadcastService.notifyNewArticles({
+          count: insertedCount,
+          latestArticle: {
+            id: latestInserted.id,
+            title: latestInserted.title,
+            summary: latestInserted.summary,
+            category: latestInserted.category,
+            imageUrl: latestInserted.imageUrl,
+            url: latestInserted.url,
+            publishedAt: latestInserted.publishedAt?.toISOString(),
+          },
+          checkedAt: new Date().toISOString(),
+        }).catch((e) => console.warn('[SSE Broadcast Error]:', e.message));
       }
     }
 
