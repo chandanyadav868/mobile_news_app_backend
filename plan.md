@@ -145,10 +145,10 @@ If you ever wish to archive deleted articles for historical AI training or offli
 
 ## 📋 Actionable Implementation Checklist
 
-- [ ] **Step 1: Database Compression**: Run `ALTER TABLE "Article" ALTER COLUMN "rawContent" SET COMPRESSION lz4;`
-- [ ] **Step 2: Lifecycle Worker**: Implement `src/workers/lifecycleWorker.ts` with:
-  - 14-day `rawContent` pruner
-  - 30-day smart engagement-preserving deletion
-- [ ] **Step 3: Register Worker**: Initialize `initLifecycleWorker()` in `src/index.ts` alongside `initIngestWorker()`.
-- [ ] **Step 4: Partial Hot Index**: Run partial index SQL for 30-day queries to protect RAM.
-- [ ] **Step 5: Verify & Commit**: Test worker execution, verify zero impact on bookmarks, and push to GitHub.
+- [x] **Step 1: Database Compression**: Run `ALTER TABLE "Article" ALTER COLUMN "rawContent" SET COMPRESSION lz4;` (✅ Executed & active)
+- [x] **Step 2: Lifecycle Worker**: Implement `src/workers/lifecycleWorker.ts` with:
+  - 14-day `rawContent` pruner (✅ Implemented & verified)
+  - 30-day smart engagement-preserving deletion (✅ Implemented & verified)
+- [x] **Step 3: Register Worker**: Initialize `initLifecycleWorker()` in `src/index.ts` alongside `initIngestWorker()` (✅ Scheduled at 02:30 AM).
+- [x] **Step 4: Fast Lookup Indexing**: Added GIN index `idx_user_bookmarks` on `User.bookmarkedArticleIds` and composite `(category, publishedAt DESC)` index (✅ Active).
+- [x] **Step 5: Verify & Commit**: Tested worker execution, added on-demand API & UI buttons, and pushed to GitHub (✅ Commit `61b2a01`).
