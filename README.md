@@ -205,7 +205,7 @@ docker compose up -d
 > Starts 3 high-speed microservices in Docker:
 > - **PostgreSQL 16** on port `5432` (`newsflow_postgres`)
 > - **Redis 7** on port `6379` (`newsflow_redis`)
-> - **Imgproxy** on port `8080` (`newsflow_imgproxy` - ~18 MB RAM on-the-fly WebP converter)
+> - **Imgproxy** internal microservice on port `8080` (`newsflow_imgproxy` - ~18 MB RAM on-the-fly WebP converter)
 
 ### 2. Does `imgproxy` provide its own built-in dashboard?
 > **Architectural Note**: **No**. As per official `imgproxy` documentation, `imgproxy` is a headless, stateless C/Go image processing microservice designed strictly for URL-based on-the-fly transformations (e.g. `/unsafe/rs:fit:800:0:0:0/plain/<URL>@webp`). It does not include a web UI, file manager, or admin portal.

@@ -52,8 +52,8 @@ services:
       IMGPROXY_MAX_SRC_RESOLUTION: 50
       IMGPROXY_ENFORCE_WEBP: "true"
       IMGPROXY_DEVELOPMENT_ERRORS_MODE: "true"
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     healthcheck:
       test: [ "CMD-SHELL", "imgproxy healthcheck || exit 0" ]
       interval: 10s
