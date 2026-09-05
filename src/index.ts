@@ -12,10 +12,12 @@ import apiRouter from './routes/index.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { apiRateLimiter } from './middlewares/rateLimiter.js';
 import { renderDatabaseAdmin } from './controllers/admin.controller.js';
+import path from 'path';
 import { DashboardController } from './controllers/dashboardController.js';
 import { CmsDashboardController } from './controllers/cmsDashboard.controller.js';
 import { BetaController } from './controllers/betaController.js';
 import { AdminUsersController } from './controllers/adminUsers.controller.js';
+import { MediaDashboardController } from './controllers/mediaDashboard.controller.js';
 
 import { CmsSeedService } from './services/cmsSeedService.js';
 
@@ -38,6 +40,9 @@ app.options('*', cors());
 app.use(compression());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// ─── Static Uploads Folder ────────────────────────────────────────────────────
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // ─── Public Beta Tester Registration & Campaign Studio Routes ────────────────
 app.get('/join-beta', BetaController.renderPublicLanding);
@@ -63,6 +68,9 @@ app.get('/admin/telemetry', DashboardController.renderDashboard);
 app.get('/admin/database', renderDatabaseAdmin);
 app.get('/admin/users', AdminUsersController.renderAdminUsersPortal);
 app.get('/users-admin', AdminUsersController.renderAdminUsersPortal);
+app.get('/admin/images', MediaDashboardController.renderDashboard);
+app.get('/admin/media', MediaDashboardController.renderDashboard);
+app.get('/media', MediaDashboardController.renderDashboard);
 
 // Apply rate limiting to API routes
 app.use('/api', apiRateLimiter);
@@ -95,6 +103,9 @@ async function startServer() {
   🌟  NewsFlow Production Backend Server is Live!
   📡  Listening on:   http://localhost:${env.PORT}
   📊  DB Explorer:    http://localhost:${env.PORT}/admin/database
+  🖼️  Media Studio:   http://localhost:${env.PORT}/admin/images
+  👥  User Admin:     http://localhost:${env.PORT}/admin/users
+  📰  CMS Studio:     http://localhost:${env.PORT}/admin/cms
   🔗  Health Check:   http://localhost:${env.PORT}/api/v1/health
   📰  Home Feed:      http://localhost:${env.PORT}/api/v1/news/feed
   🌍  Environment:    ${env.NODE_ENV}

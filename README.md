@@ -12,6 +12,7 @@ All visual portals are accessible directly in your web browser without needing a
 | :--- | :--- | :--- |
 | **`/dashboard`**<br>`/admin/telemetry` | **AI Mission Control & Telemetry** | Real-time Server-Sent Events (SSE) telemetry, LLM provider switching (Groq LPU, Mistral, SambaNova), AI summary testing, active queue metrics, cache flush, and manual RSS trigger. |
 | **`/cms`**<br>`/admin/cms` | **Visual CMS Editorial Studio** | Full editorial portal to create, edit, categorize, feature hero articles, manage visual insight stories, conduct community polls, and trigger custom push alerts. |
+| **`/admin/images`**<br>`/admin/media`<br>`/media` | **Media & Image Optimization Studio** | Live dashboard tracking real uploaded file sizes vs WebP compressed sizes via `imgproxy` Docker. Side-by-side preview, bandwidth savings metrics, in-place edit, and deletion. |
 | **`/admin/users`**<br>`/users-admin` | **Admin User Accounts Portal** | Complete user management dashboard. View all registered accounts, change roles (`USER` ↔ `ADMIN`), update user status (`ACTIVE`, `SUSPENDED`), and reset passwords. |
 | **`/admin/database`** | **Visual Database Explorer** | Raw database table explorer for PostgreSQL. Inspect articles, users, insights, push tokens, and verify stored fields without opening a CLI. |
 | **`/campaigns`**<br>`/email-studio`<br>`/testers` | **Email Campaign & Beta Studio** | Visual WYSIWYG & HTML/CSS campaign studio. Design invitation emails with live mobile preview, store download badges, and test send via Mailtrap/Gmail. |
@@ -178,27 +179,47 @@ All visual portals are accessible directly in your web browser without needing a
 | `POST` | `/api/v1/feeds/validate` | Non-blocking probe to test if an RSS/Atom URL is valid and reachable. |
 | `POST` | `/api/v1/feeds/add` | Atomically register a new verified RSS source. |
 
+### 13. 🖼️ Media & Image Compression API (`/api/v1/media`)
+
+Manages media assets, uploads, and benchmarks real raw file sizes against high-efficiency WebP compressed sizes via `imgproxy`.
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/v1/media` | List all tracked media items with pagination, query search, format filter, and storage metrics. |
+| `GET` | `/api/v1/media/stats` | Returns aggregate statistics (total raw MB, total compressed MB, % space saved, imgproxy status). |
+| `POST` | `/api/v1/media/upload` | Multipart image file upload (saves to `/uploads/images/` and auto-benchmarks). |
+| `POST` | `/api/v1/media/url` | Direct web image URL ingestion (measures remote size vs WebP compressed size). |
+| `POST` | `/api/v1/media/sync-db` | Scans PostgreSQL articles and visual stories to index and benchmark all images. |
+| `PUT` | `/api/v1/media/:id` | Update media item metadata (`title`, `altText`, or replacement URL). |
+| `DELETE` | `/api/v1/media/:id` | Delete media item and clean up local disk file. |
+
 ---
 
 ## ⚡ Quick Start Guide (Local Development)
 
-### 1. Start Containers
+### 1. Start Docker Containers
 ```bash
 cd backend
 docker compose up -d
 ```
-> Starts PostgreSQL on port `5432` and Redis on port `6379`.
+> Starts 3 high-speed microservices in Docker:
+> - **PostgreSQL 16** on port `5432` (`newsflow_postgres`)
+> - **Redis 7** on port `6379` (`newsflow_redis`)
+> - **Imgproxy** on port `8080` (`newsflow_imgproxy` - ~18 MB RAM on-the-fly WebP converter)
 
-### 2. Install & Migrate
+### 2. Does `imgproxy` provide its own built-in dashboard?
+> **Architectural Note**: **No**. As per official `imgproxy` documentation, `imgproxy` is a headless, stateless C/Go image processing microservice designed strictly for URL-based on-the-fly transformations (e.g. `/unsafe/rs:fit:800:0:0:0/plain/<URL>@webp`). It does not include a web UI, file manager, or admin portal.
+> 
+> To provide complete visibility, NewsFlow includes the **Media & Image Optimization Studio** at **`/admin/images`**, which communicates with `imgproxy` to give you real-time visual comparisons, real vs WebP compressed sizes, percentage savings, edit, and delete functionality directly in your browser.
+
+### 3. Install & Launch Backend
 ```bash
 npm install
-npx prisma db push
-```
-
-### 3. Launch Development Server
-```bash
 npm run dev
 ```
 
-* Backend Server runs on `http://localhost:4000`
-* Prisma Studio runs on `http://localhost:5555` (`npx prisma studio`)
+* **Backend Server**: `http://localhost:4000`
+* **Media Compression Studio**: `http://localhost:4000/admin/images`
+* **Visual CMS Studio**: `http://localhost:4000/admin/cms`
+* **Database Explorer**: `http://localhost:4000/admin/database`
+* **Prisma Studio GUI**: `http://localhost:5555` (`npx prisma studio`)
