@@ -143,9 +143,15 @@ export async function broadcastIngestPushToConnectedDevices(latestArticle: {
         category: latestArticle.category,
         url: latestArticle.url,
         imageUrl: latestArticle.imageUrl,
+        image: latestArticle.imageUrl,
       },
-      // Rich Media Banner Attachment for Inshorts-style BigPicture notification tray display
-      ...(latestArticle.imageUrl ? { attachments: [{ url: latestArticle.imageUrl }] } : {}),
+      // Rich Media Banner Attachment for Inshorts-style BigPicture notification tray display (iOS & Android)
+      ...(latestArticle.imageUrl
+        ? {
+            attachments: [{ url: latestArticle.imageUrl }],
+            richMedia: { image: latestArticle.imageUrl },
+          }
+        : {}),
     }));
 
     // Send in chunks of 100 to Expo Push API
