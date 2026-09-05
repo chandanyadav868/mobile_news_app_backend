@@ -52,11 +52,8 @@ RUN apk add --no-cache openssl libc6-compat
 COPY package*.json ./
 COPY prisma ./prisma/
 
-# Install only production dependencies and global prisma CLI for schema migrations
-RUN npm install -g prisma && \
-    npm install --omit=dev --legacy-peer-deps --no-audit && \
-    npx prisma generate && \
-    npm cache clean --force
+# Copy pre-built, fully resolved node_modules from builder stage (includes generated Prisma client)
+COPY --from=builder /app/node_modules ./node_modules
 
 # Copy built code, verified feeds constants, and assets from builder stage
 COPY --from=builder /app/dist ./dist
