@@ -144,6 +144,8 @@ export async function broadcastIngestPushToConnectedDevices(latestArticle: {
         url: latestArticle.url,
         imageUrl: latestArticle.imageUrl,
         image: latestArticle.imageUrl,
+        bigPicture: latestArticle.imageUrl,
+        picture: latestArticle.imageUrl,
       },
       // Rich Media Banner Attachment for Inshorts-style BigPicture notification tray display (iOS & Android)
       ...(latestArticle.imageUrl
