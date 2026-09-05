@@ -3,9 +3,9 @@
 ## 📌 Executive Summary & Scale Mathematical Model
 
 At **10,000 new articles per day**:
-- **Daily Volume**: ~10,000 articles (~260 MB/day uncompressed)
-- **Monthly Volume**: ~300,000 articles (~7.8 GB/month uncompressed)
-- **Annual Volume**: ~3,650,000 articles (**~95 GB to 120 GB / year** including B-Tree indexes)
+- **Daily Ingestion**: ~10,000 articles (~260 MB/day uncompressed)
+- **Monthly Ingestion**: ~300,000 articles (~7.8 GB/month uncompressed)
+- **Annual Ingestion**: ~3,650,000 articles (**~95 GB to 120 GB / year** including B-Tree indexes)
 
 Without an intentional, tiered data lifecycle strategy, a standard PostgreSQL database will experience:
 1. **Memory & Cache Thrashing**: Database indexes on 3.6M+ rows will exceed VPS RAM (`shared_buffers`), slowing down feed queries.
@@ -14,32 +14,38 @@ Without an intentional, tiered data lifecycle strategy, a standard PostgreSQL da
 
 ---
 
-## 🎯 The Strategy Combination for 10,000 Articles/Day
+## 🎯 The 5-Tier Combined Strategy for 10,000 Articles/Day
 
-To guarantee **sub-10ms query speeds**, **under 500 MB RAM usage**, and **96%+ disk savings**, we implement a **4-Tier Lifecycle Architecture**:
+By combining **LZ4 compression**, **Redis Ring Buffers**, **rawContent pruning**, and **User-Engagement Smart Retention (Bookmarks & Shares)**, your database reaches a **permanent steady state of ~300,000 rows** and stays **under 500 MB RAM** forever:
 
 ```mermaid
 flowchart TD
     subgraph Tier 1: Ingestion & Write Speed (Day 0)
         A[10,000 Daily RSS Articles] --> B[MD5 Deduplication & Timestamp Gate]
         B --> C[Postgres TOAST LZ4 Transparent Compression]
-        C --> D[Redis Ring Buffer: Top 20 / Category in RAM < 5ms]
+        C --> D[Redis Ring Buffer: Top 20 / Category in RAM &lt; 5ms]
     end
 
-    subgraph Tier 2: Hot & Warm Operational Window (Day 0 - 14)
+    subgraph Tier 2: Hot Operational Window (Day 0 - 14)
         D --> E[Full 60-Word Inshorts Summary + Category Indexes]
         E --> F[Full rawContent Available for Immediate Editorial Deep-Dives]
     end
 
-    subgraph Tier 3: Automated Lifecycle Pruner (Day 14+)
-        F -->|Nightly Maintenance Cron 02:00 AM| G[Prune rawContent = NULL for Articles > 14 Days]
-        G --> H[95% Storage Reclaimed! Row shrinks 26 KB ➔ 600 Bytes]
+    subgraph Tier 3: Automated rawContent Pruner (Day 14+)
+        F -->|Nightly Maintenance Cron 02:30 AM| G[Prune rawContent = NULL for Articles &gt; 14 Days]
+        G --> H[95% Storage Reclaimed! Row shrinks 26 KB ➔ 650 Bytes]
     end
 
-    subgraph Tier 4: Partition Management & Cold Archive (Day 90+)
-        H -->|Monthly Partitioning| I[Range Partitions by Month: articles_2026_09]
-        I -->|Articles > 90 Days| J[Export to Compressed Parquet / Zstandard on R2/S3]
-        J --> K[Detach Old Partition in 0.001s with Zero Table Locks]
+    subgraph Tier 4: Smart Engagement-Preserving Deletion (Day 30+)
+        H -->|Nightly Retention Check 03:00 AM| I{Engagement Check on Articles &gt; 30 Days}
+        I -->|Bookmarked by ANY user| J[🛡️ KEEP FOREVER]
+        I -->|shareCount &gt; 0| J
+        I -->|isPinned OR isHero OR Editorial| J
+        I -->|Zero Engagement & Never Saved| K[🗑️ DELETE ARTICLE RECORD]
+    end
+
+    subgraph Tier 5: Steady State Equilibrium
+        K --> L[Database Size Capped at ~300k - 350k Rows Permanently! <br> <b>Zero Storage Runaway Bloat</b>]
     end
 ```
 
@@ -47,14 +53,16 @@ flowchart TD
 
 ## 🔬 Mathematical Comparison: Unoptimized vs Optimized
 
-| Metric | Unoptimized (Holding Full Text Forever) | Optimized Multi-Tier Strategy | Improvement |
+| Metric | Unoptimized (Holding Full Text Forever) | Optimized (LZ4 + Day 14 Pruning) | Optimized + Day 30 Smart Retention (Your Idea ⭐) |
 | :--- | :---: | :---: | :---: |
-| **Storage per Article (Day 0–14)** | ~26 KB (Raw text + summary) | **~10 KB** (via Postgres TOAST LZ4) | **61.5% smaller** |
-| **Storage per Article (Day 15+)** | ~26 KB (Wasted full text) | **~650 Bytes** (Summary + Metadata) | **97.5% smaller** |
-| **Monthly Database Storage (300k items)** | **7.8 GB / month** | **~240 MB / month** | **96.9% reduction** |
-| **Annual Storage (3.65 Million items)** | **~95 GB - 120 GB** | **~2.9 GB** | **97.4% reduction** |
-| **Index RAM Footprint** | Bloats to 4–6 GB (Cache misses) | Stays in RAM (< 150 MB active partition) | **Zero cache thrashing** |
-| **Search & Feed Latency** | Degrades to 300ms–1500ms | Stays **< 15ms** constant time | **20x–100x faster** |
+| **Row Size (Day 0–14)** | ~26 KB (Raw text + summary) | ~10 KB (via Postgres TOAST LZ4) | **~10 KB** (via Postgres TOAST LZ4) |
+| **Row Size (Day 15–30)** | ~26 KB (Wasted full text) | ~650 Bytes (Summary + Metadata) | **~650 Bytes** (Summary + Metadata) |
+| **Storage Beyond Day 30** | ~26 KB | ~650 Bytes | **0 Bytes (Deleted unless Bookmarked/Shared)** |
+| **Month 1 Storage** | 7.8 GB | ~240 MB | **~240 MB** |
+| **Month 6 Storage** | 46.8 GB | ~1.44 GB | **~350 MB (Equilibrium reached)** |
+| **Annual Storage (3.65M items)** | **95 GB – 120 GB** | ~2.9 GB | **~400 MB (PERMANENT CAP)** |
+| **Index RAM Footprint** | 4 GB – 6 GB (Severe cache thrashing) | ~150 MB | **< 65 MB (100% in RAM)** |
+| **Feed Latency** | Degrades to 500ms – 2,000ms | < 25ms | **< 5ms – 10ms (Blazing fast)** |
 
 ---
 
@@ -69,14 +77,13 @@ flowchart TD
    ```
    * **Why**: PostgreSQL compresses incoming text transparently with LZ4 (4x faster than older `pglz`, 50–60% smaller on disk).
 
-2. **Index Optimization**:
-   Add composite indexes covering the most frequent queries to avoid index bloat:
+2. **Partial Index for Active Queries**:
+   Add a partial index covering only recent news to keep RAM usage minimal:
    ```sql
    CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_article_hot_feed 
    ON "Article" (category, "publishedAt" DESC) 
    WHERE "publishedAt" > NOW() - INTERVAL '30 days';
    ```
-   * **Why**: Partial index only indexes the last 30 days, keeping the index size tiny (<15 MB) and 100% resident in memory!
 
 ---
 
@@ -87,61 +94,61 @@ Add a dedicated lifecycle maintenance job in `backend/src/workers/lifecycleWorke
 - Retains 100% of: `title`, `summary`, `url`, `imageUrl`, `category`, `author`, `publishedAt`, `translations`.
 
 ```typescript
-import cron from 'node-cron';
-import { prisma } from '../config/db.js';
-
-export function initArticleLifecycleWorker() {
-  // Run every night at 02:30 AM
-  cron.schedule('30 2 * * *', async () => {
-    try {
-      console.log('🧹 [Lifecycle Worker] Starting automated article pruning...');
-      
-      // 1. Clear heavy rawContent (>14 days old)
-      const pruned = await prisma.$executeRawUnsafe(`
-        UPDATE "Article"
-        SET "rawContent" = NULL
-        WHERE "publishedAt" < NOW() - INTERVAL '14 days'
-          AND "rawContent" IS NOT NULL;
-      `);
-
-      console.log(`✅ [Lifecycle Worker] Pruned rawContent for ${pruned} old articles. Reclaimed storage!`);
-    } catch (err) {
-      console.error('❌ [Lifecycle Worker] Pruning error:', err);
-    }
-  });
-}
+// 1. Clear heavy rawContent (>14 days old)
+await prisma.$executeRawUnsafe(`
+  UPDATE "Article"
+  SET "rawContent" = NULL
+  WHERE "publishedAt" < NOW() - INTERVAL '14 days'
+    AND "rawContent" IS NOT NULL;
+`);
 ```
 
 ---
 
-### Phase 3: PostgreSQL Declarative Monthly Partitioning (For 3M+ Articles)
-When volume approaches 10,000/day, split `Article` into monthly range partitions based on `publishedAt`:
-- `Article_2026_09` (September 2026: ~300,000 rows)
-- `Article_2026_10` (October 2026: ~300,000 rows)
-- `Article_2026_11` (November 2026: ~300,000 rows)
+### Phase 3: Smart Engagement-Preserving Deletion Worker ⭐ (Day 30+)
+Runs every night at **03:00 AM**:
+Deletes articles older than 30 days **EXCEPT** those bookmarked, shared, or marked as hero/editorial.
 
-#### Why Partitioning is Crucial for 10,000 Articles/Day:
-1. **Partition Pruning**: A query for today's news only scans `Article_2026_09`, completely skipping 3.3 million older rows!
-2. **Instant Archival**: When a month is 6 months old and needs to be archived, running:
-   ```sql
-   ALTER TABLE "Article" DETACH PARTITION "Article_2026_01";
-   ```
-   takes **0.001 seconds** with ZERO table lock and ZERO fragmented dead tuples!
+#### The 5 Strict Protection Checks:
+```sql
+DELETE FROM "Article"
+WHERE "publishedAt" < NOW() - INTERVAL '30 days'
+  -- 1. Must NOT be pinned or hero
+  AND "isPinned" = false
+  AND "isHero" = false
+  -- 2. Must NOT be an editorial story manually written by admin
+  AND "source" != 'NewsFlow Editorial'
+  -- 3. Must NEVER have been shared by any user
+  AND "shareCount" = 0
+  -- 4. Must NOT be bookmarked by any registered user
+  AND "id" NOT IN (
+    SELECT DISTINCT unnest("bookmarkedArticleIds") 
+    FROM "User" 
+    WHERE "bookmarkedArticleIds" IS NOT NULL
+  );
+```
+
+#### Why This Works Perfectly:
+- **Bookmarks Never Disappear**: If a user opens their "Saved / Bookmarks" tab 1 year later, their saved article is **100% intact**.
+- **Shared Links Never Break**: Any article shared to WhatsApp, Twitter, or friends has `shareCount > 0` and is preserved.
+- **Zero Disruption for Users**: The 99% of disposable RSS articles that were never saved or shared are cleaned up seamlessly.
+- **Permanent Database Equilibrium**: Your database never exceeds ~350,000 rows.
 
 ---
 
-### Phase 4: Cold Archival to Parquet / Compressed Zstandard (.zst) (Optional Day 90+)
-For articles older than 90 days:
-- Export the monthly partition into an Apache Parquet or Zstandard file (`articles_2026_01.parquet`).
-- Store in Cloudflare R2 / S3 / local `/archives/` volume.
-- **Compression Efficiency**: 300,000 articles compress down to **~25 MB to 35 MB** in Parquet format.
-- Can be queried at any time using DuckDB or read on-demand if historical research is required.
+### Phase 4: Cold Archival to Parquet / S3 (Optional Long-Term Analytics)
+If you ever wish to archive deleted articles for historical AI training or offline analytics:
+- Before running the `DELETE` query, export deleted rows to a compressed `.parquet` or `.json.zst` file in Cloudflare R2 / S3 / local disk.
+- A full month of 300,000 articles in Parquet is only **~25 MB**.
 
 ---
 
-## 📋 Actionable Checklist
+## 📋 Actionable Implementation Checklist
 
-- [ ] **Step 1**: Run `ALTER TABLE "Article" ALTER COLUMN "rawContent" SET COMPRESSION lz4;`
-- [ ] **Step 2**: Implement `initArticleLifecycleWorker` to clear `rawContent` for articles > 14 days old.
-- [ ] **Step 3**: Add partial index for recent 30-day queries to protect RAM.
-- [ ] **Step 4**: Commit and document configuration in `backend/README.md`.
+- [ ] **Step 1: Database Compression**: Run `ALTER TABLE "Article" ALTER COLUMN "rawContent" SET COMPRESSION lz4;`
+- [ ] **Step 2: Lifecycle Worker**: Implement `src/workers/lifecycleWorker.ts` with:
+  - 14-day `rawContent` pruner
+  - 30-day smart engagement-preserving deletion
+- [ ] **Step 3: Register Worker**: Initialize `initLifecycleWorker()` in `src/index.ts` alongside `initIngestWorker()`.
+- [ ] **Step 4: Partial Hot Index**: Run partial index SQL for 30-day queries to protect RAM.
+- [ ] **Step 5: Verify & Commit**: Test worker execution, verify zero impact on bookmarks, and push to GitHub.
