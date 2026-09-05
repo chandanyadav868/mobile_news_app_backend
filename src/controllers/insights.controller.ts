@@ -46,6 +46,45 @@ export async function createInsight(req: Request, res: Response) {
 
     return res.status(201).json({ success: true, data: newStory });
   } catch (error: any) {
+    return res.status(500).json({ success: false, error: 'Failed to create insight' });
+  }
+}
+
+export async function getInsightById(req: Request, res: Response) {
+  const { id } = req.params;
+  try {
+    const insight = await prisma.insightStory.findUnique({
+      where: { id },
+    });
+    if (!insight) {
+      return res.status(404).json({ success: false, error: 'Insight story not found' });
+    }
+    return res.json({ success: true, data: insight });
+  } catch (error: any) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+export async function updateInsight(req: Request, res: Response) {
+  const { id } = req.params;
+  const { title, subtitle, coverImage, slides } = req.body;
+
+  try {
+    const updated = await prisma.insightStory.update({
+      where: { id },
+      data: {
+        ...(title !== undefined && { title }),
+        ...(subtitle !== undefined && { subtitle }),
+        ...(coverImage !== undefined && { coverImage }),
+        ...(slides !== undefined && { slides }),
+      },
+    });
+
+    await deleteCache('insights:all');
+    await deleteCache('news:feed:main');
+
+    return res.json({ success: true, data: updated });
+  } catch (error: any) {
     return res.status(500).json({ success: false, error: error.message });
   }
 }
