@@ -7,6 +7,7 @@ import { env } from './config/env.js';
 import { connectDB, prisma } from './config/db.js';
 import { redis } from './config/redis.js';
 import { initIngestWorker } from './workers/ingestWorker.js';
+import { initLifecycleWorker } from './workers/lifecycleWorker.js';
 import { warmAllRingBuffers } from './services/redisFeedService.js';
 import apiRouter from './routes/index.js';
 import { errorHandler } from './middlewares/errorHandler.js';
@@ -93,6 +94,9 @@ async function startServer() {
 
   // Start background RSS worker
   initIngestWorker();
+
+  // Start automated storage lifecycle & smart retention worker (Pruning & Cleanup)
+  initLifecycleWorker();
 
   // Pre-warm 20-item Redis ring buffers for all categories
   warmAllRingBuffers().catch((e) => console.warn('Ring buffer warmup note:', e?.message || e));

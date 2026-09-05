@@ -101,6 +101,7 @@ export async function renderDatabaseAdmin(req: Request, res: Response) {
         <span>⚡</span> NewsFlow Database & Readability Explorer
       </div>
       <div style="display: flex; gap: 10px;">
+        <button class="btn" onclick="triggerLifecycle()" style="background: #8B5CF6;">🧹 Run 14d Prune & 30d Retention</button>
         <button class="btn" onclick="triggerIngest()" style="background: var(--accent);">🔄 Sync RSS Feeds & Run Readability</button>
       </div>
     </div>
@@ -209,6 +210,25 @@ export async function renderDatabaseAdmin(req: Request, res: Response) {
   </div>
 
   <script>
+    async function triggerLifecycle() {
+      if (!confirm('Run storage lifecycle maintenance now? This prunes rawContent for articles > 14 days and deletes unengaged articles > 30 days (while strictly preserving bookmarked, shared, pinned, hero, and editorial stories).')) return;
+      try {
+        const btn = document.querySelector('button[onclick="triggerLifecycle()"]');
+        btn.innerText = '⏳ Running Lifecycle...';
+        btn.disabled = true;
+        const res = await fetch('/api/v1/dashboard/trigger-lifecycle', { method: 'POST' });
+        const json = await res.json();
+        if (json.success) {
+          alert('✅ Lifecycle Maintenance Finished!\n\n' + json.report.message);
+        } else {
+          alert('❌ Lifecycle Error: ' + json.error);
+        }
+        window.location.reload();
+      } catch (err) {
+        alert('Lifecycle Request Failed: ' + err.message);
+      }
+    }
+
     async function triggerIngest() {
       if (!confirm('Run background RSS feed synchronization & Mozilla Readability extraction now?')) return;
       try {

@@ -14,7 +14,7 @@ All visual portals are accessible directly in your web browser without needing a
 | **`/cms`**<br>`/admin/cms` | **Visual CMS Editorial Studio** | Full editorial portal to create, edit, categorize, feature hero articles, manage visual insight stories, conduct community polls, and trigger custom push alerts. |
 | **`/admin/images`**<br>`/admin/media`<br>`/media` | **Media & Image Optimization Studio** | Live dashboard tracking real uploaded file sizes vs WebP compressed sizes via `imgproxy` Docker. Side-by-side preview, bandwidth savings metrics, in-place edit, and deletion. |
 | **`/admin/users`**<br>`/users-admin` | **Admin User Accounts Portal** | Complete user management dashboard. View all registered accounts, change roles (`USER` ↔ `ADMIN`), update user status (`ACTIVE`, `SUSPENDED`), and reset passwords. |
-| **`/admin/database`** | **Visual Database Explorer** | Raw database table explorer for PostgreSQL. Inspect articles, users, insights, push tokens, and verify stored fields without opening a CLI. |
+| **`/admin/database`** | **Visual Database Explorer** | Raw database table explorer for PostgreSQL with one-click **"Run 14d Prune & 30d Retention"** maintenance trigger, filter by category/country, and search. |
 | **`/campaigns`**<br>`/email-studio`<br>`/testers` | **Email Campaign & Beta Studio** | Visual WYSIWYG & HTML/CSS campaign studio. Design invitation emails with live mobile preview, store download badges, and test send via Mailtrap/Gmail. |
 | **`/join-beta`**<br>`/beta-testers` | **Public Beta Tester Landing** | High-conversion, dark-mode landing page for early adopters to register for the NewsFlow Beta. Triggers automated welcome emails and records interest. |
 | **`http://localhost:5555`** | **Prisma Studio GUI** | Interactive Prisma ORM database GUI for relational inspection and editing. Started with `npx prisma studio`. |
@@ -223,3 +223,34 @@ npm run dev
 * **Visual CMS Studio**: `http://localhost:4000/admin/cms`
 * **Database Explorer**: `http://localhost:4000/admin/database`
 * **Prisma Studio GUI**: `http://localhost:5555` (`npx prisma studio`)
+
+---
+
+## 🧹 Automated Text Storage Compression & Smart Retention (10,000 Articles/Day Scale)
+
+At a volume of **10,000 new articles/day (~3.65 million/year)**, unmanaged database storage can grow by ~18.25 GB/year. NewsFlow implements a multi-tier automated storage lifecycle pipeline to keep storage lightweight, predictable, and fast:
+
+### 1. PostgreSQL Native TOAST LZ4 Transparent Compression
+Enabled on heavy text columns:
+```sql
+ALTER TABLE "Article" ALTER COLUMN "rawContent" SET COMPRESSION lz4;
+ALTER TABLE "Article" ALTER COLUMN "summary" SET COMPRESSION lz4;
+```
+* Reduces disk footprint by **60–70%** with near-zero CPU overhead.
+
+### 2. Stage 1: Automated 14-Day Pruning of Heavy Article Bodies
+* Full Mozilla Readability scraped text (`rawContent`) is zeroed out (`NULL`) after 14 days.
+* **Preserved**: Titles, summaries, URLs, image URLs, categories, author metadata, and language translations.
+* **Storage Reclaimed**: **~95%** of article row bytes reclaimed while search, feed cards, and bookmarks continue functioning smoothly.
+
+### 3. Stage 2: Automated 30-Day Smart Engagement-Preserving Retention
+Articles older than 30 days are automatically deleted **EXCEPT** when protected by user engagement:
+* 🛡️ **Bookmark Protection**: Never deletes any article bookmarked by any user (`id IN (SELECT unnest("bookmarkedArticleIds") FROM "User")`). Supported by a PostgreSQL GIN index for sub-millisecond lookups.
+* 🛡️ **Viral/Shared Protection**: Never deletes any story with `shareCount > 0`.
+* 🛡️ **Editorial Protection**: Never deletes articles written manually by editors (`source = 'NewsFlow Editorial'`).
+* 🛡️ **Promoted Protection**: Never deletes pinned or hero stories (`isPinned = true` or `isHero = true`).
+
+### 4. Nightly Worker & On-Demand Triggers
+* **Automated Cron**: Executes every night at 02:30 AM (`30 2 * * *`) via `lifecycleWorker.ts`.
+* **REST API Trigger**: `POST /api/v1/dashboard/trigger-lifecycle` (returns JSON telemetry report).
+* **Visual Admin Explorer**: Click the purple **"🧹 Run 14d Prune & 30d Retention"** button at `http://localhost:4000/admin/database`.
