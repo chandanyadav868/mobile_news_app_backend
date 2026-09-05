@@ -21,9 +21,8 @@ COPY package*.json ./
 COPY tsconfig.json ./
 COPY prisma ./prisma/
 
-# Install TypeScript globally and install all dependencies (including devDependencies)
-RUN npm install -g typescript tsx prisma && \
-    npm install --include=dev --production=false
+# Install all dependencies (including devDependencies)
+RUN npm install --legacy-peer-deps --no-audit
 
 # Generate Prisma Client
 RUN npx prisma generate
