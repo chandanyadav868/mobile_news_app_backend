@@ -1,154 +1,141 @@
-# 🚀 High-Volume Storage & Text Compression Plan: Scaling to 10,000 Articles / Day
+# 📡 Real-Time News Notification Plan: Eliminating Client Polling with Server Broadcast (SSE & Redis)
 
-## 📌 Executive Summary & Scale Mathematical Model
+## 📌 Executive Summary & Your Question Answered
 
-At **10,000 new articles per day**:
-- **Daily Ingestion**: ~10,000 articles (~260 MB/day uncompressed)
-- **Monthly Ingestion**: ~300,000 articles (~7.8 GB/month uncompressed)
-- **Annual Ingestion**: ~3,650,000 articles (**~95 GB to 120 GB / year** including B-Tree indexes)
+### ❓ Is this GET request being called from the frontend or backend?
+> **Answer**: It is being called **directly from the FRONTEND React Native mobile app**.
 
-Without an intentional, tiered data lifecycle strategy, a standard PostgreSQL database will experience:
-1. **Memory & Cache Thrashing**: Database indexes on 3.6M+ rows will exceed VPS RAM (`shared_buffers`), slowing down feed queries.
-2. **Storage Exhaustion**: A 50 GB - 100 GB VPS disk will fill up within months.
-3. **Database Vacuum Bloat**: Massive updates and deletions cause table fragmentation without partition management.
+Specifically, inside [`context/NewsContext.tsx`](file:///d:/live-project/mobile_app_news/context/NewsContext.tsx#L232), the app runs a `setInterval` loop every **60 seconds (1 minute)**:
+
+```typescript
+// context/NewsContext.tsx (Line 232)
+setInterval(async () => {
+    const res = await NewsApiService.checkNewArticles(
+        latestStoryTimestampRef.current,
+        targetCategories,
+        selectedCountry
+    );
+}, 60000); // 🚨 Fires every 60 seconds from every active user's device!
+```
 
 ---
 
-## 🎯 The 5-Tier Combined Strategy for 10,000 Articles/Day
+## 🚨 The Critical Scale Problem: Why This Will Choke Your Server
 
-By combining **LZ4 compression**, **Redis Ring Buffers**, **rawContent pruning**, and **User-Engagement Smart Retention (Bookmarks & Shares)**, your database reaches a **permanent steady state of ~300,000 rows** and stays **under 500 MB RAM** forever:
+Your concern is **100% accurate and mathematically justified**. Here is what happens when your user base grows:
+
+### The Mathematical Reality of 60-Second Polling:
+| Active Concurrent Users | Requests per Minute | Requests per Second (RPS) | PostgreSQL Queries / min | Server Impact |
+| :---: | :---: | :---: | :---: | :--- |
+| **100 users** | 100 req/min | ~1.6 RPS | 200 SQL queries | Lightweight. |
+| **1,000 users** | 1,000 req/min | ~16.6 RPS | 2,000 SQL queries | Noticeable CPU spikes. |
+| **10,000 users** | 10,000 req/min | **~166 RPS** | **20,000 SQL queries** | ⚠️ Database connection pool exhausts. |
+| **50,000 users** | 50,000 req/min | **~833 RPS** | **100,000 SQL queries** | 🚨 Server CPU 100%, app chokes, 502/504 Gateway Timeouts. |
+
+### Why 90% of These Requests are Completely Wasted:
+1. Your backend RSS Ingestion Worker only runs every **5 minutes** (`*/5 * * * *`).
+2. This means that for **4 out of every 5 minutes, NO new articles exist**.
+3. Yet, 10,000 users are repeatedly asking the server *"Are there new articles? No. Are there new articles? No."* — executing **80,000 useless SQL queries** every 5 minutes!
+4. On mobile devices, firing an HTTP request every 60 seconds forces the cellular radio modem to wake up, significantly **draining user battery**.
+
+---
+
+## 🎯 The Solution: Transition from Client "PULL" to Server "PUSH" (Broadcast)
+
+Instead of having thousands of phones constantly ask the server for updates, the server should **broadcast a single notification to all connected phones** only when new articles are actually ingested.
 
 ```mermaid
 flowchart TD
-    subgraph Tier 1: Ingestion & Write Speed (Day 0)
-        A[10,000 Daily RSS Articles] --> B[MD5 Deduplication & Timestamp Gate]
-        B --> C[Postgres TOAST LZ4 Transparent Compression]
-        C --> D[Redis Ring Buffer: Top 20 / Category in RAM &lt; 5ms]
+    subgraph OLD: Wasteful Client Polling (PULL)
+        U1[User Phone 1] -->|Every 60s GET /check-new| S[Node.js + PostgreSQL]
+        U2[User Phone 2] -->|Every 60s GET /check-new| S
+        U3[User Phone 10,000] -->|Every 60s GET /check-new| S
+        S -->|20,000 SQL Queries / min| DB[(PostgreSQL Choked!)]
     end
 
-    subgraph Tier 2: Hot Operational Window (Day 0 - 14)
-        D --> E[Full 60-Word Inshorts Summary + Category Indexes]
-        E --> F[Full rawContent Available for Immediate Editorial Deep-Dives]
-    end
-
-    subgraph Tier 3: Automated rawContent Pruner (Day 14+)
-        F -->|Nightly Maintenance Cron 02:30 AM| G[Prune rawContent = NULL for Articles &gt; 14 Days]
-        G --> H[95% Storage Reclaimed! Row shrinks 26 KB ➔ 650 Bytes]
-    end
-
-    subgraph Tier 4: Smart Engagement-Preserving Deletion (Day 30+)
-        H -->|Nightly Retention Check 03:00 AM| I{Engagement Check on Articles &gt; 30 Days}
-        I -->|Bookmarked by ANY user| J[🛡️ KEEP FOREVER]
-        I -->|shareCount &gt; 0| J
-        I -->|isPinned OR isHero OR Editorial| J
-        I -->|Zero Engagement & Never Saved| K[🗑️ DELETE ARTICLE RECORD]
-    end
-
-    subgraph Tier 5: Steady State Equilibrium
-        K --> L[Database Size Capped at ~300k - 350k Rows Permanently! <br> <b>Zero Storage Runaway Bloat</b>]
+    subgraph NEW: Server Broadcast Architecture (PUSH)
+        W[RSS Ingest Worker] -->|Runs Every 5 Mins| R[Inserts 15 New Articles]
+        R -->|1. Updates Redis Ring Buffer| REDIS[(Redis In-Memory)]
+        R -->|2. Emits 1 Event via Redis Pub/Sub| PUB[Redis Pub/Sub Channel: 'news_updates']
+        PUB -->|3. Broadcasts to All Connected Phones| SSE[Server-Sent Events / SSE Stream]
+        SSE -->|Single Lightweight Connection| P1[User Phone 1: Shows '15 New Stories' Pill]
+        SSE -->|Single Lightweight Connection| P2[User Phone 2: Shows '15 New Stories' Pill]
+        SSE -->|Single Lightweight Connection| P3[User Phone 10,000]
     end
 ```
 
 ---
 
-## 🔬 Mathematical Comparison: Unoptimized vs Optimized
+## 🔬 Technology Comparison for Broadcasting to Mobile Devices
 
-| Metric | Unoptimized (Holding Full Text Forever) | Optimized (LZ4 + Day 14 Pruning) | Optimized + Day 30 Smart Retention (Your Idea ⭐) |
-| :--- | :---: | :---: | :---: |
-| **Row Size (Day 0–14)** | ~26 KB (Raw text + summary) | ~10 KB (via Postgres TOAST LZ4) | **~10 KB** (via Postgres TOAST LZ4) |
-| **Row Size (Day 15–30)** | ~26 KB (Wasted full text) | ~650 Bytes (Summary + Metadata) | **~650 Bytes** (Summary + Metadata) |
-| **Storage Beyond Day 30** | ~26 KB | ~650 Bytes | **0 Bytes (Deleted unless Bookmarked/Shared)** |
-| **Month 1 Storage** | 7.8 GB | ~240 MB | **~240 MB** |
-| **Month 6 Storage** | 46.8 GB | ~1.44 GB | **~350 MB (Equilibrium reached)** |
-| **Annual Storage (3.65M items)** | **95 GB – 120 GB** | ~2.9 GB | **~400 MB (PERMANENT CAP)** |
-| **Index RAM Footprint** | 4 GB – 6 GB (Severe cache thrashing) | ~150 MB | **< 65 MB (100% in RAM)** |
-| **Feed Latency** | Degrades to 500ms – 2,000ms | < 25ms | **< 5ms – 10ms (Blazing fast)** |
+| Technology | How It Works | Server Memory Cost | Mobile Battery Impact | Scaling to 100k Users | Best Recommendation |
+| :--- | :--- | :---: | :---: | :---: | :---: |
+| **Server-Sent Events (SSE)** | One-way HTTP persistent stream (`GET /api/v1/news/stream-updates`). | Extremely low (~15 KB RAM per client). | Very Low (idle TCP socket). | 🌟 High (handled by Node.js event loop). | **Best for In-App Live Notifications (Inshorts style)** |
+| **WebSocket (Socket.io)** | Bi-directional TCP connection. | Medium (~40 KB RAM per client + heartbeat pings). | Moderate. | High (requires sticky sessions / Redis adapter). | Overkill for read-only news feed. |
+| **Redis Cache Short-Circuit (Smart Gate)** | Keeps HTTP endpoint, but caches latest ingest timestamp in Redis. | Zero additional RAM. | Moderate (still polls, but 0 DB queries). | Very High (100k req/s from Redis RAM). | **Essential Immediate Safeguard** |
+| **Firebase Cloud Messaging (FCM)** | Remote push notification to Android/iOS. | Zero server RAM (Google handles connections). | Zero battery impact. | Infinite (millions of users). | **Best for Background Notifications when app is closed** |
 
 ---
 
 ## 🛠️ Step-by-Step Implementation Roadmap
 
-### Phase 1: Database-Level Instant Wins (Zero Code Changes)
-1. **Enable PostgreSQL TOAST LZ4 Compression**:
-   Run once on the active PostgreSQL database:
-   ```sql
-   ALTER TABLE "Article" ALTER COLUMN "rawContent" SET COMPRESSION lz4;
-   ALTER TABLE "Article" ALTER COLUMN "summary" SET COMPRESSION lz4;
+### Phase 1: Immediate Safety Win — Redis Ingestion-Gated Cache (Zero DB Queries)
+Before transitioning to SSE, make the existing `/check-new` endpoint lightning-fast by caching the latest RSS batch timestamp in Redis:
+1. When the RSS Ingestion Worker finishes inserting articles, it writes a single key in Redis:
+   ```redis
+   SET news:latest_ingest_time "2026-09-05T14:30:00.000Z"
+   SET news:latest_article_json '{"id":"...","title":"...","count":15}'
    ```
-   * **Why**: PostgreSQL compresses incoming text transparently with LZ4 (4x faster than older `pglz`, 50–60% smaller on disk).
-
-2. **Partial Index for Active Queries**:
-   Add a partial index covering only recent news to keep RAM usage minimal:
-   ```sql
-   CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_article_hot_feed 
-   ON "Article" (category, "publishedAt" DESC) 
-   WHERE "publishedAt" > NOW() - INTERVAL '30 days';
-   ```
+2. When `/api/v1/news/check-new?since=...` is called:
+   - Compare `since` with `news:latest_ingest_time` from Redis RAM (<0.2ms).
+   - If `since >= latest_ingest_time`: **Return `{ hasNew: false, count: 0 }` immediately without touching PostgreSQL!**
+   - **Result**: Drops PostgreSQL database queries from 20,000/min to **ZERO**!
 
 ---
 
-### Phase 2: Automated Nightly Lifecycle Worker (Day 14 Pruner)
-Add a dedicated lifecycle maintenance job in `backend/src/workers/lifecycleWorker.ts`:
-- Runs every night at **02:30 AM** (low traffic period).
-- Clears `rawContent` for any article published more than 14 days ago.
-- Retains 100% of: `title`, `summary`, `url`, `imageUrl`, `category`, `author`, `publishedAt`, `translations`.
-
-```typescript
-// 1. Clear heavy rawContent (>14 days old)
-await prisma.$executeRawUnsafe(`
-  UPDATE "Article"
-  SET "rawContent" = NULL
-  WHERE "publishedAt" < NOW() - INTERVAL '14 days'
-    AND "rawContent" IS NOT NULL;
-`);
-```
+### Phase 2: Server-Sent Events (SSE) Live Broadcast Stream
+Implement a dedicated Server-Sent Events endpoint in the backend:
+- **Endpoint**: `GET /api/v1/news/stream-updates?country=IN`
+- Node.js registers the response object in a lightweight client set (`activeClients`).
+- When the RSS worker finishes ingesting, it loops through `activeClients` and writes:
+  ```http
+  event: new_articles
+  data: {"count": 15, "latestArticle": { "title": "...", "category": "Tech" }}
+  ```
+- If the server has multiple instances, use **Redis Pub/Sub** (`redis.subscribe('news_stream')`) so all cluster workers broadcast simultaneously.
 
 ---
 
-### Phase 3: Smart Engagement-Preserving Deletion Worker ⭐ (Day 30+)
-Runs every night at **03:00 AM**:
-Deletes articles older than 30 days **EXCEPT** those bookmarked, shared, or marked as hero/editorial.
-
-#### The 5 Strict Protection Checks:
-```sql
-DELETE FROM "Article"
-WHERE "publishedAt" < NOW() - INTERVAL '30 days'
-  -- 1. Must NOT be pinned or hero
-  AND "isPinned" = false
-  AND "isHero" = false
-  -- 2. Must NOT be an editorial story manually written by admin
-  AND "source" != 'NewsFlow Editorial'
-  -- 3. Must NEVER have been shared by any user
-  AND "shareCount" = 0
-  -- 4. Must NOT be bookmarked by any registered user
-  AND "id" NOT IN (
-    SELECT DISTINCT unnest("bookmarkedArticleIds") 
-    FROM "User" 
-    WHERE "bookmarkedArticleIds" IS NOT NULL
-  );
-```
-
-#### Why This Works Perfectly:
-- **Bookmarks Never Disappear**: If a user opens their "Saved / Bookmarks" tab 1 year later, their saved article is **100% intact**.
-- **Shared Links Never Break**: Any article shared to WhatsApp, Twitter, or friends has `shareCount > 0` and is preserved.
-- **Zero Disruption for Users**: The 99% of disposable RSS articles that were never saved or shared are cleaned up seamlessly.
-- **Permanent Database Equilibrium**: Your database never exceeds ~350,000 rows.
+### Phase 3: Mobile Client Integration & Smart Battery Suspension
+Update [`context/NewsContext.tsx`](file:///d:/live-project/mobile_app_news/context/NewsContext.tsx):
+1. **Connect to SSE Stream when app is open**:
+   - Uses `EventSource` or streaming fetch to listen for `new_articles` events.
+   - When an event arrives, update `setNewStoriesCount(event.count)` and show the floating pill `"⚡ 15 New Stories • Tap to Refresh"`.
+2. **Smart Lifecycle Suspension (`AppState`)**:
+   - When the user minimizes the app or locks their phone (`AppState === 'background'`), **immediately close the connection**.
+   - When the user opens the app again (`AppState === 'active'`), check once and re-connect.
+   - **Result**: Zero battery drain while the phone is in the user's pocket!
 
 ---
 
-### Phase 4: Cold Archival to Parquet / S3 (Optional Long-Term Analytics)
-If you ever wish to archive deleted articles for historical AI training or offline analytics:
-- Before running the `DELETE` query, export deleted rows to a compressed `.parquet` or `.json.zst` file in Cloudflare R2 / S3 / local disk.
-- A full month of 300,000 articles in Parquet is only **~25 MB**.
+### Phase 4: Long-Term Push for Closed App (FCM Topic Broadcast)
+When the app is completely closed:
+- Use Firebase Cloud Messaging (FCM) topic: `/topics/news_in_breaking`.
+- The RSS worker sends 1 single HTTP request to FCM:
+  ```typescript
+  admin.messaging().sendToTopic('news_in_breaking', {
+    notification: { title: 'Breaking News', body: latestArticle.title },
+    data: { articleId: latestArticle.id }
+  });
+  ```
+- Google's servers broadcast to all millions of Android devices worldwide with zero load on your server.
 
 ---
 
 ## 📋 Actionable Implementation Checklist
 
-- [x] **Step 1: Database Compression**: Run `ALTER TABLE "Article" ALTER COLUMN "rawContent" SET COMPRESSION lz4;` (✅ Executed & active)
-- [x] **Step 2: Lifecycle Worker**: Implement `src/workers/lifecycleWorker.ts` with:
-  - 14-day `rawContent` pruner (✅ Implemented & verified)
-  - 30-day smart engagement-preserving deletion (✅ Implemented & verified)
-- [x] **Step 3: Register Worker**: Initialize `initLifecycleWorker()` in `src/index.ts` alongside `initIngestWorker()` (✅ Scheduled at 02:30 AM).
-- [x] **Step 4: Fast Lookup Indexing**: Added GIN index `idx_user_bookmarks` on `User.bookmarkedArticleIds` and composite `(category, publishedAt DESC)` index (✅ Active).
-- [x] **Step 5: Verify & Commit**: Tested worker execution, added on-demand API & UI buttons, and pushed to GitHub (✅ Commit `61b2a01`).
+- [ ] **Step 1: Redis Ingestion Gating**: Update `checkNewArticles` in [`news.controller.ts`](file:///d:/live-project/mobile_app_news/backend/src/controllers/news.controller.ts) to check Redis before hitting PostgreSQL.
+- [ ] **Step 2: Backend SSE Stream**: Add `GET /api/v1/news/stream-updates` and connect it to the RSS Ingest worker completion event.
+- [ ] **Step 3: Frontend SSE Listener**: Connect to the SSE broadcast in [`NewsContext.tsx`](file:///d:/live-project/mobile_app_news/context/NewsContext.tsx) and remove the 60-second `setInterval` polling loop.
+- [ ] **Step 4: AppState Suspension**: Pause the connection when the mobile app goes into the background.
+- [ ] **Step 5: Verify & Benchmark**: Verify 0 DB queries on idle, test live notification delivery, and commit changes.
