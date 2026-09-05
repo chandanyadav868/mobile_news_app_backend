@@ -103,31 +103,32 @@ val notification = NotificationCompat.Builder(context, "breaking-news")
 
 ## 🎯 Architecture Comparison & Solution Options
 
-| Feature | `expo-notifications` (Current) | `@notifee/react-native` (Inshorts Equivalent) |
+| Feature | `expo-notifications` (Current) | `react-native-notify-kit` (Inshorts Equivalent) |
 | :--- | :--- | :--- |
 | **Android BigPictureStyle** | ❌ Not Supported (Only small icon or BigText) | ✅ Native First-Class (`AndroidStyle.BIGPICTURE`) |
 | **Automatic Image Download** | ❌ Fails on Android local notifications | ✅ Automatically fetches & decodes image URL into Bitmap |
 | **Notification Action Buttons** | ⚠️ Complex/limited on Android | ✅ Full support (`actions: [{ title: 'Share' }]`) |
-| **Expo Managed Workflow** | ✅ Standard Expo module | ✅ Official Expo Config Plugin (`@notifee/react-native`) |
+| **Expo Managed Workflow** | ✅ Standard Expo module | ✅ Official Expo Config Plugin (`react-native-notify-kit`) |
+| **TurboModules & React Native 0.85+** | ⚠️ Legacy bridge | ✅ Modern TurboModules / New Architecture |
 | **Reliability on Android 12-15** | ⚠️ Falls back to plain text | ✅ Verified on Android 10, 11, 12, 13, 14, 15 |
 
 ---
 
 ## 🚀 Step-by-Step Implementation Strategy
 
-### Step 1: Install `@notifee/react-native`
-Install the official Invertase notification library designed specifically for Android BigPictureStyle and rich media in React Native:
+### Step 1: Install `react-native-notify-kit`
+Install the community-maintained, TurboModule-ready Notifee fork designed specifically for Android BigPictureStyle, rich media, and Expo CNG in modern React Native:
 ```bash
-npm install @notifee/react-native
+npm install react-native-notify-kit
 ```
-Add `@notifee/react-native` to `plugins` in [`app.json`](file:///d:/live-project/mobile_app_news/app.json).
+Add `"react-native-notify-kit"` to `plugins` in [`app.json`](file:///d:/live-project/mobile_app_news/app.json).
 
 ---
 
 ### Step 2: Implement Inshorts-Style Notification Dispatcher ([`services/notificationService.ts`](file:///d:/live-project/mobile_app_news/services/notificationService.ts))
-Upgrade `triggerLocalDeviceNotification` and `scheduleDelayedNotification` to use `@notifee/react-native` on Android:
+Upgrade `triggerLocalDeviceNotification` and `scheduleDelayedNotification` to use `react-native-notify-kit` on Android:
 ```typescript
-import notifee, { AndroidStyle, AndroidImportance } from '@notifee/react-native';
+import notifee, { AndroidStyle, AndroidImportance } from 'react-native-notify-kit';
 
 public async triggerLocalDeviceNotification(
     title: string,
