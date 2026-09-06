@@ -1,230 +1,114 @@
-# 📋 Implementation Plan: Inshorts-Style Rich Image Banner Notifications on Android
+# 📋 Architectural Plan: Neural Text-to-Speech (TTS) Speech Normalization & Voice Quality Engine
 
 ## 📌 Executive Summary
 
-The user provided a photographic comparison of notifications on their physical Android device:
-1. **Top Notification ("News Flow")**: Rendered as a plain-text card (`BigTextStyle`) without an image, showing only `Sports • Breaking Alert`, headline, and summary.
-2. **Bottom Notification ("Inshorts")**: Rendered with a full-width, edge-to-edge **BigPictureStyle image banner** with a built-in **"Share"** action button.
+When news articles are sent to Microsoft Edge Neural TTS (`msedge-tts` / `en-IN-NeerjaNeural`), the audio output currently suffers from jarring acoustic glitches and unnatural speech artifacts:
+1. **Apostrophes & Contractions (`'s`, `’s`)**: Words like `India's`, `Apple’s`, `it's`, `don't` sound robotic, distorted, or have the isolated letter *"ess"* pronounced separately after a glottal pause.
+   - **Root Cause**: The current regex in [`ttsWorker.ts`](file:///d:/live-project/mobile_app_news/backend/src/workers/ttsWorker.ts#L46) filters out Unicode curly apostrophes (`’` U+2019) as non-ASCII, **replacing them with a space** (`India s`, `it s`).
+2. **Markdown Symbols (`**bold**`, `*italic*`, `##`)**: Asterisks and markdown tokens pass through and are literally vocalized by the neural engine as *"asterisk asterisk Breaking News asterisk asterisk"*.
+3. **Abbreviations & Initialisms (`e.g.`, `vs.`, `AI`, `PM`, `RBI`)**: Pronounced as *"e dot g dot"*, *"v s"*, or *"ay"* instead of natural spoken English (*"for example"*, *"versus"*, *"A.I."*, *"Prime Minister"*).
+4. **Currencies & Large Numbers (`$50M`, `₹100 Cr`)**: Read as *"dollar fifty M"* or *"symbol one zero zero C R"* rather than *"fifty million dollars"* and *"one hundred crore rupees"*.
+5. **URLs & RSS Agency Bylines (`https://...`, `(PTI):`, `[Read More]`)**: Read out character-by-character as *"h-t-t-p-s colon slash slash..."*.
 
-This document details the exact root causes in the frontend and backend, explains the Android OS notification architecture, and presents a rock-solid implementation plan to achieve the identical Inshorts visual presentation.
+This document catalogues **every single discrepancy between written text and spoken neural speech**, provides the complete phonetic transformation mapping, and defines an end-to-end normalization architecture that preserves **karaoke word-by-word visual sync** in the mobile UI.
 
 ---
 
-## 🔍 Deep-Dive Root Cause Analysis
+## 🔍 Master Catalog: Spoken Voice Discrepancies vs. Written Text
 
-### 1. Frontend: The `expo-notifications` Architectural Limitation
-In [`services/notificationService.ts`](file:///d:/live-project/mobile_app_news/services/notificationService.ts#L220-L241), notifications are scheduled using:
-```typescript
-await Notifications.scheduleNotificationAsync({
-    identifier: notificationId,
-    content: {
-        title: cleanHeadline,
-        subtitle: `${category || 'News'} • Breaking Alert`,
-        body: cleanSummary,
-        attachments: [
-            {
-                url: validImage,
-                identifier: 'news-image',
-                type: 'image',
-            },
-        ],
-        data: { ... }
-    }
-});
+| Category | Written Input | Current Broken Pronunciation | Desired Natural Spoken Voice | Transformation Rule |
+| :--- | :--- | :--- | :--- | :--- |
+| **Apostrophe / Possessives** | `India’s`, `Apple's` | *"India... ess"*, *"Apple... ess"* | *"India's"*, *"Apple's"* | Replace U+2019 `’` with standard ASCII `'` without spaces |
+| **Contractions** | `it's`, `don’t`, `they’re` | *"it... ess"*, *"don... t"* | *"it's"*, *"don't"*, *"they're"* | Keep contraction unified; normalize Unicode apostrophes |
+| **Markdown Bold** | `**Breaking News**` | *"asterisk asterisk Breaking News asterisk asterisk"* | *"Breaking News"* | Strip `**` delimiters |
+| **Markdown Italic / Quotes** | `*Important*`, `_urgent_` | *"asterisk Important asterisk"* | *"Important"* | Strip `*` and `_` delimiters |
+| **Markdown Headers** | `### Global Economy` | *"hash hash hash Global Economy"* | *"Global Economy"* | Strip `#` prefix |
+| **Bullet Points** | `• Headline 1`, `- Point 2` | *"bullet Headline one"*, *"hyphen Point two"* | *"Headline 1. Point 2."* | Replace bullets with sentence-ending pause |
+| **Latin Abbreviations** | `e.g.`, `e.g.,` | *"e dot g dot"* | *"for example,"* | Expand to conversational English |
+| **Latin Abbreviations** | `i.e.`, `i.e.,` | *"i dot e dot"* | *"that is,"* | Expand to conversational English |
+| **Comparison** | `vs.`, `vs` | *"v s"* | *"versus"* | Expand abbreviation |
+| **General Abbreviations** | `approx.`, `dept.`, `govt.` | *"approx"*, *"dept"*, *"govt"* | *"approximately"*, *"department"*, *"government"* | Dictionary word expansion |
+| **Acronym: Artificial Intelligence** | `AI`, `A.I.` | *"ay"* (like the word 'aye') | *"A.I."* (letter-by-letter with phonetic pauses) | Ensure dotted acronym `A.I.` |
+| **Indian Financial Currencies** | `₹100 Cr`, `Rs 100 Crore` | *"currency sign one zero zero C R"* | *"100 crore rupees"* | Currency + scale expansion |
+| **Indian Financial Currencies** | `₹50 Lakh`, `Rs. 50L` | *"fifty L"* | *"50 lakh rupees"* | Currency + scale expansion |
+| **US/Global Currencies** | `$50M`, `$2.5B` | *"dollar fifty M"*, *"dollar two point five B"* | *"50 million dollars"*, *"2.5 billion dollars"* | Number + magnitude + currency |
+| **Percentages** | `25%` | *"twenty-five percent"* (sometimes *"percent sign"*) | *"25 percent"* | Convert `%` to word `percent` |
+| **Time & Operating Hours** | `24/7` | *"twenty-four slash seven"* | *"twenty-four seven"* | Convert `24/7` to words |
+| **Web Links & URLs** | `https://newsflow.app/story` | *"h-t-t-p-s colon slash slash newsflow dot app..."* | *[Omit or say "link"]* | Strip raw URLs completely |
+| **Social Mentions & Tags** | `@narendramodi`, `#Budget2026` | *"at narendramodi"*, *"hash Budget twenty twenty-six"* | *"Narendra Modi"*, *"Budget 2026"* | Clean social decorators |
+| **RSS Wire Bylines** | `NEW DELHI (PTI) —`, `(Reuters)` | *"New Delhi P T I em-dash"* | *"New Delhi. PTI reports:"* | Clean news wire brackets and dashes |
+| **Em-dashes & En-dashes** | `Policy—introduced today` | Glitched word mash: *"Policyintroduced"* | Natural speech pause: *"Policy, introduced today"* | Convert `—` / `–` to `, ` or ` - ` |
+| **Ellipsis** | `Wait for it…` | Glitch or silence | Natural pause: `Wait for it...` | Normalize U+2026 to `...` |
+
+---
+
+## 🏗️ Technical Architecture: Two-Pass Speech Normalizer
+
+To ensure natural spoken speech **WITHOUT breaking the mobile app's word-by-word visual highlight (karaoke)**, we employ a Two-Pass Architecture:
+
 ```
-
-#### Why Android Completely Ignores `attachments`:
-1. In `node_modules/expo-notifications/src/Notifications.types.ts`:
-   ```typescript
-   export type NotificationContentInput = {
-       ...
-       /**
-        * The visual and audio attachments to display alongside the notification's main content.
-        * @platform ios
-        */
-       attachments?: NotificationContentAttachmentIos[];
-   }
-   ```
-   **`attachments` is an iOS-only API** that maps to Apple's `UNNotificationAttachment`.
-2. In `node_modules/expo-notifications/android/.../NotificationContent.java`:
-   - For local notifications, `getImage()` only inspects `ai.metaData.getInt("expo.modules.notifications.large_icon")` (a static app icon defined at compile-time in `AndroidManifest.xml`).
-   - It **does not parse `attachments`** and **does not download remote HTTP image URLs**.
-3. In `node_modules/expo-notifications/android/.../ExpoNotificationBuilder.kt`:
-   - Line 152 sets:
-     ```kotlin
-     bitmap?.let { builder.setLargeIcon(it) }
-     ```
-     `setLargeIcon()` on Android only shows a small square avatar on the right side of the notification.
-   - It hardcodes `NotificationCompat.BigTextStyle` for text content.
-   - **`ExpoNotificationBuilder` does NOT implement `NotificationCompat.BigPictureStyle` for local notifications.**
-
----
-
-### 2. Backend: Remote Push Limitations
-In [`backend/src/services/deviceRegistryService.ts`](file:///d:/live-project/mobile_app_news/backend/src/services/deviceRegistryService.ts#L149-L155):
-```typescript
-const messages = pushTokens.map((token) => ({
-    to: token,
-    sound: 'default',
-    priority: 'high',
-    channelId: 'breaking-news',
-    title: `⚡ ${latestArticle.category.toUpperCase()}: ${latestArticle.title}`,
-    body: latestArticle.summary,
-    attachments: [{ url: latestArticle.imageUrl }],
-    richMedia: { image: latestArticle.imageUrl },
-}));
-```
-- While Expo Push Service accepts `richMedia: { image }`, when the push arrives on an Android device, `expo-notifications`'s Android client builder still routes through `ExpoNotificationBuilder.kt`.
-- Because `ExpoNotificationBuilder.kt` only calls `builder.setLargeIcon(it)`, it **never expands into the hero edge-to-edge BigPictureStyle** banner seen in Inshorts.
-
----
-
-### 3. How Inshorts Achieves BigPictureStyle on Android
-In native Android development, Inshorts uses the Android Support/AndroidX Notification API:
-```kotlin
-val bigPictureStyle = NotificationCompat.BigPictureStyle()
-    .bigPicture(downloadedBitmap)         // The large image banner
-    .setBigContentTitle(headline)          // Headline shown when expanded
-    .setSummaryText(summary)               // Summary shown beneath image
-    .bigLargeIcon(null as Bitmap?)         // Removes the thumbnail when expanded
-
-val notification = NotificationCompat.Builder(context, "breaking-news")
-    .setSmallIcon(R.drawable.ic_notification)
-    .setContentTitle(headline)
-    .setContentText(summary)
-    .setStyle(bigPictureStyle)
-    .setPriority(NotificationCompat.PRIORITY_MAX)
-    .addAction(R.drawable.ic_share, "Share", shareIntent) // Inshorts Share Action Button
-    .setAutoCancel(true)
-    .build()
+[ Raw Article Text ]
+         │
+         ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Pass 1: Text Sanitization & Typographical Cleanup           │
+│  - Convert Unicode curly quotes (’ ‘ ” “) to ASCII          │
+│  - Strip Markdown (**, *, _, ##, ``, [text](url))          │
+│  - Strip Raw URLs & RSS boilerplate ([Read more...], PTI)   │
+│  - Convert Em-dash (—) and En-dash (–) to speech pause      │
+└─────────────────────────────────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Pass 2: Phonetic & Lexical Speech Expansion                │
+│  - Expand abbreviations: e.g. -> "for example", vs -> "versus"│
+│  - Expand currencies: ₹100 Cr -> "100 crore rupees"         │
+│  - Format acronyms: AI -> "A.I.", RBI -> "R.B.I."           │
+│  - Clean contractions: it's, don't, India's preserved        │
+└─────────────────────────────────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Pass 3: Alignment & Boundary Interpolation Engine          │
+│  - Sends normalized text to MsEdgeTTS                       │
+│  - Receives WordBoundary events from Microsoft Edge stream  │
+│  - Maps spoken words back to the original article words      │
+│  - Returns audioBase64 + aligned wordBoundaries to Frontend │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🎯 Architecture Comparison & Solution Options
+## 📁 Proposed Code Changes
 
-| Feature | `expo-notifications` (Current) | `react-native-notify-kit` (Inshorts Equivalent) |
-| :--- | :--- | :--- |
-| **Android BigPictureStyle** | ❌ Not Supported (Only small icon or BigText) | ✅ Native First-Class (`AndroidStyle.BIGPICTURE`) |
-| **Automatic Image Download** | ❌ Fails on Android local notifications | ✅ Automatically fetches & decodes image URL into Bitmap |
-| **Notification Action Buttons** | ⚠️ Complex/limited on Android | ✅ Full support (`actions: [{ title: 'Share' }]`) |
-| **Expo Managed Workflow** | ✅ Standard Expo module | ✅ Official Expo Config Plugin (`react-native-notify-kit`) |
-| **TurboModules & React Native 0.85+** | ⚠️ Legacy bridge | ✅ Modern TurboModules / New Architecture |
-| **Reliability on Android 12-15** | ⚠️ Falls back to plain text | ✅ Verified on Android 10, 11, 12, 13, 14, 15 |
+### Component 1: Speech Normalizer Utility
+#### [NEW] [`backend/src/utils/speechNormalizer.ts`](file:///d:/live-project/mobile_app_news/backend/src/utils/speechNormalizer.ts)
+A standalone, high-performance module dedicated to text-to-speech phonetic transformation:
+- `normalizeForSpeech(rawText: string, lang: string): { speechText: string, tokenMap: TokenMap }`
+- Handles all 21 categories from the master table.
+- Converts currency symbols and multipliers (`$M`, `₹Cr`, `₹Lakh`, `€B`).
+- Expands abbreviations (`e.g.`, `i.e.`, `vs.`, `approx.`, `dept.`, `govt.`).
+- Cleans markdown formatting, quotes, dashes, and wire bylines.
 
----
+### Component 2: TTS Worker Integration
+#### [MODIFY] [`backend/src/workers/ttsWorker.ts`](file:///d:/live-project/mobile_app_news/backend/src/workers/ttsWorker.ts)
+- Replace lines 44-50 (the buggy regex that replaces `’` with a space) with `normalizeForSpeech()`.
+- Ensure standard ASCII `'` inside words (`India's`, `don't`) is **never removed or replaced with space**.
+- Strip all `*`, `_`, `#`, and markdown characters so Edge-TTS never pronounces them.
 
-## 🚀 Step-by-Step Implementation Strategy
-
-### Step 1: Install `react-native-notify-kit`
-Install the community-maintained, TurboModule-ready Notifee fork designed specifically for Android BigPictureStyle, rich media, and Expo CNG in modern React Native:
-```bash
-npm install react-native-notify-kit
-```
-Add `"react-native-notify-kit"` to `plugins` in [`app.json`](file:///d:/live-project/mobile_app_news/app.json).
-
----
-
-### Step 2: Implement Inshorts-Style Notification Dispatcher ([`services/notificationService.ts`](file:///d:/live-project/mobile_app_news/services/notificationService.ts))
-Upgrade `triggerLocalDeviceNotification` and `scheduleDelayedNotification` to use `react-native-notify-kit` on Android:
-```typescript
-import notifee, { AndroidStyle, AndroidImportance } from 'react-native-notify-kit';
-
-public async triggerLocalDeviceNotification(
-    title: string,
-    body: string,
-    category: string,
-    article?: NewsItem,
-    imageUrl?: string | null
-) {
-    const validImage = imageUrl || article?.image || article?.imageUrl;
-    const cleanHeadline = title.replace(/^⚡\s*\d+\s*New\s+[^:]+:\s*/i, '').trim();
-    const cleanSummary = body.replace(/<[^>]+>/g, '').slice(0, 140).trim();
-
-    // 1. Create high-importance Android Notification Channel with sound & vibration
-    const channelId = await notifee.createChannel({
-        id: 'breaking-news',
-        name: 'NewsFlow Breaking Alerts',
-        importance: AndroidImportance.HIGH,
-        sound: 'default',
-        vibration: true,
-    });
-
-    // 2. Display identical Inshorts-grade notification with BigPicture & Share action
-    await notifee.displayNotification({
-        id: article?.id ? `news-${article.id}` : `news-${Date.now()}`,
-        title: cleanHeadline,
-        body: cleanSummary,
-        data: {
-            category,
-            articleId: article?.id,
-            articleUrl: article?.link,
-            imageUrl: validImage,
-        },
-        android: {
-            channelId,
-            importance: AndroidImportance.HIGH,
-            pressAction: {
-                id: 'default',
-            },
-            // 🖼️ INSHORTS BIG PICTURE HERO BANNER:
-            style: validImage
-                ? {
-                      type: AndroidStyle.BIGPICTURE,
-                      picture: validImage,
-                  }
-                : {
-                      type: AndroidStyle.BIGTEXT,
-                      text: cleanSummary,
-                  },
-            actions: [
-                {
-                    title: 'Share ↗',
-                    pressAction: { id: 'share' },
-                },
-            ],
-        },
-    });
-}
-```
+### Component 3: Frontend Karaoke Sync Protection
+#### [MODIFY] [`services/neuralVoicePlayer.ts`](file:///d:/live-project/mobile_app_news/services/neuralVoicePlayer.ts)
+- Update word boundary matching to use fuzzy prefix/stem matching so that expanded tokens (e.g. `₹100 Cr` spoken as *"100 crore rupees"*) cleanly highlight the corresponding on-screen card text without getting stuck.
 
 ---
 
-### Step 3: Handle Notification Action Clicks (Share & Open Story)
-Listen for notification action events (e.g., when the user taps "Share ↗" directly from the Android status bar):
-```typescript
-notifee.onForegroundEvent(async ({ type, detail }) => {
-    if (detail.pressAction?.id === 'share') {
-        const articleUrl = detail.notification?.data?.articleUrl;
-        const title = detail.notification?.title;
-        if (articleUrl) {
-            Share.share({ message: `${title}\n\nRead more on NewsFlow: ${articleUrl}` });
-        }
-    }
-});
-```
+## 🧪 Verification & Benchmark Plan
 
----
+### 1. Unit Tests ([`backend/src/test/speechNormalizer.test.ts`](file:///d:/live-project/mobile_app_news/backend/src/test/speechNormalizer.test.ts))
+- Test 1: `India’s economy is growing` -> `India's economy is growing` (no space, no dropped `'s`).
+- Test 2: `**Breaking:** Apple's new AI phone` -> `Breaking: Apple's new A.I. phone` (no asterisks, A.I. punctuated).
+- Test 3: `Growth was 8.2% vs. 7.5% e.g. in Q1` -> `Growth was 8.2 percent versus 7.5 percent for example in Q1`.
+- Test 4: `Company raised ₹500 Cr and $50M` -> `Company raised 500 crore rupees and 50 million dollars`.
 
-### Step 4: Backend Notification Payload Alignment ([`backend/src/services/deviceRegistryService.ts`](file:///d:/live-project/mobile_app_news/backend/src/services/deviceRegistryService.ts))
-Ensure the backend push dispatcher includes both Expo and FCM-compliant image keys:
-```typescript
-data: {
-    articleId: latestArticle.id,
-    category: latestArticle.category,
-    url: latestArticle.url,
-    imageUrl: latestArticle.imageUrl,
-    image: latestArticle.imageUrl,
-    bigPicture: latestArticle.imageUrl,
-}
-```
-
----
-
-### Step 5: Verification & Testing
-1. **Local Notification Test**: Trigger a test notification via `NotificationManager.triggerLocalDeviceNotification`.
-2. **Visual Verification**: Pull down Android notification shade and confirm:
-   - ✅ Big picture hero image expands edge-to-edge.
-   - ✅ Title and summary appear cleanly above and below image.
-   - ✅ "Share ↗" action button is clickable directly in the notification card.
-3. **Build Verification**: Run `npx tsc --noEmit` and EAS build / Expo export.
+### 2. Live Audio Synthesis Benchmark
+- Dispatch test payloads to `/api/v1/speech/synthesize` and listen to the audio output to confirm zero phonetic glitches on `en-IN-NeerjaNeural`.
