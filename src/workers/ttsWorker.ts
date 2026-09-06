@@ -1,6 +1,7 @@
 import { parentPort, isMainThread } from 'worker_threads';
 import { MsEdgeTTS, OUTPUT_FORMAT } from 'msedge-tts';
 import * as crypto from 'crypto';
+import { normalizeForSpeech } from '../utils/speechNormalizer.js';
 
 export interface TTSJobRequest {
     jobId: string;
@@ -40,13 +41,8 @@ export async function synthesizeSpeech(
         sentenceBoundaryEnabled: true,
     });
 
-    // Clean and normalize text, limiting oversized text chunks to 4000 characters to prevent Edge-TTS socket disconnect
-    let cleanText = text
-        .replace(/<[^>]*>/g, ' ')
-        .replace(/[^\x20-\x7E\u0900-\u097F\u00A0-\u024F.,!?'"-\s]/g, ' ')
-        .replace(/&/g, ' and ')
-        .replace(/\s+/g, ' ')
-        .trim();
+    // Clean, phonetically normalize, and expand speech tokens
+    let cleanText = normalizeForSpeech(text);
 
     if (cleanText.length > 4000) {
         cleanText = cleanText.slice(0, 4000);
