@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authenticateAdmin, requireRole } from '../middleware/adminAuth.js';
 import { AdminRole } from '@prisma/client';
 import { CmsAuthController } from '../controllers/cms/auth.controller.js';
+import { authBruteForceLimiter } from '../middlewares/rateLimiter.js';
 import { CmsArticleController } from '../controllers/cms/article.controller.js';
 import { CmsAiController } from '../controllers/cms/ai.controller.js';
 import { CmsStoryController } from '../controllers/cms/story.controller.js';
@@ -14,9 +15,10 @@ import { CmsAnalyticsController } from '../controllers/cms/analytics.controller.
 const router = Router();
 
 // ==========================================
-// 1. PUBLIC AUTH ROUTES
+// 1. PUBLIC AUTH ROUTES (Rate Limited)
 // ==========================================
-router.post('/auth/login', CmsAuthController.login);
+router.post('/auth/login', authBruteForceLimiter, CmsAuthController.login);
+router.post('/auth/logout', CmsAuthController.logout);
 
 // ==========================================
 // 2. PROTECTED CMS ROUTES (Require Admin Auth)

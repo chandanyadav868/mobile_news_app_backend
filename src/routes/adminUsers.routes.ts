@@ -1,7 +1,11 @@
 import { Router } from 'express';
 import { AdminUsersController } from '../controllers/adminUsers.controller.js';
+import { adminWebGuard } from '../middleware/adminWebGuard.js';
 
 const router = Router();
+
+// Require administrative authentication for all user management endpoints
+router.use(adminWebGuard);
 
 // GET /api/v1/admin/users - Query list with filters & stats
 router.get('/', AdminUsersController.getUsers);

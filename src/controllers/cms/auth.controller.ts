@@ -86,6 +86,14 @@ export class CmsAuthController {
                 role: admin.role,
             });
 
+            // Set secure browser cookie for instant portal authorization
+            res.cookie('newsflow_admin_token', token, {
+                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+                httpOnly: false,
+                sameSite: 'lax',
+                path: '/',
+            });
+
             return res.json({
                 success: true,
                 token,
@@ -103,6 +111,14 @@ export class CmsAuthController {
                 error: error.message || 'Login failed.',
             });
         }
+    }
+
+    /**
+     * Admin Logout
+     */
+    static async logout(_req: Request, res: Response) {
+        res.clearCookie('newsflow_admin_token', { path: '/' });
+        return res.json({ success: true, message: 'Admin logged out successfully' });
     }
 
     /**

@@ -255,3 +255,30 @@ Articles older than 30 days are automatically deleted **EXCEPT** when protected 
 * **Automated Cron**: Executes every night at 02:30 AM (`30 2 * * *`) via `lifecycleWorker.ts`.
 * **REST API Trigger**: `POST /api/v1/dashboard/trigger-lifecycle` (returns JSON telemetry report).
 * **Visual Admin Explorer**: Click the purple **"🧹 Run 14d Prune & 30d Retention"** button at `http://localhost:4000/admin/database`.
+
+---
+
+## 🛡️ Enterprise Security, Threat Defense & APM Monitoring
+
+NewsFlow backend enforces banking-grade zero-trust access control and real-time security auditing:
+
+### 1. Zero-Trust Admin Access Gate (`adminWebGuard`)
+All administrative web portals and management API endpoints are shielded behind `adminWebGuard`:
+* **Protected Portals**: `/admin/database`, `/admin/users`, `/admin/images`, `/admin/cms`, `/admin/telemetry`, `/campaigns`, `/testers`, `/email-studio`.
+* **Zero-Trust Challenge Screen**: Unauthenticated browser visits are intercepted by the **NewsFlow CyberShield Access Gate**, rendering a dark-mode, animated authentication modal.
+* **Authentication Vector**: Validates JWT session cookies (`newsflow_admin_token`), Bearer headers, or the high-entropy master key `x-admin-key`.
+* **One-Click Sign-In**: Authenticating seamlessly writes a 7-day secure session cookie and reloads directly into the target dashboard.
+
+### 2. Multi-Tier Rate Limiting & Anti-Brute-Force
+* **Auth Endpoints (`/api/v1/auth/login`, `/api/v1/cms/auth/login`)**: Strict IP limit of **10 attempts per 15 minutes** via `authBruteForceLimiter`. Excess attempts automatically trigger security audit alerts.
+* **General API**: **120 requests/min** per IP (`apiRateLimiter`).
+* **Admin APIs**: **300 requests/15 min** (`adminApiLimiter`).
+
+### 3. Sentry Performance & Threat Auditing (`sentry.ts`)
+* **Live APM**: Instruments request tracing, SQL query latency, and unhandled 500 error captures.
+* **Security Event Logging**: Audits unauthorized admin route probes, brute-force login attempts, and suspicious payloads with client IP tracing.
+
+### 4. Hardware-Backed Mobile Token Security (`expo-secure-store`)
+* Mobile authentication tokens (`@newsflow_auth_token_v1` and `@newsflow_restore_credential_v1`) are stored using **Android KeyStore** and **Apple iOS Keychain** with AES-256 GCM encryption.
+* Transparent automatic migration guarantees zero user disruption when upgrading from legacy plaintext storage.
+
