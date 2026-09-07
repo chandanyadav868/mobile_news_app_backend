@@ -21,6 +21,7 @@ import { CmsDashboardController } from './controllers/cmsDashboard.controller.js
 import { BetaController } from './controllers/betaController.js';
 import { AdminUsersController } from './controllers/adminUsers.controller.js';
 import { MediaDashboardController } from './controllers/mediaDashboard.controller.js';
+import { PrivacyController } from './controllers/privacy.controller.js';
 import { adminWebGuard } from './middleware/adminWebGuard.js';
 
 import { CmsSeedService } from './services/cmsSeedService.js';
@@ -54,7 +55,9 @@ app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 // ─── Static Uploads Folder ────────────────────────────────────────────────────
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
-// ─── Public Beta Tester Registration ──────────────────────────────────────────
+// ─── Public Beta Tester Registration & Legal Pages ───────────────────────────
+app.get('/privacy-policy', PrivacyController.renderPrivacyPolicy);
+app.get('/privacy', PrivacyController.renderPrivacyPolicy);
 app.get('/join-beta', BetaController.renderPublicLanding);
 app.get('/beta-testers', BetaController.renderPublicLanding);
 app.post('/api/beta/register', BetaController.registerTester);
