@@ -150,9 +150,16 @@ export async function getCategoryNews(req: Request, res: Response) {
       categoryParam.toLowerCase() === 'all' ||
       categoryParam === '⏰ Daily Dose';
 
+    // Google Play News Policy Freshness Clamp (< 90 days / 3 months)
+    const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
+
     const whereClause: any = isMainOrTrending
-      ? { OR: [{ country: { equals: country } }, { country: { equals: 'GLOBAL' } }] }
+      ? {
+          publishedAt: { gte: ninetyDaysAgo },
+          OR: [{ country: { equals: country } }, { country: { equals: 'GLOBAL' } }],
+        }
       : {
+          publishedAt: { gte: ninetyDaysAgo },
           category: { equals: categoryParam, mode: 'insensitive' },
           OR: [{ country: { equals: country } }, { country: { equals: 'GLOBAL' } }],
         };

@@ -22,6 +22,7 @@ import { BetaController } from './controllers/betaController.js';
 import { AdminUsersController } from './controllers/adminUsers.controller.js';
 import { MediaDashboardController } from './controllers/mediaDashboard.controller.js';
 import { PrivacyController } from './controllers/privacy.controller.js';
+import { ContactController } from './controllers/contact.controller.js';
 import { adminWebGuard } from './middleware/adminWebGuard.js';
 
 import { CmsSeedService } from './services/cmsSeedService.js';
@@ -55,7 +56,12 @@ app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 // ─── Static Uploads Folder ────────────────────────────────────────────────────
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
-// ─── Public Beta Tester Registration & Legal Pages ───────────────────────────
+// ─── Public Dedicated News Website, Contact & Legal Pages ─────────────────────
+app.get('/', ContactController.renderLandingPage);
+app.get('/home', ContactController.renderLandingPage);
+app.get('/contact', ContactController.renderContactPage);
+app.get('/contact-us', ContactController.renderContactPage);
+app.get('/about', ContactController.renderAboutPage);
 app.get('/privacy-policy', PrivacyController.renderPrivacyPolicy);
 app.get('/privacy', PrivacyController.renderPrivacyPolicy);
 app.get('/join-beta', BetaController.renderPublicLanding);
