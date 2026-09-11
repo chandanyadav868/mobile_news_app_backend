@@ -12,6 +12,7 @@ import adminUsersRoutes from './adminUsers.routes.js';
 import mediaRoutes from './media.routes.js';
 import { DashboardController } from '../controllers/dashboardController.js';
 import { BetaController } from '../controllers/betaController.js';
+import { SduiController } from '../controllers/sdui.controller.js';
 import { runFullLifecycleMaintenance } from '../workers/lifecycleWorker.js';
 
 const router = Router();
@@ -55,6 +56,10 @@ router.post('/dashboard/trigger-lifecycle', async (_req: Request, res: Response)
     res.status(500).json({ success: false, error: err?.message || 'Lifecycle execution failed' });
   }
 });
+
+// ─── Server-Driven UI (SDUI) Configuration Endpoint ──────────────────────────
+router.get('/config/ui', SduiController.getUiConfig);
+router.post('/config/ui', SduiController.updateUiConfig);
 
 router.get('/health', (_req: Request, res: Response) => {
   res.json({

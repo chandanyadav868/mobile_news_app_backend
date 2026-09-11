@@ -100,18 +100,18 @@ export class UniversalLlmService {
             providers.sort((a, b) => (a.id === params.preferredProvider ? -1 : 1));
         }
 
-        const systemPrompt = `You are a premier broadcast news anchor and audio journalist for NewsFlow.
-Transform the raw news text into a dynamic, compelling, rich 110 to 140-word news story (2-3 paragraphs) designed to be read effortlessly and spoken aloud by an AI voice anchor.
+        const systemPrompt = `You are an expert news editor who explains news in simple, crystal-clear, everyday English (Grade 6–8 reading level).
+Your mission: Make every story easy to read and understand in under 45 seconds using simple, familiar words.
 
-BROADCAST VOCAL & EDITORIAL RULES:
-1. CADENCE & TONE: Write with charismatic, energetic broadcast rhythm. Hook the listener in the first 5 words with active, immediate verbs.
-2. NATURAL HUMAN PHRASING: Strictly avoid robotic phrasing like "In a recent development", "It is important to note", "As per reports", or "Furthermore". Use direct, lively, conversational journalism.
-3. SPOKEN PHONETICS: Write exclusively in clean words and natural punctuation (commas and periods for breath pauses). Never include brackets, slashes, URLs, asterisks, or markdown symbols.
-4. FULL STORY COVERAGE: Provide complete, engaging context across 110 to 140 words (2-3 paragraphs) explaining the core event, why it matters, key figures/quotes, and upcoming impact.
-5. 3 CRISP BULLETS: Extract 3 distinct high-impact fact takeaways.
+STRICT EDITORIAL RULES:
+1. SIMPLE WORDS ONLY: Use simple, everyday words that any reader can understand effortlessly. Avoid difficult, academic, legal, or dense jargon. (For example, use "stopped" instead of "halted", "danger" instead of "peril", "agree" instead of "concur", "job" instead of "vocation").
+2. CRISP LENGTH: Exactly 60 to 75 words across 1 or 2 short paragraphs. Never exceed 80 words.
+3. CLEAR & DIRECT: Write short, active sentences. Hook the reader immediately with what happened and why it matters.
+4. SPOKEN PHONETICS: Write exclusively in clean words and natural punctuation. Never include brackets, slashes, URLs, asterisks, or markdown symbols.
+5. 3 SIMPLE BULLETS: Provide 3 short takeaway bullets written in plain, simple words.
 
 Return strict JSON only without markdown:
-{"headline":"Ultra-punchy spoken headline (under 10 words)","story":"Dynamic, comprehensive 120-word broadcast story (2-3 paragraphs) with natural speech rhythm, full context, and emotional hook.","bullets":["Impact fact 1","Impact fact 2","Impact fact 3"]}`;
+{"headline":"Simple, clear headline under 10 words","story":"Clear 60 to 75-word story in simple everyday English.","bullets":["Simple fact 1","Simple fact 2","Simple fact 3"]}`;
 
         const userPrompt = `Category: ${params.category || 'General'}
 Headline: ${cleanTitle}
@@ -126,9 +126,9 @@ ${cleanContent || cleanTitle}`;
                 schema: {
                     type: 'object',
                     properties: {
-                        headline: { type: 'string', description: 'Punchy headline (max 10 words)' },
-                        story: { type: 'string', description: 'Comprehensive 110-140 word news story across 2-3 paragraphs' },
-                        bullets: { type: 'array', items: { type: 'string' }, description: '3 key takeaway bullets' },
+                        headline: { type: 'string', description: 'Simple, clear headline (max 10 words)' },
+                        story: { type: 'string', description: 'Clear 60-75 word news story in simple everyday English across 1-2 paragraphs' },
+                        bullets: { type: 'array', items: { type: 'string' }, description: '3 simple key takeaway bullets' },
                     },
                     required: ['headline', 'story', 'bullets'],
                     additionalProperties: false,

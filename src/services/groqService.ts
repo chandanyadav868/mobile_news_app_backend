@@ -62,9 +62,10 @@ export class GroqService {
             ? [params.preferredModel, ...this.modelPool.filter((m) => m !== params.preferredModel)]
             : [...this.modelPool];
 
-        const systemPrompt = `You are an Inshorts news editor. Summarize raw news into an ultra-crisp 60-word story with 3 key takeaway bullets.
+        const systemPrompt = `You are an expert news editor who writes in simple everyday English (Grade 6–8 level).
+Summarize the raw news into an ultra-crisp 60 to 75-word story using simple, easy-to-understand words that anyone can read effortlessly. Never use complex or academic jargon.
 Return strict JSON only:
-{"headline":"Punchy headline (max 10 words)","story":"Crisp 60-word news story with full context.","bullets":["Key fact 1","Key fact 2","Key fact 3"]}
+{"headline":"Simple, clear headline under 10 words","story":"Clear 60-70 word story in plain everyday English.","bullets":["Simple fact 1","Simple fact 2","Simple fact 3"]}
 Do not include dates, author names, or fluff.`;
 
         const userPrompt = `Category: ${params.category || 'General'}
