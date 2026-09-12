@@ -46,6 +46,11 @@ export class GroqService {
         return cleaned;
     }
 
+    public static sanitizeOutputText(text: string): string {
+        if (!text) return '';
+        return text.replace(/\*{1,}/g, '').replace(/_{2,}/g, '').replace(/\s+/g, ' ').trim();
+    }
+
     /**
      * Summarize raw news article into an Inshorts-crisp 60-word story with auto-model rotation
      */
@@ -212,11 +217,11 @@ ${cleanContent || cleanTitle}`;
                     }
                 }
 
-                const headline = parsed.headline || cleanTitle;
-                const crispyStory = parsed.story || cleanContent.slice(0, 350);
-                const bulletPoints = Array.isArray(parsed.bullets) && parsed.bullets.length > 0
+                const headline = GroqService.sanitizeOutputText(parsed.headline || cleanTitle);
+                const crispyStory = GroqService.sanitizeOutputText(parsed.story || cleanContent.slice(0, 350));
+                const bulletPoints = (Array.isArray(parsed.bullets) && parsed.bullets.length > 0
                     ? parsed.bullets
-                    : [cleanTitle];
+                    : [cleanTitle]).map((b: string) => GroqService.sanitizeOutputText(b));
 
                 // Record usage in Telemetry
                 TelemetryService.recordAiUsage({

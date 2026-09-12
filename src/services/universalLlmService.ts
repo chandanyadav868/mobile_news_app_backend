@@ -80,6 +80,11 @@ export class UniversalLlmService {
         return cleaned;
     }
 
+    public static sanitizeOutputText(text: string): string {
+        if (!text) return '';
+        return text.replace(/\*{1,}/g, '').replace(/_{2,}/g, '').replace(/\s+/g, ' ').trim();
+    }
+
     /**
      * Summarizes news with automatic multi-provider cross-failover hand-off
      * Supports exactOnly mode for Studio testing (returning raw provider outputs without fallback)
@@ -181,9 +186,9 @@ ${cleanContent || cleanTitle}`;
                             const text = response.text || '{}';
                             const parsed = JSON.parse(text);
 
-                            const headline = parsed.headline || cleanTitle;
-                            const story = parsed.story || cleanContent.slice(0, 350);
-                            const bullets = Array.isArray(parsed.bullets) ? parsed.bullets : [headline];
+                            const headline = UniversalLlmService.sanitizeOutputText(parsed.headline || cleanTitle);
+                            const story = UniversalLlmService.sanitizeOutputText(parsed.story || cleanContent.slice(0, 350));
+                            const bullets = (Array.isArray(parsed.bullets) ? parsed.bullets : [headline]).map((b: string) => UniversalLlmService.sanitizeOutputText(b));
 
                             const promptTokens = Math.round(fullPrompt.length / 4);
                             const completionTokens = Math.round((headline.length + story.length) / 4);
@@ -336,11 +341,11 @@ ${cleanContent || cleanTitle}`;
                         }
                     }
 
-                    const headline = parsed.headline || cleanTitle;
-                    const crispyStory = parsed.story || cleanContent.slice(0, 350);
-                    const bulletPoints = Array.isArray(parsed.bullets) && parsed.bullets.length > 0
+                    const headline = UniversalLlmService.sanitizeOutputText(parsed.headline || cleanTitle);
+                    const crispyStory = UniversalLlmService.sanitizeOutputText(parsed.story || cleanContent.slice(0, 350));
+                    const bulletPoints = (Array.isArray(parsed.bullets) && parsed.bullets.length > 0
                         ? parsed.bullets
-                        : [cleanTitle];
+                        : [cleanTitle]).map((b: string) => UniversalLlmService.sanitizeOutputText(b));
 
                     TelemetryService.recordAiUsage({
                         model: `${provider.id}:${model}`,
@@ -381,9 +386,9 @@ ${cleanContent || cleanTitle}`;
         const bullets = sentences.slice(0, 3);
 
         return {
-            headline: cleanTitle,
-            crispyStory: leadStory || cleanTitle,
-            bulletPoints: bullets.length > 0 ? bullets : [cleanTitle],
+            headline: UniversalLlmService.sanitizeOutputText(cleanTitle),
+            crispyStory: UniversalLlmService.sanitizeOutputText(leadStory || cleanTitle),
+            bulletPoints: (bullets.length > 0 ? bullets : [cleanTitle]).map((b) => UniversalLlmService.sanitizeOutputText(b)),
             modelUsed: 'deterministic-lead3-fallback',
             providerUsed: 'Local Heuristic Engine',
             promptTokens: 0,

@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
 import { TTSService } from '../services/ttsService';
+import { spawn } from 'child_process';
+import * as path from 'path';
+import * as fs from 'fs';
 
 const AVAILABLE_NEURAL_VOICES = [
     { id: 'en-IN-NeerjaNeural', name: 'Neerja (Indian English - Studio Female)', gender: 'Female', locale: 'en-IN' },
@@ -162,5 +165,68 @@ export class SpeechController {
             success: true,
             voices: AVAILABLE_NEURAL_VOICES,
         });
+    }
+
+    /**
+     * POST /api/v1/speech/sano
+     * Body: { text: string, voice?: string }
+     */
+    public static async synthesizeSano(req: Request, res: Response): Promise<void> {
+        try {
+            const { text, voice } = req.body;
+            if (!text || typeof text !== 'string' || !text.trim()) {
+                res.status(400).json({ success: false, error: 'Text field is required' });
+                return;
+            }
+
+            const chosenVoice = voice || 'amy';
+            const startTime = Date.now();
+
+            let scriptPath = path.resolve(__dirname, '../scripts/sano_synth.py');
+            if (!fs.existsSync(scriptPath)) {
+                scriptPath = path.resolve(process.cwd(), 'src/scripts/sano_synth.py');
+            }
+            if (!fs.existsSync(scriptPath)) {
+                scriptPath = path.resolve(process.cwd(), 'dist/scripts/sano_synth.py');
+            }
+
+            const pythonBin = process.env.PYTHON_BIN || (process.platform === 'win32' ? 'python' : 'python3');
+            const pyProcess = spawn(pythonBin, [scriptPath, text.trim(), chosenVoice]);
+
+            let stdoutData = '';
+            let stderrData = '';
+
+            pyProcess.stdout.on('data', (data) => {
+                stdoutData += data.toString();
+            });
+
+            pyProcess.stderr.on('data', (data) => {
+                stderrData += data.toString();
+            });
+
+            pyProcess.on('close', (code) => {
+                if (code !== 0 || !stdoutData) {
+                    console.error('SanoTTS Python Error:', stderrData || 'No output');
+                    res.status(500).json({ success: false, error: stderrData || 'SanoTTS synthesis failed' });
+                    return;
+                }
+
+                try {
+                    const parsed = JSON.parse(stdoutData.trim());
+                    const elapsedMs = Date.now() - startTime;
+                    console.log(`⚡ [SanoTTS Backend] Generated audio for "${text.slice(0, 30)}..." in ${elapsedMs}ms (${chosenVoice})`);
+                    res.status(200).json({
+                        ...parsed,
+                        latencyMs: elapsedMs,
+                    });
+                } catch (parseErr) {
+                    console.error('SanoTTS Parse Error:', parseErr, stdoutData.slice(0, 200));
+                    res.status(500).json({ success: false, error: 'Failed to parse SanoTTS audio response' });
+                }
+            });
+        } catch (err: any) {
+            console.error('SanoTTS synthesize error:', err);
+            res.status(500).json({ success: false, error: err.message || 'SanoTTS error' });
+        }
     }
 }

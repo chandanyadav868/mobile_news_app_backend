@@ -38,7 +38,6 @@ export const RSS_FEEDS: Record<string, string[]> = {
   Entertainment: [
     "https://deadline.com/category/box-office/feed/",
     "https://www.bollywoodhungama.com/rss/news.xml",
-    "https://indianexpress.com/section/entertainment/bollywood/feed/",
     "https://www.thehindu.com/entertainment/reviews/feeder/default.rss",
     "https://www.news18.com/commonfeeds/v1/eng/rss/entertainment.xml",
     "https://timesofindia.indiatimes.com/rssfeedsvideo/3812908.cms",
@@ -51,7 +50,6 @@ export const RSS_FEEDS: Record<string, string[]> = {
   "Box Office": [
     "https://deadline.com/category/box-office/feed/",
     "https://www.bollywoodhungama.com/rss/news.xml",
-    "https://indianexpress.com/section/entertainment/bollywood/feed/",
     "https://collider.com/tag/box-office/feed/",
     "https://www.filmibeat.com/rss/filmibeat-bollywood-fb.xml",
   ],

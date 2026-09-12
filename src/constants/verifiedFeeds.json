@@ -7,12 +7,6 @@
       "category": "Top Stories"
     },
     {
-      "title": "The Indian Express - National News",
-      "url": "https://indianexpress.com/section/india/feed/",
-      "country": "IN",
-      "category": "Top Stories"
-    },
-    {
       "title": "NDTV News - Top Stories",
       "url": "https://feeds.feedburner.com/ndtvnews-top-stories",
       "country": "IN",
@@ -492,12 +486,6 @@
       "title": ": Tech",
       "url": "https://globalnews.ca/tech/feed/",
       "country": "CA",
-      "category": "Technology"
-    },
-    {
-      "title": "Technology | The Indian Express",
-      "url": "https://indianexpress.com/section/technology/feed/",
-      "country": "IN",
       "category": "Technology"
     },
     {
@@ -1008,12 +996,6 @@
       "title": "BBC Sport - Cricket Headlines",
       "url": "http://feeds.bbci.co.uk/sport/cricket/rss.xml",
       "country": "GLOBAL",
-      "category": "Sports"
-    },
-    {
-      "title": "The Indian Express - Sports Desk",
-      "url": "https://indianexpress.com/section/sports/feed/",
-      "country": "IN",
       "category": "Sports"
     },
     {
@@ -1683,12 +1665,6 @@
   ],
   "Politics": [
     {
-      "title": "The Indian Express - Politics Desk",
-      "url": "https://indianexpress.com/section/political-pulse/feed/",
-      "country": "IN",
-      "category": "Politics"
-    },
-    {
       "title": "NDTV - Top Politics",
       "url": "https://feeds.feedburner.com/ndtvnews-top-stories",
       "country": "IN",
@@ -1953,12 +1929,6 @@
     {
       "title": "The Hindu - Cricket Desk",
       "url": "https://www.thehindu.com/sport/cricket/feeder/default.rss",
-      "country": "IN",
-      "category": "Cricket"
-    },
-    {
-      "title": "The Indian Express - Cricket News",
-      "url": "https://indianexpress.com/section/sports/cricket/feed/",
       "country": "IN",
       "category": "Cricket"
     },

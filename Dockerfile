@@ -34,8 +34,9 @@ COPY rss-catalog ./rss-catalog/
 # Build TypeScript to dist/ using tsc with skipLibCheck to guarantee clean build
 RUN tsc --skipLibCheck || ./node_modules/.bin/tsc --skipLibCheck || npx tsc --skipLibCheck
 
-# Copy constants JSON to dist/constants/ in builder stage
+# Copy constants JSON and Python scripts to dist/ in builder stage
 RUN mkdir -p /app/dist/constants && cp -r /app/src/constants/* /app/dist/constants/ || true
+RUN mkdir -p /app/dist/scripts && cp -r /app/src/scripts/* /app/dist/scripts/ || true
 
 # ─── Stage 2: Production Runner ────────────────────────────────────────────────
 FROM node:20-alpine AS runner
@@ -44,9 +45,14 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=4000
+ENV PYTHON_BIN=python3
 
-# Install OpenSSL for Prisma engine binary
-RUN apk add --no-cache openssl libc6-compat
+# Install OpenSSL for Prisma and Python3 + pip for SanoTTS neural synthesis
+RUN apk add --no-cache openssl libc6-compat python3 py3-pip py3-wheel
+
+# Copy Python requirements & install sanoTTS
+COPY requirements.txt ./
+RUN pip install --no-cache-dir --break-system-packages -r requirements.txt
 
 # Copy package descriptors
 COPY package*.json ./
@@ -55,10 +61,12 @@ COPY prisma ./prisma/
 # Copy pre-built, fully resolved node_modules from builder stage (includes generated Prisma client)
 COPY --from=builder /app/node_modules ./node_modules
 
-# Copy built code, verified feeds constants, and assets from builder stage
+# Copy built code, verified feeds constants, Python scripts, and assets from builder stage
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/src/constants ./src/constants
 COPY --from=builder /app/src/constants ./dist/constants
+COPY --from=builder /app/src/scripts ./src/scripts
+COPY --from=builder /app/src/scripts ./dist/scripts
 COPY --from=builder /app/rss-catalog ./rss-catalog
 
 # Copy entrypoint script
