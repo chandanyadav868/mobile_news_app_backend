@@ -252,7 +252,10 @@ ${cleanContent || cleanTitle}`;
                         ...(provider.defaultHeaders || {}),
                     };
 
-                    const requestTimeoutMs = provider.id === 'ollama' ? 14000 : 25000;
+                    const requestTimeoutMs = provider.id === 'ollama' ? 30000 : 25000;
+                    const isOllama = provider.id === 'ollama';
+                    const activeResponseFormat = isOllama ? { type: 'json_object' } : jsonSchemaFormat;
+                    const activeMaxTokens = isOllama ? 220 : 600;
 
                     // 1. Try json_schema / json_object structured payload
                     let response = await fetch(endpoint, {
@@ -266,8 +269,8 @@ ${cleanContent || cleanTitle}`;
                                 { role: 'user', content: userPrompt },
                             ],
                             temperature: 0.1,
-                            max_tokens: 600,
-                            response_format: jsonSchemaFormat,
+                            max_tokens: activeMaxTokens,
+                            response_format: activeResponseFormat,
                         }),
                     });
 
