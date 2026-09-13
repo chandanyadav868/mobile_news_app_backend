@@ -12,7 +12,8 @@ export interface ModelUsageMetric {
     completionTokensToday: number;
     totalTokensToday: number;
     lastLatencyMs: number;
-    status: 'ready' | 'active' | 'rate_limited' | 'error';
+    status: 'ready' | 'active' | 'rate_limited' | 'error' | 'disabled';
+    disabled?: boolean;
     lastUsedAt: string | null;
     errorsToday: number;
     rateLimitResetAt: string | null;
@@ -490,7 +491,7 @@ export class TelemetryService {
 
         const metric = this.modelMetrics.get(modelId);
         if (metric) {
-            metric.status = shouldEnable ? 'ready' : 'rate_limited';
+            metric.status = shouldEnable ? 'ready' : 'disabled';
             this.modelMetrics.set(modelId, metric);
         }
 
@@ -691,7 +692,11 @@ export class TelemetryService {
     public static async getFullTelemetry() {
         const sys = await this.getSystemMetrics();
 
-        const models = Array.from(this.modelMetrics.values());
+        const models = Array.from(this.modelMetrics.values()).map(m => ({
+            ...m,
+            status: this.disabledModels.has(m.model) ? 'disabled' : m.status,
+            disabled: this.disabledModels.has(m.model),
+        }));
         const totalTokensToday = models.reduce((acc, m) => acc + m.totalTokensToday, 0);
         const totalRequestsToday = models.reduce((acc, m) => acc + m.requestsToday, 0);
         const totalErrorsToday = models.reduce((acc, m) => acc + m.errorsToday, 0);

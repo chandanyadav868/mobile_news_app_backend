@@ -1232,7 +1232,11 @@ export class DashboardController {
                     body: JSON.stringify({ model: modelName }),
                 });
                 const json = await res.json();
-                if (!json.success) alert('Failed: ' + json.error);
+                if (json.success) {
+                    await fetchFallback();
+                } else {
+                    alert('Failed: ' + json.error);
+                }
             } catch (e) {
                 alert('Error toggling model: ' + e.message);
             }
@@ -1365,9 +1369,9 @@ export class DashboardController {
             const modelsContainer = document.getElementById('models-container');
             if (modelsContainer && modelsList.length > 0) {
                 modelsContainer.innerHTML = modelsList.map(m => {
-                    const isPaused = m.status === 'disabled';
-                    const isCooldown = m.status === 'cooldown';
-                    const isReady = m.status === 'ready';
+                    const isPaused = m.status === 'disabled' || m.disabled === true;
+                    const isCooldown = !isPaused && (m.status === 'cooldown' || m.status === 'rate_limited');
+                    const isReady = !isPaused && !isCooldown;
 
                     let statusBadgeClass = isPaused ? 'card-badge-paused' : isCooldown ? 'card-badge-cooldown' : 'card-badge-ready';
                     let statusLabel = isPaused ? '⏸️ PAUSED' : isCooldown ? '⏳ RATE-LIMITED' : '🟢 ACTIVE';
