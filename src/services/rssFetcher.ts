@@ -3,6 +3,7 @@ import Parser from 'rss-parser';
 import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
+import { env } from '../config/env.js';
 import { prisma } from '../config/db.js';
 import { invalidateFeedCache } from './cacheService.js';
 import { extractArticleContent } from './articleExtractor.js';

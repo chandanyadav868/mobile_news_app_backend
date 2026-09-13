@@ -251,7 +251,7 @@ ${cleanContent || cleanTitle}`;
                             }
                             // Silent model rotation without terminal clutter
                             // console.warn(`⚠️ [Google Gemini] Model "${model}" failed: ${geminiErr.message}. Rotating to next tier...`);
-                            TelemetryService.recordAiError({
+                            TelemetryService.recordModelError({
                                 model,
                                 error: geminiErr.message || 'Gemini API call failed',
                                 statusCode: geminiErr.status || (geminiErr.message?.includes('429') ? 429 : 500),
