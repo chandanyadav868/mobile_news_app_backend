@@ -563,8 +563,11 @@ export async function ingestAllFeeds(): Promise<{
           modelUsed = 'RSS-Direct (0 tokens)';
           TelemetryService.incrementFunnel('directSaved', 1);
         } else {
-          // 🟢 High-Speed Multi-Model Rotation: Alternate dynamically between Groq Cloud & Mistral AI
+          // 🟢 High-Speed Multi-Model Rotation: Alternate dynamically between Local Container, Groq Cloud & Mistral AI
           const rotatingEngines = [
+            ...(env.LOCAL_LLM_ENABLED !== 'false' && !UniversalLlmService.isLocalLlmBusy
+              ? [{ provider: 'ollama', model: env.OLLAMA_MODEL || 'qwen2.5:0.5b' }]
+              : []),
             { provider: 'groq', model: 'qwen/qwen3.8-27b' },
             { provider: 'mistral', model: 'mistral-small-latest' },
             { provider: 'groq', model: 'openai/gpt-oss-120b' },

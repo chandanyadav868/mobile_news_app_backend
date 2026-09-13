@@ -24,6 +24,9 @@ export interface LlmProviderConfig {
 }
 
 export class UniversalLlmService {
+    // Concurrency Lock: Indicates if the local container LLM is actively evaluating a job
+    public static isLocalLlmBusy = false;
+
     // Multi-Provider AI Mesh: Local Ollama (Qwen 2.5) + Groq Cloud LPU + Mistral AI Serverless
     private static getProviders(): LlmProviderConfig[] {
         const providers: LlmProviderConfig[] = [];
@@ -37,8 +40,6 @@ export class UniversalLlmService {
                 apiKey: 'ollama-local',
                 models: [
                     env.OLLAMA_MODEL || 'qwen2.5:0.5b',
-                    'qwen2.5:0.5b',
-                    'qwen2.5:1.5b',
                 ],
             });
         }
@@ -133,6 +134,9 @@ STRICT EDITORIAL RULES:
 Return strict JSON only without markdown:
 {"headline":"Simple, clear headline under 10 words","story":"Clear 60 to 75-word story in simple everyday English.","bullets":["Simple fact 1","Simple fact 2","Simple fact 3"]}`;
 
+        // Highly-compact system prompt for local 0.5B container to speed up CPU prompt evaluation by 70%
+        const localCompactSystemPrompt = `You are an Inshorts news editor. Summarize this news in simple English in 60-70 words with 3 bullet takeaways. Output strict JSON only: {"headline":"Headline under 10 words","story":"60-70 words story","bullets":["Fact 1","Fact 2","Fact 3"]}`;
+
         const userPrompt = `Category: ${params.category || 'General'}
 Headline: ${cleanTitle}
 
@@ -159,8 +163,14 @@ ${cleanContent || cleanTitle}`;
 
         let lastError: any = null;
 
-        // Iterate through Provider Chain (Gemini -> Mistral -> Cloudflare -> Groq)
+        // Iterate through Provider Chain (Ollama -> Groq -> Mistral)
         for (const provider of providers) {
+            // Concurrency Protection: If local Ollama is busy and this is an auto-rotate request, skip directly to fast cloud providers!
+            if (provider.id === 'ollama' && !params.exactOnly && UniversalLlmService.isLocalLlmBusy) {
+                console.log('⚡ [AI Mesh] Local Ollama is busy with active inference. Auto-routing to cloud provider...');
+                continue;
+            }
+
             let models = provider.models;
             if (params.preferredModel) {
                 if (params.exactOnly) {
@@ -180,6 +190,12 @@ ${cleanContent || cleanTitle}`;
                 }
 
                 const startTime = Date.now();
+                const isOllama = provider.id === 'ollama';
+
+                if (isOllama) {
+                    UniversalLlmService.isLocalLlmBusy = true;
+                }
+
                 try {
                     // Special handler for Google Gemini GenAI SDK
                     if (provider.id === 'gemini') {
@@ -235,7 +251,7 @@ ${cleanContent || cleanTitle}`;
                             }
                             // Silent model rotation without terminal clutter
                             // console.warn(`⚠️ [Google Gemini] Model "${model}" failed: ${geminiErr.message}. Rotating to next tier...`);
-                            TelemetryService.recordModelError({
+                            TelemetryService.recordAiError({
                                 model,
                                 error: geminiErr.message || 'Gemini API call failed',
                                 statusCode: geminiErr.status || (geminiErr.message?.includes('429') ? 429 : 500),
@@ -252,49 +268,55 @@ ${cleanContent || cleanTitle}`;
                         ...(provider.defaultHeaders || {}),
                     };
 
-                    const requestTimeoutMs = provider.id === 'ollama' ? 30000 : 25000;
-                    const isOllama = provider.id === 'ollama';
+                    // Local CPU inference needs generous 75s headroom for cold start or queue
+                    const requestTimeoutMs = isOllama ? 75000 : 25000;
                     const activeResponseFormat = isOllama ? { type: 'json_object' } : jsonSchemaFormat;
-                    const activeMaxTokens = isOllama ? 220 : 600;
+                    const activeMaxTokens = isOllama ? 140 : 600;
+                    const activeSystemPrompt = isOllama ? localCompactSystemPrompt : systemPrompt;
+
+                    const basePayload: any = {
+                        model,
+                        messages: [
+                            { role: 'system', content: activeSystemPrompt },
+                            { role: 'user', content: userPrompt },
+                        ],
+                        temperature: 0.1,
+                        max_tokens: activeMaxTokens,
+                        response_format: activeResponseFormat,
+                    };
+
+                    // Restrict context slots and prediction length for Ollama to optimize pure CPU throughput
+                    if (isOllama) {
+                        basePayload.options = {
+                            num_ctx: 1024,
+                            num_predict: 140,
+                            temperature: 0.1,
+                        };
+                    }
 
                     // 1. Try json_schema / json_object structured payload
                     let response = await fetch(endpoint, {
                         method: 'POST',
                         headers,
                         signal: AbortSignal.timeout(requestTimeoutMs),
-                        body: JSON.stringify({
-                            model,
-                            messages: [
-                                { role: 'system', content: systemPrompt },
-                                { role: 'user', content: userPrompt },
-                            ],
-                            temperature: 0.1,
-                            max_tokens: activeMaxTokens,
-                            response_format: activeResponseFormat,
-                        }),
+                        body: JSON.stringify(basePayload),
                     });
 
                     // 2. Fallback to json_object if json_schema fails on specific provider
-                    if (response.status === 400) {
+                    if (response.status === 400 && !isOllama) {
                         response = await fetch(endpoint, {
                             method: 'POST',
                             headers,
                             signal: AbortSignal.timeout(requestTimeoutMs),
                             body: JSON.stringify({
-                                model,
-                                messages: [
-                                    { role: 'system', content: systemPrompt },
-                                    { role: 'user', content: userPrompt },
-                                ],
-                                temperature: 0.1,
-                                max_tokens: 600,
+                                ...basePayload,
                                 response_format: { type: 'json_object' },
                             }),
                         });
                     }
 
                     // 3. Fallback to standard chat completion
-                    if (response.status === 400) {
+                    if (response.status === 400 && !isOllama) {
                         response = await fetch(endpoint, {
                             method: 'POST',
                             headers,
@@ -302,7 +324,7 @@ ${cleanContent || cleanTitle}`;
                             body: JSON.stringify({
                                 model,
                                 messages: [
-                                    { role: 'system', content: `${systemPrompt}\n\nReturn strict JSON only.` },
+                                    { role: 'system', content: `${activeSystemPrompt}\n\nReturn strict JSON only.` },
                                     { role: 'user', content: userPrompt },
                                 ],
                                 temperature: 0.1,
@@ -395,6 +417,10 @@ ${cleanContent || cleanTitle}`;
                     // console.warn(`❌ [${provider.name}] Exception with model "${model}":`, err.message);
                     if (params.exactOnly) {
                         throw err;
+                    }
+                } finally {
+                    if (isOllama) {
+                        UniversalLlmService.isLocalLlmBusy = false;
                     }
                 }
             }

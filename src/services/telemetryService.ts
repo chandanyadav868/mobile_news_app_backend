@@ -85,8 +85,25 @@ export class TelemetryService {
     // Set of manually disabled models by user (empty by default so all Groq & Mistral models rotate)
     private static disabledModels: Set<string> = new Set<string>();
 
-    // Per-Model Accounting Map (Groq Cloud + Mistral AI Fleet)
+    // Per-Model Accounting Map (Local Container + Groq Cloud + Mistral AI Fleet)
     private static modelMetrics: Map<string, ModelUsageMetric> = new Map([
+        [
+            'qwen2.5:0.5b',
+            {
+                model: 'qwen2.5:0.5b',
+                displayName: 'Local Qwen 2.5 0.5B (Container)',
+                tier: 0,
+                requestsToday: 0,
+                promptTokensToday: 0,
+                completionTokensToday: 0,
+                totalTokensToday: 0,
+                lastLatencyMs: 0,
+                status: 'ready',
+                lastUsedAt: null,
+                errorsToday: 0,
+                rateLimitResetAt: null,
+            },
+        ],
         [
             'qwen/qwen3.8-27b',
             {
@@ -387,11 +404,11 @@ export class TelemetryService {
     }
 
     /**
-     * Normalize model identifiers to canonical names (e.g. groq:qwen/qwen3.8-27b -> qwen/qwen3.8-27b)
+     * Normalize model identifiers to canonical names (e.g. ollama:qwen2.5:0.5b -> qwen2.5:0.5b)
      */
     public static normalizeModelKey(rawModel: string): string {
         if (!rawModel) return 'unknown';
-        return rawModel.replace(/^(groq:|mistral:)/i, '');
+        return rawModel.replace(/^(ollama:|groq:|mistral:)/i, '');
     }
 
     /**
@@ -405,10 +422,12 @@ export class TelemetryService {
         articleTitle?: string;
     }) {
         const canonicalKey = this.normalizeModelKey(params.model);
+        const isLocal = canonicalKey.startsWith('qwen2.5') || canonicalKey.includes('ollama');
+
         const metric = this.modelMetrics.get(canonicalKey) || this.modelMetrics.get(params.model) || {
             model: canonicalKey,
-            displayName: canonicalKey,
-            tier: 2,
+            displayName: isLocal ? 'Local Qwen 2.5 0.5B (Container)' : canonicalKey,
+            tier: isLocal ? 0 : 2,
             requestsToday: 0,
             promptTokensToday: 0,
             completionTokensToday: 0,
@@ -434,7 +453,7 @@ export class TelemetryService {
 
         this.addLog({
             type: 'ai_request',
-            model: params.model,
+            model: canonicalKey,
             tokens: total,
             latencyMs: params.latencyMs,
             status: 'success',
@@ -495,10 +514,13 @@ export class TelemetryService {
         statusCode?: number;
         articleTitle?: string;
     }) {
-        const metric = this.modelMetrics.get(params.model) || {
-            model: params.model,
-            displayName: params.model,
-            tier: 99,
+        const canonicalKey = this.normalizeModelKey(params.model);
+        const isLocal = canonicalKey.startsWith('qwen2.5') || canonicalKey.includes('ollama');
+
+        const metric = this.modelMetrics.get(canonicalKey) || this.modelMetrics.get(params.model) || {
+            model: canonicalKey,
+            displayName: isLocal ? 'Local Qwen 2.5 0.5B (Container)' : canonicalKey,
+            tier: isLocal ? 0 : 99,
             requestsToday: 0,
             promptTokensToday: 0,
             completionTokensToday: 0,
@@ -512,7 +534,7 @@ export class TelemetryService {
 
         metric.errorsToday += 1;
         metric.status = params.statusCode === 429 ? 'rate_limited' : 'error';
-        this.modelMetrics.set(params.model, metric);
+        this.modelMetrics.set(canonicalKey, metric);
 
         this.addLog({
             type: params.statusCode === 429 ? 'rate_limit' : 'error',

@@ -1123,7 +1123,7 @@ export class DashboardController {
         <section class="models-section">
             <div class="section-header">
                 <h2 class="section-title">🧠 Multi-Model AI Auto-Rotation & Failover Pool</h2>
-                <span class="val-sub">Groq Cloud LPU (Primary Ultra-Fast) • Mistral AI Serverless</span>
+                <span class="val-sub">Local Container (Ollama 100% Free / 24/7) • Groq Cloud LPU • Mistral AI Serverless</span>
             </div>
             <div class="models-list" id="models-container">
                 <!-- Populated dynamically via SSE -->
@@ -1145,7 +1145,6 @@ export class DashboardController {
                         <option value="">Auto-Rotate (Local Ollama ↔ Groq Cloud ↔ Mistral AI)</option>
                         <optgroup label="Local Ollama Container (24/7 Unlimited Free)">
                             <option value="qwen2.5:0.5b" selected>Qwen 2.5 0.5B (qwen2.5:0.5b) - Local Container</option>
-                            <option value="qwen2.5:1.5b">Qwen 2.5 1.5B (qwen2.5:1.5b) - Local Container</option>
                         </optgroup>
                         <optgroup label="Groq Cloud">
                             <option value="qwen/qwen3.8-27b">Groq Qwen 3.8 27B (qwen/qwen3.8-27b)</option>
@@ -1373,7 +1372,11 @@ export class DashboardController {
                     let statusBadgeClass = isPaused ? 'card-badge-paused' : isCooldown ? 'card-badge-cooldown' : 'card-badge-ready';
                     let statusLabel = isPaused ? '⏸️ PAUSED' : isCooldown ? '⏳ RATE-LIMITED' : '🟢 ACTIVE';
 
-                    const tierLabel = m.tier === 1 ? '⚡ Primary Groq LPU' : '🇪🇺 Mistral AI Serverless';
+                    const tierLabel = m.tier === 0
+                        ? '🏠 Local Container (100% Free / 24/7)'
+                        : m.tier === 1
+                            ? '⚡ Primary Groq LPU'
+                            : '🇪🇺 Mistral AI Serverless';
                     const reqCount = m.requestsToday || 0;
                     const tokCount = (m.totalTokensToday || 0).toLocaleString();
                     const lat = m.lastLatencyMs ? m.lastLatencyMs + 'ms' : '--';
@@ -1458,7 +1461,10 @@ export class DashboardController {
             const preferredModel = document.getElementById('test-model').value;
             const outputBox = document.getElementById('test-output');
 
-            btn.textContent = '⏳ Calling ' + (preferredModel || 'AI Mesh') + '...';
+            const isLocal = preferredModel && preferredModel.startsWith('qwen2.5');
+            btn.textContent = isLocal
+                ? '⏳ Generating via Local CPU Container (12–18s)...'
+                : '⏳ Calling ' + (preferredModel || 'AI Mesh') + '...';
             btn.disabled = true;
 
             try {
