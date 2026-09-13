@@ -24,11 +24,26 @@ export interface LlmProviderConfig {
 }
 
 export class UniversalLlmService {
-    // Dual High-Speed Rotating Providers: Groq Cloud LPU + Mistral AI Serverless
+    // Multi-Provider AI Mesh: Local Ollama (Qwen 2.5) + Groq Cloud LPU + Mistral AI Serverless
     private static getProviders(): LlmProviderConfig[] {
         const providers: LlmProviderConfig[] = [];
 
-        // 1. Groq Cloud (Primary Ultra-Fast LPU Engine: 500+ Tokens/sec)
+        // 0. Local Containerized LLM (Ollama - Qwen2.5-0.5B: 100% Free, Unlimited 24/7 Summarization)
+        if (env.OLLAMA_BASE_URL && env.LOCAL_LLM_ENABLED !== 'false') {
+            providers.push({
+                id: 'ollama',
+                name: 'Local Ollama (Qwen 2.5)',
+                baseUrl: env.OLLAMA_BASE_URL.replace(/\/chat\/completions\/?$/, '').replace(/\/$/, ''),
+                apiKey: 'ollama-local',
+                models: [
+                    env.OLLAMA_MODEL || 'qwen2.5:0.5b',
+                    'qwen2.5:0.5b',
+                    'qwen2.5:1.5b',
+                ],
+            });
+        }
+
+        // 1. Groq Cloud (Ultra-Fast LPU Engine: 500+ Tokens/sec)
         if (env.GROQ_API_KEY) {
             providers.push({
                 id: 'groq',
@@ -237,10 +252,13 @@ ${cleanContent || cleanTitle}`;
                         ...(provider.defaultHeaders || {}),
                     };
 
+                    const requestTimeoutMs = provider.id === 'ollama' ? 14000 : 25000;
+
                     // 1. Try json_schema / json_object structured payload
                     let response = await fetch(endpoint, {
                         method: 'POST',
                         headers,
+                        signal: AbortSignal.timeout(requestTimeoutMs),
                         body: JSON.stringify({
                             model,
                             messages: [
@@ -258,6 +276,7 @@ ${cleanContent || cleanTitle}`;
                         response = await fetch(endpoint, {
                             method: 'POST',
                             headers,
+                            signal: AbortSignal.timeout(requestTimeoutMs),
                             body: JSON.stringify({
                                 model,
                                 messages: [
@@ -276,6 +295,7 @@ ${cleanContent || cleanTitle}`;
                         response = await fetch(endpoint, {
                             method: 'POST',
                             headers,
+                            signal: AbortSignal.timeout(requestTimeoutMs),
                             body: JSON.stringify({
                                 model,
                                 messages: [

@@ -22,6 +22,9 @@ const envSchema = z.object({
   CLOUDFLARE_BASE_URL: z.string().default('https://api.cloudflare.com/client/v4/accounts'),
   JWT_SECRET: z.string().default('newsflow_super_secret_jwt_key_2026'),
   GOOGLE_WEB_CLIENT_ID: z.string().optional().default(''),
+  OLLAMA_BASE_URL: z.string().default('http://localhost:11434/v1'),
+  OLLAMA_MODEL: z.string().default('qwen2.5:0.5b'),
+  LOCAL_LLM_ENABLED: z.string().default('true'),
 });
 
 export const env = envSchema.parse(process.env);

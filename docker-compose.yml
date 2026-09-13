@@ -62,6 +62,49 @@ services:
     networks:
       - newsflow-network
 
+  # ─── Local LLM: Ollama (Qwen2.5-0.5B for 24/7 Unlimited Free Summarization) ─
+  ollama:
+    image: ollama/ollama:latest
+    container_name: newsflow_ollama
+    restart: always
+    environment:
+      - OLLAMA_KEEP_ALIVE=20m
+      - OLLAMA_NUM_PARALLEL=1
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    deploy:
+      resources:
+        limits:
+          memory: 1200M
+          cpus: '0.85'
+    networks:
+      - newsflow-network
+
+  # ─── Ollama Auto-Pull Service (Downloads Qwen2.5-0.5B on First Run) ───────────
+  ollama-pull:
+    image: curlimages/curl:latest
+    container_name: newsflow_ollama_pull
+    restart: "no"
+    depends_on:
+      - ollama
+    entrypoint: >
+      sh -c "
+        echo 'Waiting for Ollama to become ready...';
+        until curl -s http://ollama:11434/api/tags > /dev/null; do sleep 2; done;
+        echo 'Ollama is online! Checking if qwen2.5:0.5b is already installed...';
+        if curl -s http://ollama:11434/api/tags | grep -q 'qwen2.5:0.5b'; then
+          echo 'Model qwen2.5:0.5b is already present in persistent volume.';
+        else
+          echo 'Pulling qwen2.5:0.5b model into persistent volume...';
+          curl -s -X POST http://ollama:11434/api/pull -d '{\"name\":\"qwen2.5:0.5b\"}';
+          echo 'Model qwen2.5:0.5b successfully pulled!';
+        fi
+      "
+    networks:
+      - newsflow-network
+
   # ─── NewsFlow Production Backend Server ──────────────────────────────────────
   api:
     build:
@@ -80,6 +123,9 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-newsflow_user}:${POSTGRES_PASSWORD:-newsflow_secret_password}@postgres:5432/${POSTGRES_DB:-newsflow_db}?schema=public
       REDIS_URL: redis://redis:6379
       IMGPROXY_URL: http://imgproxy:8080
+      OLLAMA_BASE_URL: http://ollama:11434/v1
+      OLLAMA_MODEL: qwen2.5:0.5b
+      LOCAL_LLM_ENABLED: "true"
       CORS_ORIGIN: "*"
       RSS_INGEST_INTERVAL_MINUTES: 5
       READABILITY_MAX_CONCURRENCY: 3
@@ -110,6 +156,8 @@ volumes:
   postgres_data:
     driver: local
   redis_data:
+    driver: local
+  ollama_data:
     driver: local
 
 networks:

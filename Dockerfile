@@ -46,6 +46,9 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=4000
 ENV PYTHON_BIN=python3
+ENV OLLAMA_BASE_URL=http://ollama:11434/v1
+ENV OLLAMA_MODEL=qwen2.5:0.5b
+ENV LOCAL_LLM_ENABLED=true
 
 # Install OpenSSL for Prisma and Python3 + pip for SanoTTS neural synthesis
 RUN apk add --no-cache openssl libc6-compat python3 py3-pip py3-wheel

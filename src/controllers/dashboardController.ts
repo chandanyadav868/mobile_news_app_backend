@@ -1142,7 +1142,11 @@ export class DashboardController {
                 <div class="input-group">
                     <label>Preferred Model (Direct Test / Zero Fallback)</label>
                     <select id="test-model">
-                        <option value="">Auto-Rotate (Groq Cloud ↔ Mistral AI Balanced Fleet)</option>
+                        <option value="">Auto-Rotate (Local Ollama ↔ Groq Cloud ↔ Mistral AI)</option>
+                        <optgroup label="Local Ollama Container (24/7 Unlimited Free)">
+                            <option value="qwen2.5:0.5b" selected>Qwen 2.5 0.5B (qwen2.5:0.5b) - Local Container</option>
+                            <option value="qwen2.5:1.5b">Qwen 2.5 1.5B (qwen2.5:1.5b) - Local Container</option>
+                        </optgroup>
                         <optgroup label="Groq Cloud">
                             <option value="qwen/qwen3.8-27b">Groq Qwen 3.8 27B (qwen/qwen3.8-27b)</option>
                             <option value="openai/gpt-oss-120b">Groq GPT-OSS 120B (openai/gpt-oss-120b)</option>
