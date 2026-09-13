@@ -1531,7 +1531,7 @@ export class DashboardController {
                     await fetchFallback();
                     const statusStr = (json.data?.status || 'unknown').toUpperCase();
                     const msg = json.data?.message || '';
-                    alert('Local Container Status: ' + statusStr + '\n' + msg);
+                    alert('Local Container Status: ' + statusStr + ': ' + msg);
                 } else {
                     alert('Error checking status: ' + json.error);
                 }
