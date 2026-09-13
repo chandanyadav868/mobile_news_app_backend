@@ -110,6 +110,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: newsflow_api:latest
     container_name: newsflow_api
     restart: always
     depends_on:
@@ -134,17 +135,17 @@ services:
     networks:
       - newsflow-network
 
-  # ─── Prisma Studio Web GUI ───────────────────────────────────────────────────
+  # ─── Prisma Studio Web GUI (Reuses Built API Image - Zero Rebuild Overhead) ───
   studio:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: newsflow_api:latest
     container_name: newsflow_studio
     restart: always
     command: [ "npx", "prisma", "studio", "--port", "5555", "--browser", "none" ]
     depends_on:
       postgres:
         condition: service_healthy
+      api:
+        condition: service_started
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-newsflow_user}:${POSTGRES_PASSWORD:-newsflow_secret_password}@postgres:5432/${POSTGRES_DB:-newsflow_db}?schema=public
     ports:

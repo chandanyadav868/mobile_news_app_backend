@@ -9,7 +9,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Force development mode during build stage to bypass Coolify build-arg injection
-ARG NODE_ENV=development
+ARG NODE_ENV
 ENV NODE_ENV=development
 ENV NPM_CONFIG_PRODUCTION=false
 
@@ -50,10 +50,10 @@ ENV OLLAMA_BASE_URL=http://ollama:11434/v1
 ENV OLLAMA_MODEL=qwen2.5:0.5b
 ENV LOCAL_LLM_ENABLED=true
 
-# Install OpenSSL for Prisma and Python3 + pip for SanoTTS neural synthesis
-RUN apk add --no-cache openssl libc6-compat python3 py3-pip py3-wheel
+# Install OpenSSL for Prisma and Python3 + pip + pre-compiled py3-numpy (prevents slow C++ compile)
+RUN apk add --no-cache openssl libc6-compat python3 py3-pip py3-wheel py3-numpy
 
-# Copy Python requirements & install sanoTTS
+# Copy Python requirements & install sanoTTS (numpy is already satisfied by apk package)
 COPY requirements.txt ./
 RUN pip install --no-cache-dir --break-system-packages -r requirements.txt
 
