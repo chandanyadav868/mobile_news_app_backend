@@ -102,6 +102,92 @@ export class UniversalLlmService {
     }
 
     /**
+     * Ensures stories and bullets form complete, meaningful sentences without abrupt cut-offs.
+     * Drops trailing fragmented words or clauses and guarantees terminal punctuation.
+     */
+    public static cleanSentenceCompletion(text: string, minWords = 25): string {
+        if (!text) return '';
+        let cleaned = this.sanitizeOutputText(text);
+
+        // Remove any dangling punctuation at the end like commas, hyphens, colons
+        cleaned = cleaned.replace(/[\s,;:\-\–—]+$/, '');
+
+        // If text does not end with terminal punctuation (. ! ? " '), look for the last complete sentence
+        if (!/[.!?]["']?$/.test(cleaned)) {
+            const lastPeriod = cleaned.lastIndexOf('.');
+            const lastExcl = cleaned.lastIndexOf('!');
+            const lastQues = cleaned.lastIndexOf('?');
+            const lastTerminator = Math.max(lastPeriod, lastExcl, lastQues);
+
+            if (lastTerminator > 0) {
+                const candidate = cleaned.slice(0, lastTerminator + 1).trim();
+                const wordCount = candidate.split(/\s+/).filter(Boolean).length;
+                if (wordCount >= minWords) {
+                    cleaned = candidate;
+                } else {
+                    cleaned = cleaned + '.';
+                }
+            } else {
+                cleaned = cleaned + '.';
+            }
+        }
+        return cleaned;
+    }
+
+    /**
+     * Smart JSON extractor and repairer for LLM output strings that may miss closing brackets
+     */
+    public static parseOrRepairJson(rawStr: string, fallback: any): any {
+        if (!rawStr) return fallback;
+        try {
+            return JSON.parse(rawStr);
+        } catch {
+            // Attempt regex extraction
+            const jsonMatch = rawStr.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+                try {
+                    return JSON.parse(jsonMatch[0]);
+                } catch {
+                    // Try auto-repair missing braces
+                    try {
+                        let candidate = jsonMatch[0].trim();
+                        if (candidate.endsWith(',')) candidate = candidate.slice(0, -1);
+                        if (!candidate.endsWith('}')) {
+                            if (candidate.includes('"bullets"') && !candidate.includes(']')) {
+                                candidate += '"]}';
+                            } else {
+                                candidate += '"}';
+                            }
+                        }
+                        return JSON.parse(candidate);
+                    } catch {
+                        // proceed
+                    }
+                }
+            }
+            // Try extracting from first { to end of text
+            const firstBrace = rawStr.indexOf('{');
+            if (firstBrace !== -1) {
+                let partial = rawStr.slice(firstBrace).trim();
+                if (!partial.endsWith('}')) {
+                    partial = partial.replace(/,\s*$/, '');
+                    if (partial.includes('"bullets"') && !partial.includes(']')) {
+                        partial += '"]}';
+                    } else {
+                        partial += '"}';
+                    }
+                }
+                try {
+                    return JSON.parse(partial);
+                } catch {
+                    // ignore
+                }
+            }
+        }
+        return fallback;
+    }
+
+    /**
      * Summarizes news with automatic multi-provider cross-failover hand-off
      * Supports exactOnly mode for Studio testing (returning raw provider outputs without fallback)
      */
@@ -126,16 +212,21 @@ Your mission: Make every story easy to read and understand in under 45 seconds u
 
 STRICT EDITORIAL RULES:
 1. SIMPLE WORDS ONLY: Use simple, everyday words that any reader can understand effortlessly. Avoid difficult, academic, legal, or dense jargon. (For example, use "stopped" instead of "halted", "danger" instead of "peril", "agree" instead of "concur", "job" instead of "vocation").
-2. CRISP LENGTH: Exactly 60 to 75 words across 1 or 2 short paragraphs. Never exceed 80 words.
+2. CRISP LENGTH & COMPLETION: Exactly 55 to 75 words across 2 to 3 complete, well-formed sentences. Never stop mid-sentence. Always finish your thoughts with terminal punctuation. Never leave hanging words.
 3. CLEAR & DIRECT: Write short, active sentences. Hook the reader immediately with what happened and why it matters.
 4. SPOKEN PHONETICS: Write exclusively in clean words and natural punctuation. Never include brackets, slashes, URLs, asterisks, or markdown symbols.
-5. 3 SIMPLE BULLETS: Provide 3 short takeaway bullets written in plain, simple words.
+5. 3 COMPLETE BULLETS: Provide 3 distinct key takeaway bullets written in plain, complete sentences (8 to 15 words each).
 
 Return strict JSON only without markdown:
-{"headline":"Simple, clear headline under 10 words","story":"Clear 60 to 75-word story in simple everyday English.","bullets":["Simple fact 1","Simple fact 2","Simple fact 3"]}`;
+{"headline":"Simple, clear headline under 10 words","story":"Clear 55 to 75-word story in simple everyday English with complete sentences.","bullets":["Simple fact 1","Simple fact 2","Simple fact 3"]}`;
 
-        // Highly-compact system prompt for local 0.5B container to speed up CPU prompt evaluation by 70%
-        const localCompactSystemPrompt = `You are an Inshorts news editor. Summarize this news in simple English in 60-70 words with 3 bullet takeaways. Output strict JSON only: {"headline":"Headline under 10 words","story":"60-70 words story","bullets":["Fact 1","Fact 2","Fact 3"]}`;
+        // High-precision compact system prompt for local 0.5B container to guarantee complete, meaningful sentences without cutting off
+        const localCompactSystemPrompt = `You are a professional Inshorts news editor. Summarize this news story into an engaging, complete, and meaningful summary in simple English.
+RULES:
+1. Story: Exactly 55 to 70 words across 2 to 3 complete, coherent sentences. Never stop mid-sentence. Always finish thoughts with a full stop.
+2. Bullets: Exactly 3 complete, insightful takeaway facts (each 8 to 15 words).
+3. Headline: Catchy, clear headline under 10 words.
+4. Output STRICT JSON ONLY with keys "headline", "story", "bullets". No markdown, no preambles, no unfinished sentences.`;
 
         const userPrompt = `Category: ${params.category || 'General'}
 Headline: ${cleanTitle}
@@ -271,7 +362,7 @@ ${cleanContent || cleanTitle}`;
                     // Local CPU inference needs generous 75s headroom for cold start or queue
                     const requestTimeoutMs = isOllama ? 75000 : 25000;
                     const activeResponseFormat = isOllama ? { type: 'json_object' } : jsonSchemaFormat;
-                    const activeMaxTokens = isOllama ? 140 : 600;
+                    const activeMaxTokens = isOllama ? 350 : 600;
                     const activeSystemPrompt = isOllama ? localCompactSystemPrompt : systemPrompt;
 
                     const basePayload: any = {
@@ -280,17 +371,19 @@ ${cleanContent || cleanTitle}`;
                             { role: 'system', content: activeSystemPrompt },
                             { role: 'user', content: userPrompt },
                         ],
-                        temperature: 0.1,
+                        temperature: isOllama ? 0.15 : 0.1,
                         max_tokens: activeMaxTokens,
                         response_format: activeResponseFormat,
                     };
 
-                    // Restrict context slots and prediction length for Ollama to optimize pure CPU throughput
+                    // Optimize context slots and token predictions so local Ollama never cuts off mid-sentence
                     if (isOllama) {
                         basePayload.options = {
-                            num_ctx: 1024,
-                            num_predict: 140,
-                            temperature: 0.1,
+                            num_ctx: 2048,
+                            num_predict: 350,
+                            temperature: 0.15,
+                            repeat_penalty: 1.1,
+                            top_p: 0.9,
                         };
                     }
 
@@ -370,27 +463,39 @@ ${cleanContent || cleanTitle}`;
                     const usage = data.usage || { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 };
                     const rawContentStr = choice?.message?.content || '{}';
 
-                    let parsed: any;
-                    try {
-                        parsed = JSON.parse(rawContentStr);
-                    } catch {
-                        const jsonMatch = rawContentStr.match(/\{[\s\S]*\}/);
-                        if (jsonMatch) {
-                            try {
-                                parsed = JSON.parse(jsonMatch[0]);
-                            } catch {
-                                parsed = { headline: cleanTitle, story: cleanContent.slice(0, 300), bullets: [cleanTitle] };
+                    const parsed = UniversalLlmService.parseOrRepairJson(rawContentStr, {
+                        headline: cleanTitle,
+                        story: cleanContent.slice(0, 300),
+                        bullets: [cleanTitle],
+                    });
+
+                    const headline = UniversalLlmService.sanitizeOutputText(parsed.headline || cleanTitle);
+                    let crispyStory = UniversalLlmService.cleanSentenceCompletion(parsed.story || cleanContent.slice(0, 350));
+
+                    // Length & Quality Enforcement: If story is under 35 words and original text is rich, supplement it cleanly
+                    const storyWords = crispyStory.split(/\s+/).filter(Boolean).length;
+                    if (storyWords < 35 && cleanContent.length > 120) {
+                        const backupSentences = cleanContent.split(/[.!?]+/).map((s) => s.trim()).filter((s) => s.length > 20);
+                        for (const sent of backupSentences) {
+                            if (!crispyStory.toLowerCase().includes(sent.toLowerCase().slice(0, 25))) {
+                                crispyStory = UniversalLlmService.cleanSentenceCompletion(`${crispyStory} ${sent}`);
+                                if (crispyStory.split(/\s+/).filter(Boolean).length >= 50) break;
                             }
-                        } else {
-                            parsed = { headline: cleanTitle, story: cleanContent.slice(0, 300), bullets: [cleanTitle] };
                         }
                     }
 
-                    const headline = UniversalLlmService.sanitizeOutputText(parsed.headline || cleanTitle);
-                    const crispyStory = UniversalLlmService.sanitizeOutputText(parsed.story || cleanContent.slice(0, 350));
-                    const bulletPoints = (Array.isArray(parsed.bullets) && parsed.bullets.length > 0
-                        ? parsed.bullets
-                        : [cleanTitle]).map((b: string) => UniversalLlmService.sanitizeOutputText(b));
+                    // Bullet Points Enhancement: Strip bullet symbols, numbers, and filter trivial entries
+                    let bulletPoints: string[] = [];
+                    if (Array.isArray(parsed.bullets) && parsed.bullets.length > 0) {
+                        bulletPoints = parsed.bullets
+                            .map((b: any) => UniversalLlmService.sanitizeOutputText(String(b || '')))
+                            .map((b: string) => b.replace(/^[\s•\-\*\d\.\)]+/, '').trim())
+                            .filter((b: string) => b.length > 6);
+                    }
+                    if (bulletPoints.length === 0) {
+                        const sentences = (crispyStory || cleanContent || cleanTitle).split(/[.!?]+/).map((s) => s.trim()).filter((s) => s.length > 15);
+                        bulletPoints = sentences.slice(0, 3);
+                    }
 
                     TelemetryService.recordAiUsage({
                         model: `${provider.id}:${model}`,
