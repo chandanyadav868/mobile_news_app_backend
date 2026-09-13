@@ -167,6 +167,8 @@ export class SpeechController {
         });
     }
 
+    private static sanoCache: Map<string, any> = new Map();
+
     /**
      * POST /api/v1/speech/sano
      * Body: { text: string, voice?: string }
@@ -180,6 +182,20 @@ export class SpeechController {
             }
 
             const chosenVoice = voice || 'amy';
+            const cacheKey = `${chosenVoice}:${text.trim()}`;
+
+            // Instant cache return (0ms latency for repeating / reviewing articles)
+            if (SpeechController.sanoCache.has(cacheKey)) {
+                const cached = SpeechController.sanoCache.get(cacheKey);
+                console.log(`⚡ [SanoTTS Cache HIT] Delivered in 1ms for "${text.slice(0, 30)}..." (${chosenVoice})`);
+                res.status(200).json({
+                    ...cached,
+                    cached: true,
+                    latencyMs: 1,
+                });
+                return;
+            }
+
             const startTime = Date.now();
 
             let scriptPath = path.resolve(__dirname, '../scripts/sano_synth.py');
@@ -191,10 +207,27 @@ export class SpeechController {
             }
 
             const pythonBin = process.env.PYTHON_BIN || (process.platform === 'win32' ? 'python' : 'python3');
-            const pyProcess = spawn(pythonBin, [scriptPath, text.trim(), chosenVoice]);
+            const pyProcess = spawn(pythonBin, [scriptPath]);
+
+            // Stream text and voice safely via stdin
+            pyProcess.stdin.write(JSON.stringify({ text: text.trim(), voice: chosenVoice }));
+            pyProcess.stdin.end();
 
             let stdoutData = '';
             let stderrData = '';
+            let isClosed = false;
+
+            const processKillTimer = setTimeout(() => {
+                if (!isClosed) {
+                    isClosed = true;
+                    pyProcess.kill();
+                    res.status(504).json({
+                        success: false,
+                        error: 'SanoTTS process timed out after 75s',
+                        rectification: 'The audio text may be too long. SanoTTS has condensed to 26 words, but CPU load was saturated.',
+                    });
+                }
+            }, 75000);
 
             pyProcess.stdout.on('data', (data) => {
                 stdoutData += data.toString();
@@ -205,6 +238,10 @@ export class SpeechController {
             });
 
             pyProcess.on('close', (code) => {
+                if (isClosed) return;
+                isClosed = true;
+                clearTimeout(processKillTimer);
+
                 if (code !== 0 || !stdoutData) {
                     console.error('SanoTTS Python Error:', stderrData || 'No output');
                     res.status(500).json({ success: false, error: stderrData || 'SanoTTS synthesis failed' });
@@ -214,6 +251,27 @@ export class SpeechController {
                 try {
                     const parsed = JSON.parse(stdoutData.trim());
                     const elapsedMs = Date.now() - startTime;
+                    if (parsed.success === false) {
+                        console.error('SanoTTS Engine Failure:', parsed.error);
+                        res.status(parsed.isLanguageMismatch ? 400 : 500).json({
+                            success: false,
+                            error: parsed.error || 'SanoTTS Python engine reported failure',
+                            isLanguageMismatch: parsed.isLanguageMismatch || false,
+                            suggestedVoice: parsed.isLanguageMismatch ? 'hi-IN-SwaraNeural' : undefined,
+                            rectification: parsed.isLanguageMismatch
+                                ? 'Hindi text detected. Use Microsoft Edge-TTS Hindi (hi-IN-SwaraNeural).'
+                                : "Run 'pip install sanotts' in your Python environment and verify installation.",
+                        });
+                        return;
+                    }
+
+                    // Store in fast in-memory cache
+                    SpeechController.sanoCache.set(cacheKey, parsed);
+                    if (SpeechController.sanoCache.size > 200) {
+                        const oldestKey = SpeechController.sanoCache.keys().next().value;
+                        if (oldestKey) SpeechController.sanoCache.delete(oldestKey);
+                    }
+
                     console.log(`⚡ [SanoTTS Backend] Generated audio for "${text.slice(0, 30)}..." in ${elapsedMs}ms (${chosenVoice})`);
                     res.status(200).json({
                         ...parsed,
@@ -221,7 +279,7 @@ export class SpeechController {
                     });
                 } catch (parseErr) {
                     console.error('SanoTTS Parse Error:', parseErr, stdoutData.slice(0, 200));
-                    res.status(500).json({ success: false, error: 'Failed to parse SanoTTS audio response' });
+                    res.status(500).json({ success: false, error: 'Failed to parse SanoTTS audio response', raw: stdoutData.slice(0, 200) });
                 }
             });
         } catch (err: any) {

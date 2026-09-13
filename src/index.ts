@@ -36,13 +36,26 @@ const app = express();
 app.use(
   helmet({
     contentSecurityPolicy: false, // Allows inline styles in admin portals while enforcing X-Frame, XSS protection, and MIME sniffing prevention
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
   })
 );
 app.use(
   cors({
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'x-admin-key'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'Accept',
+      'Origin',
+      'x-admin-key',
+      'Cache-Control',
+      'X-Accel-Buffering',
+      'Last-Event-ID',
+      'Keep-Alive',
+    ],
+    exposedHeaders: ['Content-Length', 'Content-Type', 'X-Duration-Ms', 'X-Speech-Voice'],
   })
 );
 app.options('*', cors());
