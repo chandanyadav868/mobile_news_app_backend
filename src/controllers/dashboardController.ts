@@ -111,6 +111,38 @@ export class DashboardController {
     }
 
     /**
+     * GET /api/v1/dashboard/ollama/status
+     * Inspect Ollama container health, loaded model, and download progress
+     */
+    public static async getOllamaStatus(req: Request, res: Response): Promise<void> {
+        try {
+            const status = await TelemetryService.getOllamaStatus(true);
+            res.json({ success: true, data: status });
+        } catch (error: any) {
+            res.status(500).json({ success: false, error: error.message });
+        }
+    }
+
+    /**
+     * POST /api/v1/dashboard/ollama/pull
+     * Trigger background pull of Qwen 2.5 into persistent volume
+     */
+    public static async triggerOllamaPull(req: Request, res: Response): Promise<void> {
+        try {
+            const { model } = req.body;
+            const initiated = await TelemetryService.triggerOllamaPull(model);
+            res.json({
+                success: initiated,
+                message: initiated
+                    ? 'Model download initiated in Ollama container.'
+                    : 'Failed to initiate pull. Ensure Ollama container is running.',
+            });
+        } catch (error: any) {
+            res.status(500).json({ success: false, error: error.message });
+        }
+    }
+
+    /**
      * POST /api/v1/dashboard/summarize-test
      * Interactive test summarization across Multi-Provider AI Mesh (supports exactOnly direct model testing)
      */
@@ -645,6 +677,173 @@ export class DashboardController {
             color: #FFF;
         }
 
+        /* Local LLM Container & Download Progress Banner */
+        .ollama-banner {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .ollama-banner.ready {
+            border-color: rgba(16, 185, 129, 0.35);
+            background: linear-gradient(135deg, rgba(6, 78, 59, 0.2) 0%, rgba(15, 23, 42, 0.85) 100%);
+        }
+
+        .ollama-banner.downloading {
+            border-color: rgba(139, 92, 246, 0.5);
+            background: linear-gradient(135deg, rgba(88, 28, 135, 0.25) 0%, rgba(15, 23, 42, 0.85) 100%);
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.25);
+        }
+
+        .ollama-banner.offline {
+            border-color: rgba(239, 68, 68, 0.3);
+            background: linear-gradient(135deg, rgba(127, 29, 29, 0.2) 0%, rgba(15, 23, 42, 0.85) 100%);
+        }
+
+        .ollama-banner-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .ollama-banner-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .ollama-status-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .ollama-title-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .ollama-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #F8FAFC;
+        }
+
+        .ollama-status-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 999px;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .ollama-message {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin-top: 2px;
+        }
+
+        .ollama-metrics {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .ollama-metric-tag {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            gap: 6px;
+        }
+
+        .ollama-metric-tag .lbl {
+            color: var(--text-sub);
+        }
+
+        .ollama-metric-tag .val {
+            color: #F8FAFC;
+            font-weight: 600;
+        }
+
+        .ollama-progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+        }
+
+        .ollama-progress-bar {
+            height: 100%;
+            border-radius: 999px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(90deg, #10B981, #34D399);
+            position: relative;
+        }
+
+        .ollama-progress-bar.downloading {
+            background: linear-gradient(90deg, #6366F1, #8B5CF6, #EC4899, #6366F1);
+            background-size: 250% 100%;
+            animation: moveOllamaGradient 2s linear infinite;
+        }
+
+        @keyframes moveOllamaGradient {
+            0% { background-position: 250% 0; }
+            100% { background-position: 0 0; }
+        }
+
+        .ollama-progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-sub);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .btn-banner-action {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #F8FAFC;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-banner-action:hover {
+            background: rgba(255, 255, 255, 0.16);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
         /* Split View: Interactive Test Studio & Live Logs */
         .split-grid {
             display: grid;
@@ -1122,9 +1321,53 @@ export class DashboardController {
         <!-- Multi-Model AI Accounting Pool -->
         <section class="models-section">
             <div class="section-header">
-                <h2 class="section-title">🧠 Multi-Model AI Auto-Rotation & Failover Pool</h2>
-                <span class="val-sub">Local Container (Ollama 100% Free / 24/7) • Groq Cloud LPU • Mistral AI Serverless</span>
+                <div>
+                    <h2 class="section-title">🧠 Multi-Model AI Auto-Rotation & Failover Pool</h2>
+                    <span class="val-sub">Local Container (Ollama 100% Free / 24/7) • Groq Cloud LPU • Mistral AI Serverless</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-banner-action" onclick="checkOllamaStatus()" title="Probe Ollama daemon health">🔄 Check Status</button>
+                    <button class="btn-banner-action" onclick="pullOllamaModel()" id="btn-ollama-pull" title="Pull Qwen2.5-0.5B model layers into persistent container volume">⬇️ Pull Model (398 MB)</button>
+                </div>
             </div>
+
+            <!-- Dedicated Local Container Health & Download Progress Indicator Banner -->
+            <div class="ollama-banner" id="ollama-banner">
+                <div class="ollama-banner-top">
+                    <div class="ollama-banner-info">
+                        <div class="ollama-status-icon-box" id="ollama-icon-box">
+                            <span id="ollama-icon">🟢</span>
+                        </div>
+                        <div>
+                            <div class="ollama-title-row">
+                                <span class="ollama-title">Local LLM Container (Qwen2.5-0.5B • 398 MB)</span>
+                                <span class="ollama-status-badge card-badge-ready" id="ollama-badge">Checking Container...</span>
+                            </div>
+                            <div class="ollama-message" id="ollama-msg">Probing local Ollama daemon & model weights in container...</div>
+                        </div>
+                    </div>
+                    <div class="ollama-metrics">
+                        <div class="ollama-metric-tag"><span class="lbl">Memory:</span> <span class="val" id="ollama-mem">Resident in RAM</span></div>
+                        <div class="ollama-metric-tag"><span class="lbl">Cost:</span> <span class="val" style="color: #34D399;">$0.00 (Unlimited)</span></div>
+                    </div>
+                </div>
+
+                <!-- Animated Real-Time Download / Health Progress Bar -->
+                <div class="ollama-progress-container">
+                    <div class="ollama-progress-bar" id="ollama-progress-bar" style="width: 100%;"></div>
+                </div>
+
+                <div class="ollama-progress-labels">
+                    <span id="ollama-progress-detail">Checking local container state...</span>
+                    <span id="ollama-bytes-detail">398 MB Model Weights</span>
+                </div>
+
+                <!-- Production VPS Diagnostic Helper (shown if offline) -->
+                <div id="ollama-offline-hint" style="display: none; background: rgba(0,0,0,0.3); border: 1px dashed rgba(239,68,68,0.3); border-radius: 8px; padding: 8px 12px; font-size: 11px; color: #FCA5A5; font-family: 'JetBrains Mono', monospace;">
+                    💡 <strong>Production Notice:</strong> To boot Ollama on your Hostinger VPS, run: <code>docker compose up -d ollama ollama-pull</code> or add the Ollama container in Coolify. Cloud failover (Groq + Mistral) is currently handling all news summarization.
+                </div>
+            </div>
+
             <div class="models-list" id="models-container">
                 <!-- Populated dynamically via SSE -->
             </div>
@@ -1280,6 +1523,42 @@ export class DashboardController {
             }
         }
 
+        async function checkOllamaStatus() {
+            try {
+                const res = await fetch('/api/v1/dashboard/ollama/status');
+                const json = await res.json();
+                if (json.success) {
+                    await fetchFallback();
+                    const statusStr = (json.data?.status || 'unknown').toUpperCase();
+                    const msg = json.data?.message || '';
+                    alert('Local Container Status: ' + statusStr + '\n' + msg);
+                } else {
+                    alert('Error checking status: ' + json.error);
+                }
+            } catch (e) {
+                alert('Network error checking Ollama: ' + e.message);
+            }
+        }
+
+        async function pullOllamaModel() {
+            const btn = document.getElementById('btn-ollama-pull');
+            if (btn) btn.disabled = true;
+            try {
+                const res = await fetch('/api/v1/dashboard/ollama/pull', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ model: 'qwen2.5:0.5b' })
+                });
+                const json = await res.json();
+                alert(json.message || 'Pull request dispatched to container');
+                await fetchFallback();
+            } catch (e) {
+                alert('Pull error: ' + e.message);
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        }
+
         function updateAiButtonUi(enabled) {
             const btn = document.getElementById('ai-toggle-btn');
             const label = document.getElementById('ai-toggle-label');
@@ -1364,17 +1643,116 @@ export class DashboardController {
                 }
             }
 
+            // ─── Local LLM Container Health & Real-Time Download Progress ───
+            if (d.ollama) {
+                const o = d.ollama;
+                const banner = document.getElementById('ollama-banner');
+                const badge = document.getElementById('ollama-badge');
+                const msg = document.getElementById('ollama-msg');
+                const bar = document.getElementById('ollama-progress-bar');
+                const icon = document.getElementById('ollama-icon');
+                const detail = document.getElementById('ollama-progress-detail');
+                const bytesDetail = document.getElementById('ollama-bytes-detail');
+                const mem = document.getElementById('ollama-mem');
+                const hint = document.getElementById('ollama-offline-hint');
+
+                const pct = Math.max(0, Math.min(100, o.progressPercent ?? 0));
+                if (bar) {
+                    bar.style.width = pct + '%';
+                    if (o.status === 'downloading') {
+                        bar.classList.add('downloading');
+                    } else {
+                        bar.classList.remove('downloading');
+                    }
+                }
+
+                if (o.status === 'ready') {
+                    if (banner) banner.className = 'ollama-banner ready';
+                    if (icon) icon.textContent = '🟢';
+                    if (badge) {
+                        badge.textContent = '🟢 CONTAINER ONLINE & READY';
+                        badge.className = 'ollama-status-badge card-badge-ready';
+                    }
+                    if (msg) msg.textContent = o.message || 'Model qwen2.5:0.5b resident in container. Ready for 100% free local inference.';
+                    if (detail) detail.textContent = '100% Ready (Local Inference)';
+                    if (mem) mem.textContent = o.details?.inMemory ? 'Active in RAM (0s cold start)' : 'Cached / Ready';
+                    if (bytesDetail) {
+                        const sz = o.details?.sizeBytes ? (o.details.sizeBytes / 1024 / 1024).toFixed(0) + ' MB' : '398 MB';
+                        bytesDetail.textContent = sz + ' on Disk';
+                    }
+                    if (hint) hint.style.display = 'none';
+                } else if (o.status === 'downloading') {
+                    if (banner) banner.className = 'ollama-banner downloading';
+                    if (icon) icon.textContent = '⏳';
+                    if (badge) {
+                        badge.textContent = '⏳ DOWNLOADING MODEL WEIGHTS (' + pct + '%)';
+                        badge.className = 'ollama-status-badge card-badge-cooldown';
+                    }
+                    if (msg) msg.textContent = o.message || 'Pulling model layers from registry into persistent volume...';
+                    if (detail) detail.textContent = 'Downloading ' + (o.model || 'qwen2.5:0.5b') + ' (' + pct + '% complete)...';
+                    if (mem) mem.textContent = 'Pulling layers...';
+                    if (bytesDetail && o.details?.completedBytes && o.details?.totalBytes) {
+                        const comp = (o.details.completedBytes / 1024 / 1024).toFixed(1);
+                        const tot = (o.details.totalBytes / 1024 / 1024).toFixed(1);
+                        bytesDetail.textContent = comp + ' MB / ' + tot + ' MB';
+                    } else if (bytesDetail) {
+                        bytesDetail.textContent = '398 MB Total Download';
+                    }
+                    if (hint) hint.style.display = 'none';
+                } else if (o.status === 'starting') {
+                    if (banner) banner.className = 'ollama-banner';
+                    if (icon) icon.textContent = '🔄';
+                    if (badge) {
+                        badge.textContent = '🔄 CONTAINER BOOTING';
+                        badge.className = 'ollama-status-badge card-badge-cooldown';
+                    }
+                    if (msg) msg.textContent = o.message || 'Ollama daemon initializing API...';
+                    if (detail) detail.textContent = 'Booting...';
+                    if (hint) hint.style.display = 'none';
+                } else { // offline
+                    if (banner) banner.className = 'ollama-banner offline';
+                    if (icon) icon.textContent = '⚠️';
+                    if (badge) {
+                        badge.textContent = '⚠️ OFFLINE • CLOUD FALLBACK ACTIVE';
+                        badge.className = 'ollama-status-badge card-badge-paused';
+                    }
+                    if (msg) msg.textContent = o.message || 'Local container offline. Groq Cloud LPU + Mistral AI handling all requests.';
+                    if (detail) detail.textContent = 'Offline (Cloud Mesh Active)';
+                    if (mem) mem.textContent = 'Standby';
+                    if (hint) hint.style.display = 'block';
+                }
+            }
+
             // Model Accounting Cards
             const modelsList = d.ai?.models || d.models || [];
             const modelsContainer = document.getElementById('models-container');
             if (modelsContainer && modelsList.length > 0) {
                 modelsContainer.innerHTML = modelsList.map(m => {
                     const isPaused = m.status === 'disabled' || m.disabled === true;
+                    const isDownloading = !isPaused && m.status === 'downloading';
+                    const isOffline = !isPaused && m.status === 'offline';
                     const isCooldown = !isPaused && (m.status === 'cooldown' || m.status === 'rate_limited');
-                    const isReady = !isPaused && !isCooldown;
+                    const isReady = !isPaused && !isCooldown && !isDownloading && !isOffline;
 
-                    let statusBadgeClass = isPaused ? 'card-badge-paused' : isCooldown ? 'card-badge-cooldown' : 'card-badge-ready';
-                    let statusLabel = isPaused ? '⏸️ PAUSED' : isCooldown ? '⏳ RATE-LIMITED' : '🟢 ACTIVE';
+                    let statusBadgeClass = isPaused
+                        ? 'card-badge-paused'
+                        : isDownloading
+                            ? 'card-badge-cooldown'
+                            : isOffline
+                                ? 'card-badge-paused'
+                                : isCooldown
+                                    ? 'card-badge-cooldown'
+                                    : 'card-badge-ready';
+
+                    let statusLabel = isPaused
+                        ? '⏸️ PAUSED'
+                        : isDownloading
+                            ? '⏳ DOWNLOADING (' + (d.ollama?.progressPercent || 0) + '%)'
+                            : isOffline
+                                ? '⚠️ OFFLINE (FALLBACK)'
+                                : isCooldown
+                                    ? '⏳ RATE-LIMITED'
+                                    : '🟢 ACTIVE';
 
                     const tierLabel = m.tier === 0
                         ? '🏠 Local Container (100% Free / 24/7)'

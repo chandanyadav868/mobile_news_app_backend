@@ -2,6 +2,7 @@ import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Response } from 'express';
+import { OllamaService, OllamaStatus } from './ollamaService';
 
 export interface ModelUsageMetric {
     model: string;
@@ -12,7 +13,7 @@ export interface ModelUsageMetric {
     completionTokensToday: number;
     totalTokensToday: number;
     lastLatencyMs: number;
-    status: 'ready' | 'active' | 'rate_limited' | 'error' | 'disabled';
+    status: 'ready' | 'active' | 'rate_limited' | 'error' | 'disabled' | 'downloading' | 'offline';
     disabled?: boolean;
     lastUsedAt: string | null;
     errorsToday: number;
@@ -687,16 +688,51 @@ export class TelemetryService {
     }
 
     /**
+     * Get Ollama container status directly
+     */
+    public static async getOllamaStatus(forceFresh = false): Promise<OllamaStatus> {
+        return OllamaService.getStatus(forceFresh);
+    }
+
+    /**
+     * Trigger model download in Ollama container
+     */
+    public static async triggerOllamaPull(model?: string): Promise<boolean> {
+        const result = await OllamaService.triggerPull(model);
+        this.broadcastTelemetry();
+        return result;
+    }
+
+    /**
      * Get full consolidated telemetry snapshot
      */
     public static async getFullTelemetry() {
         const sys = await this.getSystemMetrics();
+        const ollamaStatus = await OllamaService.getStatus();
 
-        const models = Array.from(this.modelMetrics.values()).map(m => ({
-            ...m,
-            status: this.disabledModels.has(m.model) ? 'disabled' : m.status,
-            disabled: this.disabledModels.has(m.model),
-        }));
+        const models = Array.from(this.modelMetrics.values()).map(m => {
+            let status: ModelUsageMetric['status'] = m.status;
+            const disabled = this.disabledModels.has(m.model);
+
+            if (disabled) {
+                status = 'disabled';
+            } else if (m.model === 'qwen2.5:0.5b' || m.model.startsWith('qwen2.5')) {
+                if (ollamaStatus.status === 'downloading') {
+                    status = 'downloading';
+                } else if (ollamaStatus.status === 'offline') {
+                    status = 'offline';
+                } else if (ollamaStatus.status === 'ready') {
+                    status = m.status === 'rate_limited' ? 'rate_limited' : 'ready';
+                }
+            }
+
+            return {
+                ...m,
+                status,
+                disabled,
+            };
+        });
+
         const totalTokensToday = models.reduce((acc, m) => acc + m.totalTokensToday, 0);
         const totalRequestsToday = models.reduce((acc, m) => acc + m.requestsToday, 0);
         const totalErrorsToday = models.reduce((acc, m) => acc + m.errorsToday, 0);
@@ -711,6 +747,7 @@ export class TelemetryService {
             system: sys,
             queue: this.queueMetrics,
             funnel: this.funnelMetrics,
+            ollama: ollamaStatus,
             quota: {
                 tokensToday: totalTokensToday,
                 percentUsed: dailyQuotaUsedPercent,

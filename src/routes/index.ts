@@ -42,6 +42,8 @@ router.delete('/beta/:id', BetaController.deleteTester);
 // ─── Live Telemetry, SSE Stream & Mission Control Endpoints ──────────────────
 router.get('/dashboard/stats', DashboardController.getStats);
 router.get('/dashboard/stream', DashboardController.streamTelemetry);
+router.get('/dashboard/ollama/status', DashboardController.getOllamaStatus);
+router.post('/dashboard/ollama/pull', DashboardController.triggerOllamaPull);
 router.post('/dashboard/toggle-ai', DashboardController.toggleAi);
 router.post('/dashboard/toggle-model', DashboardController.toggleModel);
 router.post('/dashboard/trigger-ingest', DashboardController.triggerIngest);
