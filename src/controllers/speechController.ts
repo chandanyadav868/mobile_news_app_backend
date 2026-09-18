@@ -68,52 +68,7 @@ export class SpeechController {
         }
     }
 
-    /**
-     * POST /api/v1/speech/gemini-s2s
-     * Body: { text: string, voicePersona?: string, lang?: string }
-     * Pure Audio-to-Audio (Speech-to-Speech) pipeline
-     */
-    public static async geminiS2S(req: Request, res: Response): Promise<void> {
-        try {
-            const { text, voicePersona, voiceName, lang } = req.body;
-            if (!text || typeof text !== 'string' || !text.trim()) {
-                res.status(400).json({ success: false, error: 'Text is required.' });
-                return;
-            }
 
-            const { GeminiLiveSpeechService } = await import('../services/geminiLiveSpeechService.js');
-            const result = await GeminiLiveSpeechService.processSpeechToSpeech({
-                text: text.trim(),
-                voicePersona: voicePersona || voiceName || 'Aoede',
-                targetLang: lang || 'en',
-            });
-
-            res.status(200).json({
-                success: true,
-                voice: result.voiceUsed,
-                audioBase64: result.audioBase64,
-                mimeType: result.mimeType,
-                durationMs: result.durationMs,
-                wordBoundaries: result.wordBoundaries,
-                cached: result.cached,
-                latencyMs: result.latencyMs,
-            });
-        } catch (err: any) {
-            console.error('❌ [Gemini S2S API] error:', err.message);
-            res.status(500).json({
-                success: false,
-                error: err.message || 'Gemini S2S audio synthesis failed.',
-            });
-        }
-    }
-
-    /**
-     * POST /api/v1/speech/gemini-synthesize
-     * Body: { text: string, voiceName?: string, lang?: string }
-     */
-    public static async geminiSynthesize(req: Request, res: Response): Promise<void> {
-        return SpeechController.geminiS2S(req, res);
-    }
 
     /**
      * GET /api/v1/speech/stream?text=...&voice=...

@@ -6,7 +6,7 @@ import path from 'path';
 import { env } from '../config/env.js';
 import { prisma } from '../config/db.js';
 import { invalidateFeedCache } from './cacheService.js';
-import { extractArticleContent } from './articleExtractor.js';
+import { extractArticleContent, cleanAuthorString } from './articleExtractor.js';
 import { logStream } from './logStreamService.js';
 import UniversalLlmService from './universalLlmService.js';
 import TelemetryService from './telemetryService.js';
@@ -384,7 +384,7 @@ export async function fetchSingleFeed(
         category,
         country,
         source: extractSource(link),
-        author: item.creator || null,
+        author: cleanAuthorString(item.creator) || null,
         publishedAt,
       });
     });
@@ -518,20 +518,22 @@ export async function ingestAllFeeds(): Promise<{
         let finalPubTime = art.publishedAt;
         let finalTitle = art.title;
 
-        // 1. Extract rich full text via Mozilla Readability if not already rich
-        if (!isRichRssItem(art.summary, art.imageUrl)) {
-          const extracted = await extractArticleContent(
-            art.url,
-            art.title,
-            art.summary,
-            art.imageUrl
-          );
-          fullBody = extracted.rawContent || extracted.summary || fullBody;
-          finalImg = extracted.imageUrl || finalImg;
-          finalAuthor = extracted.author || finalAuthor;
-          finalPubTime = extracted.publishedTime || finalPubTime;
-          finalTitle = extracted.title || finalTitle;
+        // 1. Extract rich full text via Mozilla Readability for every article URL
+        const extracted = await extractArticleContent(
+          art.url,
+          art.title,
+          art.summary,
+          art.imageUrl
+        );
+        if (extracted && extracted.rawContent && extracted.rawContent.trim().length > 60) {
+          fullBody = extracted.rawContent;
+        } else if (extracted && extracted.summary) {
+          fullBody = extracted.summary;
         }
+        finalImg = extracted.imageUrl || finalImg;
+        finalAuthor = extracted.author || finalAuthor;
+        finalPubTime = extracted.publishedTime || finalPubTime;
+        finalTitle = extracted.title || finalTitle;
 
         // 2. Smart Selective Summarization / AI Kill-Switch
         const isAiEnabled = TelemetryService.getAiEnabled();
@@ -544,23 +546,18 @@ export async function ingestAllFeeds(): Promise<{
 
         let headline = finalTitle;
         let story = fullBody;
-        let bulletsText = '';
         let modelUsed = 'Direct (0 tokens)';
 
         if (!isAiEnabled) {
           // 🔴 AI Disabled by Admin: Direct Raw / Mozilla Save (0 Tokens Burned!)
           headline = finalTitle;
-          story = fullBody.slice(0, 320);
-          const sents = fullBody.split(/[.!?]+/).map((s) => s.trim()).filter((s) => s.length > 15);
-          bulletsText = sents.slice(0, 3).map((b) => `• ${b}`).join('\n');
+          story = fullBody.slice(0, 350);
           modelUsed = 'AI Paused (Direct Save)';
           TelemetryService.incrementFunnel('directSaved', 1);
-        } else if (isAlreadyCrisp) {
-          // 0 Tokens Used! Use clean RSS summary directly
+        } else if (isAlreadyCrisp && fullBody.length <= 400) {
+          // 0 Tokens Used! Use clean summary directly
           story = art.summary;
           headline = finalTitle;
-          const sents = art.summary.split(/[.!?]+/).map((s) => s.trim()).filter((s) => s.length > 15);
-          bulletsText = sents.slice(0, 3).map((b) => `• ${b}`).join('\n');
           modelUsed = 'RSS-Direct (0 tokens)';
           TelemetryService.incrementFunnel('directSaved', 1);
         } else {
@@ -589,10 +586,6 @@ export async function ingestAllFeeds(): Promise<{
           });
           headline = aiResult.headline || finalTitle;
           story = aiResult.crispyStory || fullBody.slice(0, 300);
-          bulletsText =
-            aiResult.bulletPoints.length > 0
-              ? aiResult.bulletPoints.map((b) => `• ${b}`).join('\n')
-              : fullBody;
           modelUsed = `${aiResult.providerUsed} (${aiResult.modelUsed})`;
           TelemetryService.incrementFunnel('llmSummarized', 1);
         }
@@ -601,9 +594,9 @@ export async function ingestAllFeeds(): Promise<{
           ...art,
           title: headline,
           summary: story,
-          rawContent: bulletsText || story,
+          rawContent: fullBody || story,
           imageUrl: finalImg,
-          author: finalAuthor,
+          author: cleanAuthorString(finalAuthor),
           publishedAt: finalPubTime,
         };
 

@@ -59,6 +59,48 @@ function isValidHttpUrl(url: string | null | undefined): boolean {
 }
 
 /**
+ * Cleans and formats raw author / creator strings.
+ * Removes URLs (e.g. https://ror.org/...), email addresses, institutional departments,
+ * affiliations, long lists of co-authors, and formats into a crisp readable byline.
+ */
+export function cleanAuthorString(author?: string | null): string | null {
+  if (!author || typeof author !== 'string') return null;
+
+  let cleaned = decodeEntities(author)
+    // Remove URLs
+    .replace(/https?:\/\/\S+/gi, '')
+    // Remove emails
+    .replace(/[\w.-]+@[\w.-]+\.\w+/g, '')
+    // Remove institutional/academic boilerplate
+    .replace(/(Section of|Department of|School of|Faculty of|College of|Division of|Institute of|Center for|Centre for|Laboratory of|Research Center|University|Hospital)[\s\S]*/gi, '')
+    // Remove prefixes
+    .replace(/^(By|Written by|Reported by|Author:?)\s+/i, '')
+    .replace(/[\s,;:\-\–—]+$/, '')
+    .trim();
+
+  if (!cleaned) return null;
+
+  const splitAuthors = cleaned.split(/[,;\n]|\band\b/i).map((s) => s.trim()).filter((s) => s.length > 2);
+  if (splitAuthors.length > 1) {
+    const primary = splitAuthors[0];
+    if (primary.length <= 25) {
+      return `${primary} et al.`;
+    }
+    return `${primary.slice(0, 22)}...`;
+  }
+
+  if (cleaned.length > 30) {
+    const camelMatch = cleaned.match(/^[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?/);
+    if (camelMatch && camelMatch[0].length >= 5) {
+      return `${camelMatch[0]} et al.`;
+    }
+    return `${cleaned.slice(0, 25)}...`;
+  }
+
+  return cleaned;
+}
+
+/**
  * Extracts full article text, OpenGraph HD image, and summary using Mozilla Readability
  */
 export async function extractArticleContent(
@@ -82,31 +124,55 @@ export async function extractArticleContent(
     return defaultFallback;
   }
 
-  try {
-    const response = await axios.get(url, {
-      timeout: 8000,
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Cache-Control': 'no-cache',
-        'Sec-Ch-Ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
-        'Sec-Ch-Ua-Mobile': '?0',
-        'Sec-Ch-Ua-Platform': '"Windows"',
-        'Sec-Fetch-Dest': 'document',
-        'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-Site': 'none',
-      },
-      maxRedirects: 5,
-    });
+  // Strip URL fragments (e.g. #google_vignette)
+  const cleanUrl = url.split('#')[0];
 
-    const html = response.data;
+  try {
+    let html: string = '';
+    const browserHeaders = {
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Cache-Control': 'no-cache',
+      'Sec-Ch-Ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+      'Sec-Ch-Ua-Mobile': '?0',
+      'Sec-Ch-Ua-Platform': '"Windows"',
+      'Sec-Fetch-Dest': 'document',
+      'Sec-Fetch-Mode': 'navigate',
+      'Sec-Fetch-Site': 'none',
+    };
+
+    try {
+      const response = await axios.get(cleanUrl, {
+        timeout: 9000,
+        headers: browserHeaders,
+        maxRedirects: 5,
+      });
+      html = response.data;
+    } catch (fetchErr: any) {
+      // If blocked with 403 Forbidden or 401 Unauthorized (Cloudflare / bot-detection),
+      // retry with search-crawler (Googlebot) headers which news sites whitelist
+      if (fetchErr.response?.status === 403 || fetchErr.response?.status === 401) {
+        const crawlerRes = await axios.get(cleanUrl, {
+          timeout: 9000,
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+            Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          },
+          maxRedirects: 5,
+        });
+        html = crawlerRes.data;
+      } else {
+        throw fetchErr;
+      }
+    }
+
     if (typeof html !== 'string' || html.length < 200) {
       return defaultFallback;
     }
 
-    const dom = new JSDOM(html, { url, virtualConsole });
+    const dom = new JSDOM(html, { url: cleanUrl, virtualConsole });
     const doc = dom.window.document;
 
     // 1. Extract OpenGraph & Twitter HD Images
@@ -141,7 +207,8 @@ export async function extractArticleContent(
       doc.querySelector('meta[name="author"]') ||
       doc.querySelector('meta[property="article:author"]') ||
       doc.querySelector('meta[name="twitter:creator"]');
-    const author = authorMeta ? authorMeta.getAttribute('content')?.trim() || null : null;
+    const rawAuthor = authorMeta ? authorMeta.getAttribute('content')?.trim() || null : null;
+    const author = cleanAuthorString(rawAuthor);
 
     // 3. Run Mozilla Readability Parser
     const reader = new Readability(doc);
@@ -151,14 +218,15 @@ export async function extractArticleContent(
       const cleanFullText = decodeEntities(parsedArticle.textContent);
       const smartSummary = generate60WordSummary(cleanFullText, 65);
       const articleTitle = decodeEntities(parsedArticle.title || fallbackTitle);
+      const cleanedByline = cleanAuthorString(parsedArticle.byline);
 
       return {
         title: articleTitle,
         summary: smartSummary || decodeEntities(fallbackSnippet),
         rawContent: cleanFullText,
         imageUrl: ogImage || fallbackImage,
-        author: author || parsedArticle.byline || null,
-        byline: parsedArticle.byline || null,
+        author: author || cleanedByline || null,
+        byline: cleanedByline || null,
         publishedTime,
         isExtracted: true,
       };

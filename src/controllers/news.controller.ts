@@ -4,7 +4,7 @@ import { getCache, setCache } from '../services/cacheService.js';
 import { ingestAllFeeds } from '../services/rssFetcher.js';
 import { logStream } from '../services/logStreamService.js';
 import { batchResolveImages } from '../services/lightweightImageResolver.js';
-import { getMainFeedRingBuffer, getCategoryRingBuffer, RING_BUFFER_SIZE } from '../services/redisFeedService.js';
+import { getMainFeedRingBuffer, getCategoryRingBuffer, getCategoryRingBufferPaginated, RING_BUFFER_SIZE } from '../services/redisFeedService.js';
 import { NewsBroadcastService } from '../services/newsBroadcastService.js';
 
 const lastKnownGoodFeed: Record<string, any> = {};
@@ -196,17 +196,17 @@ export async function getCategoryNews(req: Request, res: Response) {
     });
   } catch (error: any) {
     console.warn(`⚠️ [Backend Database Warning] DB query failed in getCategoryNews for ${categoryParam}:`, error?.message || error);
-    const fallbackArticles = await getCategoryRingBuffer(categoryParam, limit);
+    const fallbackArticles = await getCategoryRingBufferPaginated(categoryParam, page, limit);
     return res.status(200).json({
       success: true,
-      source: 'ring-buffer-fallback',
+      source: 'ring-buffer-paginated-fallback',
       data: {
         category: categoryParam,
         country,
         page,
         limit,
-        totalPages: 1,
-        totalArticles: fallbackArticles.length,
+        totalPages: 5,
+        totalArticles: 100,
         articles: fallbackArticles,
       },
     });

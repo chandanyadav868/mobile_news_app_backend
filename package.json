@@ -11,7 +11,8 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
     "db:seed": "tsx src/seed.ts",
-    "feeds:validate": "tsx src/scripts/validateFeeds.ts"
+    "feeds:validate": "tsx src/scripts/validateFeeds.ts",
+    "extract:news": "tsx extract_news.ts"
   },
   "dependencies": {
     "@google/genai": "^2.19.0",

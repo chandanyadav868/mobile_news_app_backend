@@ -1,7 +1,7 @@
 import { redis, checkRedisHealth } from '../config/redis.js';
 import { prisma } from '../config/db.js';
 
-export const RING_BUFFER_SIZE = 20;
+export const RING_BUFFER_SIZE = 100;
 
 // Resilient in-memory backup in case Redis is restarting or offline
 const inMemoryRingBuffers = new Map<string, any[]>();
@@ -13,7 +13,7 @@ function normalizeCat(cat: string): string {
 
 /**
  * Pushes a newly ingested article into the category and main ring buffers.
- * Capped strictly at 20 articles (LTRIM 0 19).
+ * Capped strictly at 100 articles (LTRIM 0 99).
  */
 export async function pushArticleToRingBuffer(article: {
   id?: string;
@@ -33,7 +33,7 @@ export async function pushArticleToRingBuffer(article: {
   const mainKey = 'news:feed:main';
   const serialized = JSON.stringify(article);
 
-  // 1. In-Memory Ring Buffer update (capped at 20)
+  // 1. In-Memory Ring Buffer update (capped at 100)
   const updateMemoryBuffer = (key: string) => {
     const list = inMemoryRingBuffers.get(key) || [];
     const filtered = list.filter((a) => a.url !== article.url);
@@ -44,7 +44,7 @@ export async function pushArticleToRingBuffer(article: {
   updateMemoryBuffer(catKey);
   updateMemoryBuffer(mainKey);
 
-  // 2. Redis Ring Buffer update (LPUSH + LTRIM 0 19)
+  // 2. Redis Ring Buffer update (LPUSH + LTRIM 0 99)
   if (checkRedisHealth() && redis) {
     try {
       const pipeline = redis.pipeline();
@@ -57,6 +57,42 @@ export async function pushArticleToRingBuffer(article: {
       console.warn('⚠️ [Redis Ring Buffer] Failed to update Redis, memory updated:', err?.message || err);
     }
   }
+}
+
+/**
+ * Retrieves paginated articles from the ring buffer across pages 1, 2, 3...
+ * Ensures continuous fresh news as the user scrolls past 20-30 cards.
+ */
+export async function getCategoryRingBufferPaginated(
+  category: string,
+  page = 1,
+  limit = 20
+): Promise<any[]> {
+  const normCat = normalizeCat(category);
+  const isMain = normCat === 'my feed' || normCat === 'all' || normCat === 'trending' || normCat === '⏰ daily dose';
+  const catKey = isMain ? 'news:feed:main' : `news:category:${normCat}`;
+  const start = Math.max(0, (page - 1) * limit);
+  const stop = start + limit - 1;
+
+  // 1. Try Redis LRANGE with pagination offsets
+  if (checkRedisHealth() && redis) {
+    try {
+      const rawList = await redis.lrange(catKey, start, stop);
+      if (rawList && rawList.length > 0) {
+        return rawList.map((item) => JSON.parse(item));
+      }
+    } catch (err) {
+      console.warn(`[Redis LRANGE Paginated Warning] Failed for ${catKey}:`, err);
+    }
+  }
+
+  // 2. Try In-Memory buffer with slice
+  const memList = inMemoryRingBuffers.get(catKey);
+  if (memList && memList.length > start) {
+    return memList.slice(start, start + limit);
+  }
+
+  return [];
 }
 
 /**
