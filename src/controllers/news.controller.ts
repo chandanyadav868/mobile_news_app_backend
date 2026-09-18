@@ -699,3 +699,25 @@ export async function resolveImages(req: Request, res: Response) {
   }
 }
 
+/**
+ * POST /api/v1/news/article/:id/share
+ * Increments share count for an article, protecting it in 2-week storage retention.
+ */
+export async function recordArticleShare(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ success: false, error: 'Article ID is required' });
+    }
+
+    await prisma.article.updateMany({
+      where: { id },
+      data: { shareCount: { increment: 1 } },
+    });
+
+    return res.json({ success: true, message: 'Share recorded and article protected in disk storage' });
+  } catch (error: any) {
+    console.error('Error in recordArticleShare:', error);
+    return res.status(500).json({ success: false, error: 'Failed to record share' });
+  }
+}

@@ -15,6 +15,7 @@ import {
   updateArticle,
   searchNews,
   resolveImages,
+  recordArticleShare,
 } from '../controllers/news.controller.js';
 import { extractArticle } from '../controllers/articleExtractor.controller.js';
 
@@ -23,6 +24,7 @@ const router = Router();
 router.get('/feed', getFeed);
 router.get('/categories', getCategories);
 router.get('/article/:id', getArticleById);
+router.post('/article/:id/share', recordArticleShare);
 router.post('/manual', createManualArticle);
 router.put('/article/:id', updateArticle);
 

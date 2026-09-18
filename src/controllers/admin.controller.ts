@@ -101,7 +101,7 @@ export async function renderDatabaseAdmin(req: Request, res: Response) {
         <span>⚡</span> NewsFlow Database & Readability Explorer
       </div>
       <div style="display: flex; gap: 10px;">
-        <button class="btn" onclick="triggerLifecycle()" style="background: #8B5CF6;">🧹 Run 14d Prune & 30d Retention</button>
+        <button class="btn" onclick="triggerLifecycle()" style="background: #8B5CF6;">🧹 Run 7d Prune & 14d (2-Week) Retention</button>
         <button class="btn" onclick="triggerIngest()" style="background: var(--accent);">🔄 Sync RSS Feeds & Run Readability</button>
       </div>
     </div>
@@ -211,7 +211,7 @@ export async function renderDatabaseAdmin(req: Request, res: Response) {
 
   <script>
     async function triggerLifecycle() {
-      if (!confirm('Run storage lifecycle maintenance now? This prunes rawContent for articles > 14 days and deletes unengaged articles > 30 days (while strictly preserving bookmarked, shared, pinned, hero, and editorial stories).')) return;
+      if (!confirm('Run storage lifecycle maintenance now? This prunes rawContent for articles > 7 days and deletes unengaged articles > 14 days (2 weeks) while strictly preserving bookmarked, shared, pinned, hero, and editorial stories on disk.')) return;
       try {
         const btn = document.querySelector('button[onclick="triggerLifecycle()"]');
         btn.innerText = '⏳ Running Lifecycle...';

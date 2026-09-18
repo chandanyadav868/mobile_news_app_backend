@@ -52,7 +52,7 @@ router.post('/dashboard/reset-metrics', DashboardController.resetMetrics);
 router.post('/dashboard/summarize-test', DashboardController.summarizeTest);
 router.post('/dashboard/trigger-lifecycle', async (_req: Request, res: Response) => {
   try {
-    const report = await runFullLifecycleMaintenance(14, 30);
+    const report = await runFullLifecycleMaintenance(7, 14);
     res.json({ success: true, report });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err?.message || 'Lifecycle execution failed' });

@@ -11,10 +11,10 @@ export interface LifecycleRunReport {
 }
 
 /**
- * 🧹 Step 1: Prunes heavy rawContent (>14 days old) to reclaim 95% of row bytes
+ * 🧹 Step 1: Prunes heavy rawContent (>7 days old) to reclaim 95% of row bytes
  * Keeps title, summary, url, imageUrl, category, author, and translations intact.
  */
-export async function pruneOldArticleBodies(olderThanDays = 14): Promise<number> {
+export async function pruneOldArticleBodies(olderThanDays = 7): Promise<number> {
   try {
     const query = `
       UPDATE "Article"
@@ -32,10 +32,11 @@ export async function pruneOldArticleBodies(olderThanDays = 14): Promise<number>
 }
 
 /**
- * 🗑️ Step 2: Smart Engagement-Preserving Deletion (Day 30+)
- * Deletes articles older than 30 days EXCEPT those bookmarked, shared, or editorial.
+ * 🗑️ Step 2: Smart Engagement-Preserving Deletion (2 Weeks / 14 Days)
+ * Keeps only 2 weeks of data in disk storage.
+ * Deletes articles older than 14 days EXCEPT those that are bookmarked or shared.
  */
-export async function deleteUnengagedOldArticles(olderThanDays = 30): Promise<{ deletedCount: number; protectedBookmarks: number }> {
+export async function deleteUnengagedOldArticles(olderThanDays = 14): Promise<{ deletedCount: number; protectedBookmarks: number }> {
   try {
     // 1. Get count of distinct bookmarked IDs across all users for telemetry
     const bookmarkRows: any = await prisma.$queryRawUnsafe(`
@@ -45,7 +46,9 @@ export async function deleteUnengagedOldArticles(olderThanDays = 30): Promise<{ 
     `);
     const protectedBookmarks = bookmarkRows && bookmarkRows[0] ? parseInt(bookmarkRows[0].total_protected, 10) || 0 : 0;
 
-    // 2. Perform safe deletion with 5 strict protection guarantees
+    // 2. Perform safe deletion with strict protection guarantees:
+    // Only two weeks (14 days) of unengaged data is kept in disk storage.
+    // Articles older than 14 days are deleted EXCEPT if bookmarked, shared, pinned, hero, or editorial.
     const deleteQuery = `
       DELETE FROM "Article"
       WHERE "publishedAt" < NOW() - INTERVAL '${olderThanDays} days'
@@ -54,7 +57,7 @@ export async function deleteUnengagedOldArticles(olderThanDays = 30): Promise<{ 
         AND "isHero" = false
         -- 2. Must NOT be an editorial story manually created by admin
         AND "source" != 'NewsFlow Editorial'
-        -- 3. Must NEVER have been shared by any user
+        -- 3. Must NEVER have been shared by any user (shareCount = 0)
         AND "shareCount" = 0
         -- 4. Must NOT be bookmarked by any registered user
         AND "id" NOT IN (
@@ -65,7 +68,7 @@ export async function deleteUnengagedOldArticles(olderThanDays = 30): Promise<{ 
     `;
 
     const deletedCount = await prisma.$executeRawUnsafe(deleteQuery);
-    console.log(`🛡️ [Lifecycle Worker] Smart Retention: Deleted ${deletedCount} unengaged articles (> ${olderThanDays}d). Protected ${protectedBookmarks} bookmarked stories.`);
+    console.log(`🛡️ [Lifecycle Worker] 2-Week Retention: Deleted ${deletedCount} unengaged articles (> ${olderThanDays}d). Protected ${protectedBookmarks} bookmarked/shared stories.`);
     return {
       deletedCount: typeof deletedCount === 'number' ? deletedCount : 0,
       protectedBookmarks,
@@ -78,10 +81,11 @@ export async function deleteUnengagedOldArticles(olderThanDays = 30): Promise<{ 
 
 /**
  * Executes the complete lifecycle maintenance pipeline (Prune + Smart Delete)
+ * Enforces strict 2-week disk retention policy.
  */
-export async function runFullLifecycleMaintenance(rawContentDays = 14, deleteDays = 30): Promise<LifecycleRunReport> {
+export async function runFullLifecycleMaintenance(rawContentDays = 7, deleteDays = 14): Promise<LifecycleRunReport> {
   const startTime = new Date().toISOString();
-  console.log(`🚀 [Lifecycle Maintenance] Starting execution at ${startTime}...`);
+  console.log(`🚀 [Lifecycle Maintenance] Starting 2-week storage retention execution at ${startTime}...`);
 
   const rawContentPrunedCount = await pruneOldArticleBodies(rawContentDays);
   const { deletedCount, protectedBookmarks } = await deleteUnengagedOldArticles(deleteDays);
@@ -92,19 +96,30 @@ export async function runFullLifecycleMaintenance(rawContentDays = 14, deleteDay
     unengagedArticlesDeletedCount: deletedCount,
     protectedBookmarkedCount: protectedBookmarks,
     status: 'SUCCESS',
-    message: `Pruned raw text for ${rawContentPrunedCount} articles (>14d). Safely deleted ${deletedCount} un-engaged articles (>30d). Protected ${protectedBookmarks} bookmarked stories.`,
+    message: `Pruned raw text for ${rawContentPrunedCount} articles (>7d). Safely deleted ${deletedCount} unengaged articles older than 14 days (2 weeks). Strictly preserved all bookmarked, shared, and editorial stories on disk.`,
   };
 }
 
 /**
  * Schedules automated daily lifecycle execution at 02:30 AM
+ * and performs an initial non-blocking cleanup on startup.
  */
 export function initLifecycleWorker() {
   // Cron syntax: 30 2 * * * (Every day at 02:30 AM server time)
   cron.schedule('30 2 * * *', async () => {
-    console.log('⏰ [Lifecycle Worker Cron] Triggering scheduled maintenance...');
-    await runFullLifecycleMaintenance(14, 30);
+    console.log('⏰ [Lifecycle Worker Cron] Triggering scheduled 2-week storage maintenance...');
+    await runFullLifecycleMaintenance(7, 14);
   });
 
-  console.log('⏰ [Lifecycle Worker] Scheduled nightly 14-day pruning & 30-day smart retention cron (30 2 * * *).');
+  // Non-blocking initial startup maintenance to enforce 2-week retention immediately
+  setTimeout(async () => {
+    try {
+      console.log('🧹 [Lifecycle Worker] Running initial 2-week storage audit on startup...');
+      await runFullLifecycleMaintenance(7, 14);
+    } catch (err: any) {
+      console.warn('⚠️ [Lifecycle Worker] Startup maintenance skipped:', err?.message || err);
+    }
+  }, 10000);
+
+  console.log('⏰ [Lifecycle Worker] Scheduled nightly 7-day raw text pruning & 14-day (2 weeks) smart retention cron (30 2 * * *).');
 }
