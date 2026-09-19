@@ -59,6 +59,50 @@ function isValidHttpUrl(url: string | null | undefined): boolean {
 }
 
 /**
+ * Strips indentation, redundant leading spaces, captions, and formats clean paragraphs.
+ */
+function cleanArticleParagraphs(article: { content?: string | null; textContent?: string | null }): string {
+  if (!article) return '';
+
+  if (article.content) {
+    try {
+      const dom = new JSDOM(article.content, { virtualConsole });
+      const doc = dom.window.document;
+
+      doc.querySelectorAll('figure, figcaption, script, style, noscript, [class*="credit"], [class*="caption"]').forEach((el) => el.remove());
+
+      const blocks = doc.querySelectorAll('p, h1, h2, h3, h4, h5, h6, blockquote, li');
+      const paragraphs: string[] = [];
+
+      blocks.forEach((el) => {
+        const text = decodeEntities(el.textContent || '')
+          .replace(/[\u00A0\u1680\u180E\u2000-\u200B\u202F\u205F\u3000\uFEFF]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+
+        if (text.length > 0 && !/^\|?\s*photo credit/i.test(text) && !/^also read\s*:/i.test(text)) {
+          paragraphs.push(text);
+        }
+      });
+
+      if (paragraphs.length > 0) {
+        return paragraphs.join('\n\n');
+      }
+    } catch (e) {
+      // Fallback
+    }
+  }
+
+  const raw = decodeEntities(article.textContent || '');
+  return raw
+    .replace(/[\u00A0\u1680\u180E\u2000-\u200B\u202F\u205F\u3000\uFEFF]/g, ' ')
+    .split('\n')
+    .map((line) => line.replace(/\s+/g, ' ').trim())
+    .filter((line) => line.length > 0 && !/^\|?\s*photo credit/i.test(line) && !/^also read\s*:/i.test(line))
+    .join('\n\n');
+}
+
+/**
  * Cleans and formats raw author / creator strings.
  * Removes URLs (e.g. https://ror.org/...), email addresses, institutional departments,
  * affiliations, long lists of co-authors, and formats into a crisp readable byline.
@@ -215,7 +259,7 @@ export async function extractArticleContent(
     const parsedArticle = reader.parse();
 
     if (parsedArticle && parsedArticle.textContent && parsedArticle.textContent.trim().length > 100) {
-      const cleanFullText = decodeEntities(parsedArticle.textContent);
+      const cleanFullText = cleanArticleParagraphs(parsedArticle);
       const smartSummary = generate60WordSummary(cleanFullText, 65);
       const articleTitle = decodeEntities(parsedArticle.title || fallbackTitle);
       const cleanedByline = cleanAuthorString(parsedArticle.byline);

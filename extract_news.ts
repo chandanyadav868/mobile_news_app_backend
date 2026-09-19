@@ -44,6 +44,55 @@ async function fetchHtml(url: string): Promise<string> {
 }
 
 /**
+ * Strips indentation, redundant leading spaces, captions, and formats clean paragraphs.
+ */
+function cleanArticleParagraphs(article: { content?: string | null; textContent?: string | null }): string {
+  if (!article) return '';
+
+  // 1. Preferred: Extract structured block-level paragraphs from Readability's clean HTML
+  if (article.content) {
+    try {
+      const dom = new JSDOM(article.content);
+      const doc = dom.window.document;
+
+      // Remove photo credits, figures, captions, scripts, styles
+      doc.querySelectorAll('figure, figcaption, script, style, noscript, [class*="credit"], [class*="caption"]').forEach((el) => el.remove());
+
+      const blocks = doc.querySelectorAll('p, h1, h2, h3, h4, h5, h6, blockquote, li');
+      const paragraphs: string[] = [];
+
+      blocks.forEach((el) => {
+        // Strip non-breaking spaces and normalize horizontal whitespace
+        const text = (el.textContent || '')
+          .replace(/[\u00A0\u1680\u180E\u2000-\u200B\u202F\u205F\u3000\uFEFF]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+
+        // Filter out empty lines, photo credits, and "ALSO READ" banners
+        if (text.length > 0 && !/^\|?\s*photo credit/i.test(text) && !/^also read\s*:/i.test(text)) {
+          paragraphs.push(text);
+        }
+      });
+
+      if (paragraphs.length > 0) {
+        return paragraphs.join('\n\n');
+      }
+    } catch (e) {
+      // Fallback to textContent below
+    }
+  }
+
+  // 2. Fallback: Parse raw textContent line-by-line
+  const raw = article.textContent || '';
+  return raw
+    .replace(/[\u00A0\u1680\u180E\u2000-\u200B\u202F\u205F\u3000\uFEFF]/g, ' ')
+    .split('\n')
+    .map((line) => line.replace(/\s+/g, ' ').trim())
+    .filter((line) => line.length > 0 && !/^\|?\s*photo credit/i.test(line) && !/^also read\s*:/i.test(line))
+    .join('\n\n');
+}
+
+/**
  * Loads a website, extracts only the clean article text using @mozilla/readability,
  * and saves it into extract_news.txt in the same folder.
  */
@@ -76,7 +125,9 @@ export async function extractAndSaveArticle(
     throw new Error('Could not extract an article. The page might be behind a paywall or lacks readable text.');
   }
 
-  // 4. Format clean output
+  // 4. Format clean paragraphs without leading spaces, indentation, or squished text
+  const cleanArticleBody = cleanArticleParagraphs(article);
+
   const content = [
     `SOURCE URL: ${url}`,
     `EXTRACTED AT: ${new Date().toLocaleString()}`,
@@ -87,7 +138,7 @@ export async function extractAndSaveArticle(
     '='.repeat(70),
     'CLEAN EXTRACTED ARTICLE (ADS & CLUTTER REMOVED):',
     '='.repeat(70),
-    article.textContent.trim(),
+    cleanArticleBody,
   ].join('\n\n');
 
   // 5. Save to extract_news.txt at the same directory level
@@ -101,7 +152,7 @@ export async function extractAndSaveArticle(
 
 // Self-executing runner for quick command-line testing
 // if (require.main === module) {
-const targetUrl = process.argv[2] || 'https://indianexpress.com/article/cities/kolkata/nandigram-bypoll-congress-candidate-milan-pradhan-arrest-old-case-10884128/';
+const targetUrl = process.argv[2] || 'https://www.thehindu.com/entertainment/movies/city-lights-movie-review-kannada-vinay-rajkumar-monisha-vijaykumar-duniya-vijay-charan-raj/article71482391.ece';
 extractAndSaveArticle(targetUrl).catch((err) => {
   console.error('❌ Error during extraction:', err.message);
 });
