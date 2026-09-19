@@ -50,9 +50,15 @@ router.post('/dashboard/trigger-ingest', DashboardController.triggerIngest);
 router.post('/dashboard/clear-cache', DashboardController.clearCache);
 router.post('/dashboard/reset-metrics', DashboardController.resetMetrics);
 router.post('/dashboard/summarize-test', DashboardController.summarizeTest);
-router.post('/dashboard/trigger-lifecycle', async (_req: Request, res: Response) => {
+router.post('/dashboard/trigger-lifecycle', async (req: Request, res: Response) => {
   try {
-    const report = await runFullLifecycleMaintenance(7, 14);
+    const daysParam = parseInt((req.query.days as string) || (req.body?.days as string), 10);
+    const deleteDays = !isNaN(daysParam) && daysParam > 0 ? daysParam : 14;
+    const report = await runFullLifecycleMaintenance(7, deleteDays);
+    if (report.status === 'ERROR') {
+      res.status(500).json({ success: false, error: report.message, report });
+      return;
+    }
     res.json({ success: true, report });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err?.message || 'Lifecycle execution failed' });

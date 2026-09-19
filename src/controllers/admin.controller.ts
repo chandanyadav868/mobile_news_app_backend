@@ -22,7 +22,9 @@ export async function renderDatabaseAdmin(req: Request, res: Response) {
       where.title = { contains: search, mode: 'insensitive' };
     }
 
-    const [articles, totalCount, totalInsights, totalTimelines, categoryCounts, countryCounts] = await Promise.all([
+    const twoWeeksAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+
+    const [articles, totalCount, totalInsights, totalTimelines, categoryCounts, countryCounts, olderThanTwoWeeksCount] = await Promise.all([
       prisma.article.findMany({
         where,
         orderBy: { publishedAt: 'desc' },
@@ -40,6 +42,15 @@ export async function renderDatabaseAdmin(req: Request, res: Response) {
         by: ['country'] as any,
         _count: { id: true },
       }),
+      prisma.article.count({
+        where: {
+          publishedAt: { lt: twoWeeksAgo },
+          isPinned: false,
+          isHero: false,
+          shareCount: 0,
+          source: { not: 'NewsFlow Editorial' },
+        },
+      }).catch(() => 0),
     ]);
 
     const totalPages = Math.ceil(totalCount / limit) || 1;
@@ -101,7 +112,7 @@ export async function renderDatabaseAdmin(req: Request, res: Response) {
         <span>⚡</span> NewsFlow Database & Readability Explorer
       </div>
       <div style="display: flex; gap: 10px;">
-        <button class="btn" onclick="triggerLifecycle()" style="background: #8B5CF6;">🧹 Run 7d Prune & 14d (2-Week) Retention</button>
+        <button id="lifecycleBtn" class="btn" onclick="triggerLifecycle()" style="background: #8B5CF6;">🧹 Clean Storage: Keep Only 2 Weeks (Delete Older)</button>
         <button class="btn" onclick="triggerIngest()" style="background: var(--accent);">🔄 Sync RSS Feeds & Run Readability</button>
       </div>
     </div>
@@ -109,15 +120,15 @@ export async function renderDatabaseAdmin(req: Request, res: Response) {
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-lbl">Total Articles in DB</div>
-        <div class="stat-val">${totalCount}</div>
+        <div class="stat-val">${totalCount.toLocaleString()}</div>
       </div>
       <div class="stat-card">
-        <div class="stat-lbl">Visual Insights</div>
-        <div class="stat-val">${totalInsights}</div>
+        <div class="stat-lbl">Articles > 14 Days (Prunable)</div>
+        <div class="stat-val" style="color: #F87171;">${olderThanTwoWeeksCount.toLocaleString()}</div>
       </div>
       <div class="stat-card">
-        <div class="stat-lbl">Timeline Topics</div>
-        <div class="stat-val">${totalTimelines}</div>
+        <div class="stat-lbl">Fresh 2-Week Stories</div>
+        <div class="stat-val" style="color: #4ADE80;">${Math.max(0, totalCount - olderThanTwoWeeksCount).toLocaleString()}</div>
       </div>
       <div class="stat-card">
         <div class="stat-lbl">Active Categories</div>
@@ -211,21 +222,31 @@ export async function renderDatabaseAdmin(req: Request, res: Response) {
 
   <script>
     async function triggerLifecycle() {
-      if (!confirm('Run storage lifecycle maintenance now? This prunes rawContent for articles > 7 days and deletes unengaged articles > 14 days (2 weeks) while strictly preserving bookmarked, shared, pinned, hero, and editorial stories on disk.')) return;
-      try {
-        const btn = document.querySelector('button[onclick="triggerLifecycle()"]');
-        btn.innerText = '⏳ Running Lifecycle...';
+      if (!confirm('Run 2-week storage retention cleanup now?\\n\\nThis will permanently delete unengaged articles older than 14 days (2 weeks) in safe batches while strictly preserving all bookmarked, shared, and editorial stories on disk.')) return;
+      const btn = document.getElementById('lifecycleBtn') || document.querySelector('button[onclick="triggerLifecycle()"]');
+      if (btn) {
+        btn.innerText = '⏳ Deleting old articles (>14d in batches)... please wait';
         btn.disabled = true;
-        const res = await fetch('/api/v1/dashboard/trigger-lifecycle', { method: 'POST' });
+      }
+      try {
+        const res = await fetch('/api/v1/dashboard/trigger-lifecycle?days=14', { method: 'POST' });
         const json = await res.json();
-        if (json.success) {
-          alert('✅ Lifecycle Maintenance Finished!\n\n' + json.report.message);
+        if (json.success && json.report?.status !== 'ERROR') {
+          alert('✅ 2-Week Storage Cleanup Complete!\\n\\n' + (json.report?.message || 'Old articles pruned.'));
+          window.location.reload();
         } else {
-          alert('❌ Lifecycle Error: ' + json.error);
+          alert('❌ Cleanup Error: ' + (json.error || json.report?.message || 'Execution failed'));
+          if (btn) {
+            btn.innerText = '🧹 Clean Storage: Keep Only 2 Weeks (Delete Older)';
+            btn.disabled = false;
+          }
         }
-        window.location.reload();
       } catch (err) {
         alert('Lifecycle Request Failed: ' + err.message);
+        if (btn) {
+          btn.innerText = '🧹 Clean Storage: Keep Only 2 Weeks (Delete Older)';
+          btn.disabled = false;
+        }
       }
     }
 
