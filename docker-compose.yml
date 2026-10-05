@@ -1,5 +1,5 @@
 services:
-  # ─── PostgreSQL 16 Database ──────────────────────────────────────────────────
+  # ─── PostgreSQL 16 Database (Strictly Capped for 1 vCPU / 4 GB VPS) ─────────
   postgres:
     image: postgres:16-alpine
     container_name: newsflow_postgres
@@ -8,6 +8,12 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-newsflow_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-newsflow_secret_password}
       POSTGRES_DB: ${POSTGRES_DB:-newsflow_db}
+    command: >
+      postgres
+      -c shared_buffers=64MB
+      -c work_mem=4MB
+      -c maintenance_work_mem=16MB
+      -c max_connections=50
     ports:
       - "5432:5432"
     volumes:
@@ -17,15 +23,20 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 150M
+          cpus: '0.25'
     networks:
       - newsflow-network
 
-  # ─── Redis 7 High-Speed In-Memory Cache ─────────────────────────────────────
+  # ─── Redis 7 High-Speed In-Memory Cache (Strictly Capped with LRU Eviction) ─
   redis:
     image: redis:7-alpine
     container_name: newsflow_redis
     restart: always
-    command: [ "redis-server", "--appendonly", "yes" ]
+    command: [ "redis-server", "--maxmemory", "64mb", "--maxmemory-policy", "allkeys-lru", "--save", "" ]
     ports:
       - "6379:6379"
     volumes:
@@ -35,80 +46,15 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    networks:
-      - newsflow-network
-
-  # ─── Imgproxy (Ultra-Lightweight On-The-Fly WebP Converter & Resizer) ─────────
-  imgproxy:
-    image: darthsim/imgproxy:latest
-    container_name: newsflow_imgproxy
-    restart: always
-    environment:
-      IMGPROXY_BIND: ":8080"
-      IMGPROXY_READ_TIMEOUT: 10
-      IMGPROXY_WRITE_TIMEOUT: 10
-      IMGPROXY_DOWNLOAD_TIMEOUT: 10
-      IMGPROXY_CONCURRENCY: 10
-      IMGPROXY_MAX_SRC_RESOLUTION: 50
-      IMGPROXY_ENFORCE_WEBP: "true"
-      IMGPROXY_DEVELOPMENT_ERRORS_MODE: "true"
-    expose:
-      - "8080"
-    healthcheck:
-      test: [ "CMD-SHELL", "imgproxy healthcheck || exit 0" ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    networks:
-      - newsflow-network
-
-  # ─── Local LLM: Ollama (Qwen2.5-0.5B for 24/7 Unlimited Free Summarization) ─
-  ollama:
-    image: ollama/ollama:latest
-    container_name: newsflow_ollama
-    restart: always
-    environment:
-      - OLLAMA_KEEP_ALIVE=5m
-      - OLLAMA_NUM_PARALLEL=1
-      - OLLAMA_NUM_THREADS=1
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-    cpus: 0.50
-    mem_limit: 900m
     deploy:
       resources:
         limits:
-          memory: 900M
-          cpus: '0.50'
+          memory: 64M
+          cpus: '0.10'
     networks:
       - newsflow-network
 
-  # ─── Ollama Auto-Pull Service (Downloads Qwen2.5-0.5B on First Run) ───────────
-  ollama-pull:
-    image: curlimages/curl:latest
-    container_name: newsflow_ollama_pull
-    restart: "no"
-    depends_on:
-      - ollama
-    entrypoint: >
-      sh -c "
-        echo 'Waiting for Ollama to become ready...';
-        until curl -s http://ollama:11434/api/tags > /dev/null; do sleep 2; done;
-        echo 'Ollama is online! Checking if qwen2.5:0.5b is already installed...';
-        if curl -s http://ollama:11434/api/tags | grep -q 'qwen2.5:0.5b'; then
-          echo 'Model qwen2.5:0.5b is already present in persistent volume.';
-        else
-          echo 'Pulling qwen2.5:0.5b model into persistent volume...';
-          curl -s -X POST http://ollama:11434/api/pull -d '{\"name\":\"qwen2.5:0.5b\"}';
-          echo 'Model qwen2.5:0.5b successfully pulled!';
-        fi
-      "
-    networks:
-      - newsflow-network
-
-  # ─── NewsFlow Production Backend Server ──────────────────────────────────────
+  # ─── NewsFlow Production Backend Server (Node.js API) ──────────────────────
   api:
     build:
       context: .
@@ -126,33 +72,22 @@ services:
       PORT: 4000
       DATABASE_URL: postgresql://${POSTGRES_USER:-newsflow_user}:${POSTGRES_PASSWORD:-newsflow_secret_password}@postgres:5432/${POSTGRES_DB:-newsflow_db}?schema=public
       REDIS_URL: redis://redis:6379
-      IMGPROXY_URL: http://imgproxy:8080
-      OLLAMA_BASE_URL: http://ollama:11434/v1
-      OLLAMA_MODEL: qwen2.5:0.5b
-      LOCAL_LLM_ENABLED: "true"
+      ENABLE_LOCAL_OLLAMA: "false"
+      LOCAL_LLM_ENABLED: "false"
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY}
       CORS_ORIGIN: "*"
-      RSS_INGEST_INTERVAL_MINUTES: 5
-      READABILITY_MAX_CONCURRENCY: 3
+      RSS_INGEST_INTERVAL_MINUTES: 25
+      INGEST_CRON_SCHEDULE: "*/25 * * * *"
+      READABILITY_MAX_CONCURRENCY: 2
     ports:
       - "${PORT:-4000}:4000"
-    networks:
-      - newsflow-network
-
-  # ─── Prisma Studio Web GUI (Reuses Built API Image - Zero Rebuild Overhead) ───
-  studio:
-    image: newsflow_api:latest
-    container_name: newsflow_studio
-    restart: always
-    command: [ "npx", "prisma", "studio", "--port", "5555", "--browser", "none" ]
-    depends_on:
-      postgres:
-        condition: service_healthy
-      api:
-        condition: service_started
-    environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-newsflow_user}:${POSTGRES_PASSWORD:-newsflow_secret_password}@postgres:5432/${POSTGRES_DB:-newsflow_db}?schema=public
-    ports:
-      - "5555:5555"
+    deploy:
+      resources:
+        limits:
+          memory: 250M
+          cpus: '0.35'
     networks:
       - newsflow-network
 
@@ -160,8 +95,6 @@ volumes:
   postgres_data:
     driver: local
   redis_data:
-    driver: local
-  ollama_data:
     driver: local
 
 networks:

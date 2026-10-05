@@ -40,14 +40,108 @@ function decodeEntities(text: string): string {
 }
 
 /**
- * Generate a clean ~60-word Inshorts-style summary from full article text
+ * Strips news agency datelines, timestamps, and leading location tags from article start.
+ * e.g., "NEW DELHI (PTI) — In a landmark decision..." -> "In a landmark decision..."
+ * e.g., "MUMBAI: The Reserve Bank of India..." -> "The Reserve Bank of India..."
+ * e.g., "WASHINGTON (Reuters) - Oct 5, 2026 -" -> ""
  */
-function generate60WordSummary(textContent: string, maxWords = 65): string {
+export function stripDateline(text: string): string {
+  if (!text) return '';
+  return text
+    // Remove "CITY (AGENCY) — / -" or "CITY [AGENCY] —"
+    .replace(/^[A-Z\s]{2,30}\s*(?:\([^)]+\)|\[[^\]]+\])?\s*[-–—:]\s*/, '')
+    // Remove date prefixes like "October 5, 2026: " or "Oct 05 (Reuters) —"
+    .replace(/^(?:(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2}(?:,?\s*\d{2,4})?)\s*(?:\([^)]+\))?\s*[-–—:]\s*/i, '')
+    // Remove "Updated: ... IST" or "Published: ... UTC"
+    .replace(/^(?:(?:Updated|Published|Posted)(?:\s+on)?:\s*[^–—\n]+?[-–—]\s*)/i, '')
+    .trim();
+}
+
+const JUNK_PATTERNS = [
+  /photo credit:?/i,
+  /image (?:credit|source):?/i,
+  /also read:?/i,
+  /related (?:stories|articles|posts):?/i,
+  /read also:?/i,
+  /follow us on/i,
+  /subscribe to (?:our|the)/i,
+  /sign up for (?:our|the)/i,
+  /click here to/i,
+  /read more at/i,
+  /for more (?:news|updates|details)/i,
+  /download the .*? app/i,
+  /copyright\s*©/i,
+  /all rights reserved/i,
+  /published by/i,
+  /updated on:?/i,
+  /posted on:?/i,
+  /edited by:?/i,
+  /advertisement/i,
+  /sponsored content/i,
+  /disclaimer:?/i,
+];
+
+function isJunkParagraph(text: string): boolean {
+  if (!text || text.length < 15) return true;
+  return JUNK_PATTERNS.some((regex) => regex.test(text));
+}
+
+/**
+ * Deduplicates identical or heavily repeated sentences within article paragraphs (fixes SEO keyword spam)
+ */
+function deduplicateSentences(paragraphs: string[]): string[] {
+  const seenSentences = new Set<string>();
+  const cleanParagraphs: string[] = [];
+
+  for (const para of paragraphs) {
+    // Split paragraph into sentences by sentence terminator
+    const sentences = para.match(/[^.!?]+[.!?]+|\S+/g) || [para];
+    const uniqueSentences: string[] = [];
+
+    for (const sent of sentences) {
+      const normalized = sent.toLowerCase().replace(/[^a-z0-9]/g, ' ').replace(/\s+/g, ' ').trim();
+      if (normalized.length < 15) {
+        uniqueSentences.push(sent.trim());
+        continue;
+      }
+      if (!seenSentences.has(normalized)) {
+        seenSentences.add(normalized);
+        uniqueSentences.push(sent.trim());
+      }
+    }
+
+    if (uniqueSentences.length > 0) {
+      cleanParagraphs.push(uniqueSentences.join(' '));
+    }
+  }
+
+  return cleanParagraphs;
+}
+
+/**
+ * Generate a clean ~60-word Inshorts-style summary from full article text.
+ * Respects complete sentence boundaries so news cards never stop abruptly mid-thought.
+ */
+export function generate60WordSummary(textContent: string, maxWords = 65): string {
   if (!textContent) return '';
-  const clean = textContent.replace(/\s+/g, ' ').trim();
-  const words = clean.split(' ');
+  const clean = stripDateline(textContent.replace(/\s+/g, ' ').trim());
+  const words = clean.split(' ').filter(Boolean);
   if (words.length <= maxWords) return clean;
-  return words.slice(0, maxWords).join(' ') + '...';
+
+  // Find the last complete sentence within maxWords
+  const candidate = words.slice(0, maxWords).join(' ');
+  const lastPunctuation = Math.max(
+    candidate.lastIndexOf('.'),
+    candidate.lastIndexOf('!'),
+    candidate.lastIndexOf('?')
+  );
+
+  // If a clean sentence ends after at least 35 words, end there for natural reading
+  if (lastPunctuation > 180) {
+    return candidate.slice(0, lastPunctuation + 1);
+  }
+
+  return candidate + '...';
 }
 
 function isValidHttpUrl(url: string | null | undefined): boolean {
@@ -59,20 +153,22 @@ function isValidHttpUrl(url: string | null | undefined): boolean {
 }
 
 /**
- * Strips indentation, redundant leading spaces, captions, and formats clean paragraphs.
+ * Strips indentation, redundant leading spaces, captions, datelines, and formats clean paragraphs.
+ * Applies the Inverted Pyramid method: focuses on lead paragraphs containing the core news.
  */
 function cleanArticleParagraphs(article: { content?: string | null; textContent?: string | null }): string {
   if (!article) return '';
+
+  let rawParagraphs: string[] = [];
 
   if (article.content) {
     try {
       const dom = new JSDOM(article.content, { virtualConsole });
       const doc = dom.window.document;
 
-      doc.querySelectorAll('figure, figcaption, script, style, noscript, [class*="credit"], [class*="caption"]').forEach((el) => el.remove());
+      doc.querySelectorAll('figure, figcaption, script, style, noscript, [class*="credit"], [class*="caption"], [class*="ad"], [class*="share"]').forEach((el) => el.remove());
 
       const blocks = doc.querySelectorAll('p, h1, h2, h3, h4, h5, h6, blockquote, li');
-      const paragraphs: string[] = [];
 
       blocks.forEach((el) => {
         const text = decodeEntities(el.textContent || '')
@@ -80,26 +176,34 @@ function cleanArticleParagraphs(article: { content?: string | null; textContent?
           .replace(/\s+/g, ' ')
           .trim();
 
-        if (text.length > 0 && !/^\|?\s*photo credit/i.test(text) && !/^also read\s*:/i.test(text)) {
-          paragraphs.push(text);
+        if (text.length > 0 && !isJunkParagraph(text)) {
+          rawParagraphs.push(text);
         }
       });
-
-      if (paragraphs.length > 0) {
-        return paragraphs.join('\n\n');
-      }
     } catch (e) {
-      // Fallback
+      // Fallback below
     }
   }
 
-  const raw = decodeEntities(article.textContent || '');
-  return raw
-    .replace(/[\u00A0\u1680\u180E\u2000-\u200B\u202F\u205F\u3000\uFEFF]/g, ' ')
-    .split('\n')
-    .map((line) => line.replace(/\s+/g, ' ').trim())
-    .filter((line) => line.length > 0 && !/^\|?\s*photo credit/i.test(line) && !/^also read\s*:/i.test(line))
-    .join('\n\n');
+  if (rawParagraphs.length === 0) {
+    const raw = decodeEntities(article.textContent || '');
+    rawParagraphs = raw
+      .replace(/[\u00A0\u1680\u180E\u2000-\u200B\u202F\u205F\u3000\uFEFF]/g, ' ')
+      .split('\n')
+      .map((line) => line.replace(/\s+/g, ' ').trim())
+      .filter((line) => line.length > 0 && !isJunkParagraph(line));
+  }
+
+  if (rawParagraphs.length === 0) return '';
+
+  // Strip dateline / agency tags from the first paragraph
+  rawParagraphs[0] = stripDateline(rawParagraphs[0]);
+
+  // Remove repetitive SEO sentences
+  const deduplicated = deduplicateSentences(rawParagraphs);
+
+  // Inverted Pyramid: keep top paragraphs up to ~1,500 words for deep reading, lead 150 words for summary
+  return deduplicated.join('\n\n');
 }
 
 /**

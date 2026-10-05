@@ -9,7 +9,7 @@ const envSchema = z.object({
   CORS_ORIGIN: z.string().default('*'),
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
   REDIS_URL: z.string().default('redis://localhost:6379'),
-  INGEST_CRON_SCHEDULE: z.string().default('*/5 * * * *'),
+  INGEST_CRON_SCHEDULE: z.string().default('*/25 * * * *'),
   GEMINI_API_KEY: z.string().optional().default(''),
   OPENAI_API_KEY: z.string().optional().default(''),
   GROQ_API_KEY: z.string().optional().default(''),
@@ -24,7 +24,7 @@ const envSchema = z.object({
   GOOGLE_WEB_CLIENT_ID: z.string().optional().default(''),
   OLLAMA_BASE_URL: z.string().default('http://localhost:11434/v1'),
   OLLAMA_MODEL: z.string().default('qwen2.5:0.5b'),
-  LOCAL_LLM_ENABLED: z.string().default('true'),
+  LOCAL_LLM_ENABLED: z.string().default('false'),
 });
 
 export const env = envSchema.parse(process.env);

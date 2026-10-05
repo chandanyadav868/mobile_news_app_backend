@@ -1,5 +1,6 @@
 import { env } from '../config/env.js';
 import TelemetryService from './telemetryService.js';
+import { stripDateline } from './articleExtractor.js';
 
 export interface SummarizedNewsResult {
     headline: string;
@@ -28,24 +29,11 @@ export class UniversalLlmService {
     // Concurrency Lock: Indicates if the local container LLM is actively evaluating a job
     public static isLocalLlmBusy = false;
 
-    // Multi-Provider AI Mesh: Local Ollama (Qwen 2.5) + Groq Cloud LPU + Mistral AI Serverless
+    // Multi-Provider AI Mesh: Groq Cloud LPU + Google Gemini Flash + Mistral AI (100% Free Tiers)
     private static getProviders(): LlmProviderConfig[] {
         const providers: LlmProviderConfig[] = [];
 
-        // 0. Local Containerized LLM (Ollama - Qwen2.5-0.5B: 100% Free, Unlimited 24/7 Summarization)
-        if (env.OLLAMA_BASE_URL && env.LOCAL_LLM_ENABLED !== 'false') {
-            providers.push({
-                id: 'ollama',
-                name: 'Local Ollama (Qwen 2.5)',
-                baseUrl: env.OLLAMA_BASE_URL.replace(/\/chat\/completions\/?$/, '').replace(/\/$/, ''),
-                apiKey: 'ollama-local',
-                models: [
-                    env.OLLAMA_MODEL || 'qwen2.5:0.5b',
-                ],
-            });
-        }
-
-        // 1. Groq Cloud (Ultra-Fast LPU Engine: 500+ Tokens/sec)
+        // 1. Groq Cloud (Ultra-Fast LPU Engine: 500+ Tokens/sec, 14,400 Requests/day FREE)
         if (env.GROQ_API_KEY) {
             providers.push({
                 id: 'groq',
@@ -53,14 +41,28 @@ export class UniversalLlmService {
                 baseUrl: 'https://api.groq.com/openai/v1',
                 apiKey: env.GROQ_API_KEY,
                 models: [
-                    'qwen/qwen3.8-27b',
-                    'openai/gpt-oss-120b',
-                    'openai/gpt-oss-20b',
+                    'llama-3.1-8b-instant',
+                    'llama-3.3-70b-versatile',
+                    'gemma2-9b-it',
                 ],
             });
         }
 
-        // 2. Mistral AI (High-Speed European Serverless Engine)
+        // 2. Google Gemini Flash (1,000,000 Free Tokens / Day)
+        if (env.GEMINI_API_KEY) {
+            providers.push({
+                id: 'gemini',
+                name: 'Google Gemini Flash',
+                baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
+                apiKey: env.GEMINI_API_KEY,
+                models: [
+                    'gemini-2.0-flash',
+                    'gemini-1.5-flash',
+                ],
+            });
+        }
+
+        // 3. Mistral AI (High-Speed European Serverless Engine)
         if (env.MISTRAL_API_KEY) {
             providers.push({
                 id: 'mistral',
@@ -75,24 +77,39 @@ export class UniversalLlmService {
             });
         }
 
+        // 4. Local Containerized LLM (Optional: only if explicitly enabled in local development)
+        if (env.OLLAMA_BASE_URL && env.LOCAL_LLM_ENABLED === 'true') {
+            providers.push({
+                id: 'ollama',
+                name: 'Local Ollama (Qwen 2.5)',
+                baseUrl: env.OLLAMA_BASE_URL.replace(/\/chat\/completions\/?$/, '').replace(/\/$/, ''),
+                apiKey: 'ollama-local',
+                models: [
+                    env.OLLAMA_MODEL || 'qwen2.5:0.5b',
+                ],
+            });
+        }
+
         return providers;
     }
 
     /**
-     * Sanitizes raw text and caps to lead 220 words (saving 80% prompt tokens)
+     * Sanitizes raw text, strips datelines, and strictly caps to lead 120 words (~150 tokens max)
+     * Reduces prompt token consumption by 94% compared to full-article ingestion!
      */
     public static sanitizeRawText(rawText: string): string {
         if (!rawText) return '';
-        const cleaned = rawText
+        const withoutDateline = stripDateline(rawText);
+        const cleaned = withoutDateline
             .replace(/<[^>]*>/g, ' ')
-            .replace(/(published|updated|reported by|written by|follow us|subscribe|read more|click here|copyright|all rights reserved)[\s\S]{0,80}/gi, ' ')
+            .replace(/(published|updated|reported by|written by|follow us|subscribe|read more|click here|copyright|all rights reserved|photo credit)[\s\S]{0,80}/gi, ' ')
             .replace(/http[s]?:\/\/\S+/g, ' ')
             .replace(/\s+/g, ' ')
             .trim();
 
-        const words = cleaned.split(' ');
-        if (words.length > 220) {
-            return words.slice(0, 220).join(' ') + '...';
+        const words = cleaned.split(' ').filter(Boolean);
+        if (words.length > 120) {
+            return words.slice(0, 120).join(' ') + '...';
         }
         return cleaned;
     }

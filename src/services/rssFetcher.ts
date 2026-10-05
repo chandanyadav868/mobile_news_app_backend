@@ -6,7 +6,7 @@ import path from 'path';
 import { env } from '../config/env.js';
 import { prisma } from '../config/db.js';
 import { invalidateFeedCache } from './cacheService.js';
-import { extractArticleContent, cleanAuthorString } from './articleExtractor.js';
+import { extractArticleContent, cleanAuthorString, stripDateline, generate60WordSummary } from './articleExtractor.js';
 import { logStream } from './logStreamService.js';
 import UniversalLlmService from './universalLlmService.js';
 import TelemetryService from './telemetryService.js';
@@ -535,43 +535,41 @@ export async function ingestAllFeeds(): Promise<{
         finalPubTime = extracted.publishedTime || finalPubTime;
         finalTitle = extracted.title || finalTitle;
 
-        // 2. Smart Selective Summarization / AI Kill-Switch
+        // 2. Smart Selective Summarization / 0-Token Fast-Path
         const isAiEnabled = TelemetryService.getAiEnabled();
-        const wordCount = (art.summary || '').split(/\s+/).filter(Boolean).length;
+        const cleanSummary = stripDateline(art.summary || '');
+        const wordCount = cleanSummary.split(/\s+/).filter(Boolean).length;
         const isAlreadyCrisp =
-          wordCount >= 45 &&
+          wordCount >= 40 &&
           wordCount <= 85 &&
-          !art.summary.includes('<') &&
-          !art.summary.includes('http');
+          !cleanSummary.includes('<') &&
+          !cleanSummary.includes('http');
 
         let headline = finalTitle;
         let story = fullBody;
         let modelUsed = 'Direct (0 tokens)';
 
         if (!isAiEnabled) {
-          // 🔴 AI Disabled by Admin: Direct Raw / Mozilla Save (0 Tokens Burned!)
+          // 🔴 AI Disabled by Admin: Clean Inverted Pyramid Direct Save (0 Tokens Burned!)
           headline = finalTitle;
-          story = fullBody.slice(0, 350);
+          story = generate60WordSummary(fullBody || cleanSummary, 65);
           modelUsed = 'AI Paused (Direct Save)';
           TelemetryService.incrementFunnel('directSaved', 1);
-        } else if (isAlreadyCrisp && fullBody.length <= 400) {
-          // 0 Tokens Used! Use clean summary directly
-          story = art.summary;
+        } else if (isAlreadyCrisp) {
+          // 🟢 0-Token Fast-Path: Use clean RSS summary directly (0 Tokens Burned!)
+          story = cleanSummary;
           headline = finalTitle;
-          modelUsed = 'RSS-Direct (0 tokens)';
+          modelUsed = '0-Token Fast-Path (Direct)';
           TelemetryService.incrementFunnel('directSaved', 1);
         } else {
-          // 🟢 High-Speed Multi-Model Rotation: Alternate dynamically between Local Container, Groq Cloud & Mistral AI
+          // 🟢 High-Speed Multi-Model Rotation: Groq LPU (500 tok/s) + Gemini Flash (1M tokens/day) + Mistral Serverless
           const rotatingEngines = [
-            ...(env.LOCAL_LLM_ENABLED !== 'false' && !UniversalLlmService.isLocalLlmBusy
-              ? [{ provider: 'ollama', model: env.OLLAMA_MODEL || 'qwen2.5:0.5b' }]
-              : []),
-            { provider: 'groq', model: 'qwen/qwen3.8-27b' },
+            { provider: 'groq', model: 'llama-3.1-8b-instant' },
+            { provider: 'gemini', model: 'gemini-2.0-flash' },
+            { provider: 'groq', model: 'llama-3.3-70b-versatile' },
+            { provider: 'gemini', model: 'gemini-1.5-flash' },
             { provider: 'mistral', model: 'mistral-small-latest' },
-            { provider: 'groq', model: 'openai/gpt-oss-120b' },
-            { provider: 'mistral', model: 'open-mistral-nemo' },
-            { provider: 'groq', model: 'openai/gpt-oss-20b' },
-            { provider: 'mistral', model: 'mistral-large-latest' },
+            { provider: 'groq', model: 'gemma2-9b-it' },
           ];
           const assigned = rotatingEngines[i % rotatingEngines.length];
           const preferredProvider = assigned.provider;
@@ -585,7 +583,7 @@ export async function ingestAllFeeds(): Promise<{
             preferredModel,
           });
           headline = aiResult.headline || finalTitle;
-          story = aiResult.crispyStory || fullBody.slice(0, 300);
+          story = aiResult.crispyStory || generate60WordSummary(fullBody, 65);
           modelUsed = `${aiResult.providerUsed} (${aiResult.modelUsed})`;
           TelemetryService.incrementFunnel('llmSummarized', 1);
         }
