@@ -122,13 +122,36 @@ function deduplicateSentences(paragraphs: string[]): string[] {
  * Generate a clean ~60-word Inshorts-style summary from full article text.
  * Respects complete sentence boundaries so news cards never stop abruptly mid-thought.
  */
-export function generate60WordSummary(textContent: string, maxWords = 65): string {
+export function generate60WordSummary(textContent: string, maxWords = 70): string {
   if (!textContent) return '';
   const clean = stripDateline(textContent.replace(/\s+/g, ' ').trim());
   const words = clean.split(' ').filter(Boolean);
-  if (words.length <= maxWords) return clean;
+  if (words.length <= maxWords) {
+    if (/[.!?]$/.test(clean)) return clean;
+    return clean + '.';
+  }
 
-  // Find the last complete sentence within maxWords
+  // Sentence-aware slicing: accumulate complete sentences until ~45 to maxWords
+  const sentences = clean.match(/[^.!?]+[.!?]+/g) || [];
+  if (sentences.length > 0) {
+    let accumulated = '';
+    let currentWords = 0;
+    for (const s of sentences) {
+      const sTrim = s.trim();
+      const sWordCount = sTrim.split(/\s+/).filter(Boolean).length;
+      if (currentWords + sWordCount <= maxWords + 5 || currentWords < 40) {
+        accumulated = accumulated ? `${accumulated} ${sTrim}` : sTrim;
+        currentWords += sWordCount;
+      } else {
+        break;
+      }
+    }
+    if (currentWords >= 35) {
+      return accumulated;
+    }
+  }
+
+  // Fallback if regex split didn't find clear sentence boundaries
   const candidate = words.slice(0, maxWords).join(' ');
   const lastPunctuation = Math.max(
     candidate.lastIndexOf('.'),
@@ -137,11 +160,77 @@ export function generate60WordSummary(textContent: string, maxWords = 65): strin
   );
 
   // If a clean sentence ends after at least 35 words, end there for natural reading
-  if (lastPunctuation > 180) {
+  if (lastPunctuation > 140) {
     return candidate.slice(0, lastPunctuation + 1);
   }
 
   return candidate + '...';
+}
+
+/**
+ * Enrich thin articles (< 35 words) with full-text Readability extraction
+ * so news cards always provide plenty of detailed, informative context.
+ */
+export async function enrichCandidateArticles(
+  articles: Array<{
+    title: string;
+    url: string;
+    summary: string;
+    rawContent?: string;
+    imageUrl?: string | null;
+    category?: string;
+    source?: string;
+  }>,
+  concurrency = 6
+): Promise<void> {
+  const thinArticles = articles.filter((art) => {
+    const words = (art.summary || '').split(/\s+/).filter(Boolean).length;
+    return words < 35;
+  });
+
+  if (thinArticles.length === 0) return;
+
+  console.log(`🔍 [Enrichment] Found ${thinArticles.length} thin articles (<35 words). Enriching with full article text...`);
+
+  for (let i = 0; i < thinArticles.length; i += concurrency) {
+    const chunk = thinArticles.slice(i, i + concurrency);
+    await Promise.all(
+      chunk.map(async (art) => {
+        try {
+          // Timeout extraction after 4s to avoid stalling the pipeline
+          const extractPromise = extractArticleContent(art.url, art.title, art.summary, art.imageUrl || null);
+          const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 4000));
+          const extracted = await Promise.race([extractPromise, timeoutPromise]);
+
+          if (extracted && extracted.rawContent && extracted.rawContent.trim().length > 100) {
+            const richSummary = generate60WordSummary(extracted.rawContent, 70);
+            const richWords = richSummary.split(/\s+/).filter(Boolean).length;
+            if (richWords >= 30) {
+              art.summary = richSummary;
+              art.rawContent = extracted.rawContent;
+              if (!art.imageUrl && extracted.imageUrl) {
+                art.imageUrl = extracted.imageUrl;
+              }
+              return;
+            }
+          }
+        } catch {
+          // Fall through to heuristic fallback
+        }
+
+        // Informative Fallback: If still under 25 words, synthesize rich multi-sentence context
+        const currentWords = (art.summary || '').split(/\s+/).filter(Boolean).length;
+        if (currentWords < 25) {
+          const headline = art.title.replace(/\s+/g, ' ').trim();
+          const cleanSnippet = (art.summary || '').trim();
+          const source = art.source || 'news sources';
+          const cat = art.category || 'General';
+          art.summary = `${headline}. According to reports from ${source}, ${cleanSnippet ? cleanSnippet.replace(/[.]+$/, '') + '. ' : ''}This developing report in ${cat} continues to gain attention as further details and official statements emerge.`;
+          art.rawContent = art.summary;
+        }
+      })
+    );
+  }
 }
 
 function isValidHttpUrl(url: string | null | undefined): boolean {

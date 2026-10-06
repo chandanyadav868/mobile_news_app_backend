@@ -6,7 +6,7 @@ import path from 'path';
 import { env } from '../config/env.js';
 import { prisma } from '../config/db.js';
 import { invalidateFeedCache } from './cacheService.js';
-import { extractArticleContent, cleanAuthorString, stripDateline, generate60WordSummary } from './articleExtractor.js';
+import { extractArticleContent, cleanAuthorString, stripDateline, generate60WordSummary, enrichCandidateArticles } from './articleExtractor.js';
 import { logStream } from './logStreamService.js';
 import UniversalLlmService from './universalLlmService.js';
 import TelemetryService from './telemetryService.js';
@@ -526,13 +526,20 @@ export async function ingestAllFeeds(): Promise<{
     const categoryInsertedCounts: Record<string, number> = {};
 
     if (storiesToInsert.length > 0) {
+      // 🌟 Deep Enrichment: Ensure every thin article (<35 words) gets rich, informative context via Mozilla Readability
+      try {
+        await enrichCandidateArticles(storiesToInsert);
+      } catch (enrichErr) {
+        console.warn('⚠️ [Enrichment Warning] Non-critical error during article enrichment:', enrichErr);
+      }
+
       console.log(`💾 [Ingest Pipeline] Batch-inserting ${storiesToInsert.length} balanced stories across ${categoryBuckets.size} categories into PostgreSQL & Redis ring buffer...`);
       logStream.emitLog('info', `⚡ Batch-inserting ${storiesToInsert.length} balanced stories across ${categoryBuckets.size} categories into PostgreSQL database...`);
 
       const preparedArticles = storiesToInsert.map((art) => ({
         hash: art.hash,
         title: art.title,
-        summary: generate60WordSummary(stripDateline(art.summary || art.title), 65),
+        summary: generate60WordSummary(stripDateline(art.summary || art.title), 70),
         rawContent: art.rawContent || art.summary,
         url: art.url,
         imageUrl: art.imageUrl,
