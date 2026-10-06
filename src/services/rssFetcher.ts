@@ -607,12 +607,21 @@ export async function ingestAllFeeds(): Promise<{
           TelemetryService.incrementFunnel('dbInserted', result.count);
           TelemetryService.incrementFunnel('directSaved', result.count);
 
-          // Push into Redis ring buffers for instant sub-millisecond serving & count per category
-          for (const item of chunk) {
-            pushArticleToRingBuffer(item as any).catch(() => {});
-            const cat = item.category || 'General';
-            categoryInsertedCounts[cat] = (categoryInsertedCounts[cat] || 0) + 1;
-            NewsBroadcastService.incrementCategoryNewCount(cat, 1).catch(() => {});
+          // Only push into Redis ring buffers & count per category if articles were GENUINELY inserted
+          if (result.count > 0) {
+            const hashes = chunk.map((c) => c.hash);
+            const newlyInsertedRows = await prisma.article.findMany({
+              where: { hash: { in: hashes } },
+              orderBy: { createdAt: 'desc' },
+              take: result.count,
+            });
+
+            for (const item of newlyInsertedRows) {
+              pushArticleToRingBuffer(item as any).catch(() => {});
+              const cat = item.category || 'General';
+              categoryInsertedCounts[cat] = (categoryInsertedCounts[cat] || 0) + 1;
+              NewsBroadcastService.incrementCategoryNewCount(cat, 1).catch(() => {});
+            }
           }
           console.log(`💾 [Batch Insert] Inserted chunk ${Math.floor(i / INSERT_CHUNK) + 1} (${result.count} new articles saved across categories)...`);
         } catch (dbErr: any) {
@@ -707,6 +716,9 @@ export async function ingestAllFeeds(): Promise<{
           checkedAt: new Date().toISOString(),
         }).catch((e) => console.warn('[SSE Broadcast Error]:', e.message));
       }
+    } else {
+      // ⚡ Safe Cleanup: zero new articles inserted, clear any lingering Redis category unread counts
+      await NewsBroadcastService.resetCategoryCounts().catch(() => {});
     }
 
     lastSuccessfulScrapeTime = new Date();

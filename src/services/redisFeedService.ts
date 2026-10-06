@@ -44,15 +44,30 @@ export async function pushArticleToRingBuffer(article: {
   updateMemoryBuffer(catKey);
   updateMemoryBuffer(mainKey);
 
-  // 2. Redis Ring Buffer update (LPUSH + LTRIM 0 99)
+  // 2. Redis Ring Buffer update with atomic duplicate removal
   if (checkRedisHealth() && redis) {
     try {
-      const pipeline = redis.pipeline();
-      pipeline.lpush(catKey, serialized);
-      pipeline.ltrim(catKey, 0, RING_BUFFER_SIZE - 1);
-      pipeline.lpush(mainKey, serialized);
-      pipeline.ltrim(mainKey, 0, RING_BUFFER_SIZE - 1);
-      await pipeline.exec();
+      const updateRedisBuffer = async (key: string) => {
+        const rawItems = await redis!.lrange(key, 0, RING_BUFFER_SIZE - 1);
+        const filtered = (rawItems || []).filter((raw) => {
+          try {
+            const parsed = JSON.parse(raw);
+            return parsed.url !== article.url && (article.id ? parsed.id !== article.id : true);
+          } catch {
+            return true;
+          }
+        });
+        filtered.unshift(serialized);
+        const pipeline = redis!.pipeline();
+        pipeline.del(key);
+        pipeline.rpush(key, ...filtered.slice(0, RING_BUFFER_SIZE));
+        await pipeline.exec();
+      };
+
+      await Promise.all([
+        updateRedisBuffer(catKey),
+        updateRedisBuffer(mainKey),
+      ]);
     } catch (err: any) {
       console.warn('⚠️ [Redis Ring Buffer] Failed to update Redis, memory updated:', err?.message || err);
     }

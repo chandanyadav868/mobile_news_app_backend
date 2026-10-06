@@ -296,14 +296,7 @@ export async function checkNewArticles(req: Request, res: Response) {
     };
 
     if (sinceDate) {
-      whereClause.AND = [
-        {
-          OR: [
-            { publishedAt: { gt: sinceDate } },
-            { createdAt: { gt: sinceDate } },
-          ],
-        },
-      ];
+      whereClause.publishedAt = { gt: sinceDate };
     }
 
     if (!isAllCategories && categoryList.length > 0) {
