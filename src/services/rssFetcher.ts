@@ -171,6 +171,50 @@ function decodeEntities(text: string): string {
     .trim();
 }
 
+export function extractTitleFromUrlOrText(url: string, rawItem: any): string {
+  // 1. Try explicit RSS title fields
+  const candidates = [
+    rawItem?.title,
+    rawItem?.['itunes:title'],
+    rawItem?.['media:title'],
+    rawItem?.['dc:title'],
+  ];
+  for (const c of candidates) {
+    if (c && typeof c === 'string') {
+      const clean = decodeEntities(c).trim();
+      if (clean && !clean.toLowerCase().includes('untitled') && clean.length > 3) {
+        return clean;
+      }
+    }
+  }
+
+  // 2. Try URL slug (e.g. /video/scott-jennings-harris-vp-race-sotu-digvid)
+  try {
+    const pathname = new URL(url).pathname;
+    const parts = pathname.split('/').filter(Boolean);
+    const last = parts[parts.length - 1] || '';
+    const slug = last.replace(/\.[a-zA-Z0-9]+$/, '').replace(/[-_]+/g, ' ').trim();
+    if (slug.length >= 8 && !/^\d+$/.test(slug)) {
+      return slug
+        .split(' ')
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ');
+    }
+  } catch {}
+
+  // 3. Try lead sentence of summary / description
+  const snippet = decodeEntities(rawItem?.contentSnippet || rawItem?.content || rawItem?.summary || rawItem?.description || '');
+  if (snippet) {
+    const firstSentence = snippet.split(/[.!?]/)[0]?.trim();
+    if (firstSentence && firstSentence.length > 10) {
+      const words = firstSentence.split(/\s+/).slice(0, 12).join(' ');
+      return words;
+    }
+  }
+
+  return 'News Update';
+}
+
 import { RSS_FEEDS } from '../constants/feeds.js';
 
 export function normalizeFeedUrl(url: string): string {
@@ -367,7 +411,7 @@ export async function fetchSingleFeed(
       imageUrl = upgradeImageUrlToHighRes(imageUrl);
 
       const rawItem = item as any;
-      const title = decodeEntities(rawItem.title || '') || 'Untitled Story';
+      const title = extractTitleFromUrlOrText(link, rawItem);
       const summary = decodeEntities(rawItem.contentSnippet || rawItem.content || rawItem.summary || rawItem.description || '');
       const rawContent = rawItem.content || rawItem['content:encoded'] || rawItem.description || '';
 

@@ -34,10 +34,23 @@ export async function deleteCache(key: string): Promise<void> {
 export async function invalidateFeedCache(): Promise<void> {
   if (!checkRedisHealth() || !redis) return;
   try {
-    const keys = await redis.keys('news:*');
-    if (keys.length > 0) {
-      await redis.del(...keys);
-      console.log(`🧹 [Cache] Cleared ${keys.length} news cache keys`);
+    const allKeys = await redis.keys('news:*');
+    // Strictly preserve ring buffers and unread tracking counters
+    const keysToDelete = allKeys.filter((k) => {
+      // 1. Never delete main ring buffer
+      if (k === 'news:feed:main') return false;
+      // 2. Never delete category unread counter hash
+      if (k === 'news:category_new_counts') return false;
+      // 3. Never delete category ring buffers (format: news:category:<name>, no colons afterwards)
+      if (k.startsWith('news:category:') && !k.includes(':p') && !k.includes(':IN') && !k.includes(':GLOBAL') && !k.includes(':US')) {
+        return false;
+      }
+      return true;
+    });
+
+    if (keysToDelete.length > 0) {
+      await redis.del(...keysToDelete);
+      console.log(`🧹 [Cache] Cleared ${keysToDelete.length} cached API responses (strictly preserved Redis ring buffers)`);
     }
   } catch (error) {
     // Ignore

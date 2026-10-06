@@ -101,6 +101,10 @@ export async function getCategoryRingBufferPaginated(
  */
 export async function getCategoryRingBuffer(category: string, limit = RING_BUFFER_SIZE): Promise<any[]> {
   const normCat = normalizeCat(category);
+  const isMain = normCat === 'my feed' || normCat === 'all' || normCat === 'trending' || normCat === 'daily dose' || normCat === '⏰ daily dose';
+  if (isMain) {
+    return await getMainFeedRingBuffer('IN', limit);
+  }
   const catKey = `news:category:${normCat}`;
 
   // 1. Try Redis LRANGE

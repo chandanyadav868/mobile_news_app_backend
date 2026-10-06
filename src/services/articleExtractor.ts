@@ -447,18 +447,49 @@ export async function extractArticleContent(
     const rawAuthor = authorMeta ? authorMeta.getAttribute('content')?.trim() || null : null;
     const author = cleanAuthorString(rawAuthor);
 
-    // 3. Run Mozilla Readability Parser
+    // 3. Extract OpenGraph & HTML Title
+    const ogTitle =
+      doc.querySelector('meta[property="og:title"]')?.getAttribute('content') ||
+      doc.querySelector('meta[name="twitter:title"]')?.getAttribute('content') ||
+      doc.querySelector('h1')?.textContent ||
+      doc.title ||
+      '';
+
+    // 4. Run Mozilla Readability Parser
     const reader = new Readability(doc);
     const parsedArticle = reader.parse();
 
+    const cleanParsedTitle = decodeEntities(parsedArticle?.title || '');
+    let resolvedTitle = cleanParsedTitle && !cleanParsedTitle.toLowerCase().includes('untitled')
+      ? cleanParsedTitle
+      : decodeEntities(ogTitle).trim() || decodeEntities(fallbackTitle).trim();
+
+    if (!resolvedTitle || resolvedTitle.toLowerCase().includes('untitled')) {
+      try {
+        const parts = new URL(cleanUrl).pathname.split('/').filter(Boolean);
+        const last = parts[parts.length - 1] || '';
+        const slug = last.replace(/\.[a-zA-Z0-9]+$/, '').replace(/[-_]+/g, ' ').trim();
+        if (slug.length >= 8 && !/^\d+$/.test(slug)) {
+          resolvedTitle = slug.split(' ').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        }
+      } catch {}
+    }
+
+    if (!resolvedTitle || resolvedTitle.toLowerCase().includes('untitled')) {
+      const snippet = decodeEntities(fallbackSnippet);
+      const firstSentence = snippet.split(/[.!?]/)[0]?.trim();
+      resolvedTitle = firstSentence && firstSentence.length > 10
+        ? firstSentence.split(/\s+/).slice(0, 12).join(' ')
+        : 'News Update';
+    }
+
     if (parsedArticle && parsedArticle.textContent && parsedArticle.textContent.trim().length > 100) {
       const cleanFullText = cleanArticleParagraphs(parsedArticle);
-      const smartSummary = generate60WordSummary(cleanFullText, 65);
-      const articleTitle = decodeEntities(parsedArticle.title || fallbackTitle);
+      const smartSummary = generate60WordSummary(cleanFullText, 70);
       const cleanedByline = cleanAuthorString(parsedArticle.byline);
 
       return {
-        title: articleTitle,
+        title: resolvedTitle,
         summary: smartSummary || decodeEntities(fallbackSnippet),
         rawContent: cleanFullText,
         imageUrl: ogImage || fallbackImage,
@@ -471,7 +502,7 @@ export async function extractArticleContent(
 
     // Fallback if readability couldn't parse enough text (e.g. video pages or paywalls)
     return {
-      title: decodeEntities(fallbackTitle),
+      title: resolvedTitle,
       summary: decodeEntities(fallbackSnippet),
       rawContent: decodeEntities(fallbackSnippet),
       imageUrl: ogImage || fallbackImage,
