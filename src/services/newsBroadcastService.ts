@@ -3,6 +3,8 @@ import { redis } from '../config/redis.js';
 
 export interface NewArticlesBroadcastPayload {
   count: number;
+  categoryCounts?: Record<string, number>;
+  categoriesWithNew?: string[];
   latestArticle: {
     id: string;
     title: string;
@@ -18,6 +20,7 @@ export interface NewArticlesBroadcastPayload {
 const REDIS_CHANNEL = 'news_stream_channel';
 const REDIS_KEY_LATEST_TIME = 'news:latest_ingest_time';
 const REDIS_KEY_LATEST_BATCH = 'news:latest_batch_summary';
+const REDIS_KEY_CATEGORY_COUNTS = 'news:category_new_counts';
 
 export class NewsBroadcastService {
   private static clients: Set<Response> = new Set();
@@ -106,34 +109,93 @@ export class NewsBroadcastService {
   }
 
   /**
+   * Increment unread count for a category in Redis
+   */
+  public static async incrementCategoryNewCount(category: string, count: number): Promise<void> {
+    if (!redis || !category || count <= 0) return;
+    try {
+      await redis.hincrby(REDIS_KEY_CATEGORY_COUNTS, category, count);
+    } catch (err: any) {
+      console.warn('[NewsBroadcast] Redis hincrby note:', err.message);
+    }
+  }
+
+  /**
+   * Retrieve current unread counts per category from Redis
+   */
+  public static async getCategoryUnreadCounts(): Promise<Record<string, number>> {
+    if (!redis) return {};
+    try {
+      const data = await redis.hgetall(REDIS_KEY_CATEGORY_COUNTS);
+      const result: Record<string, number> = {};
+      for (const [cat, val] of Object.entries(data || {})) {
+        const num = parseInt(val, 10);
+        if (!isNaN(num) && num > 0) result[cat] = num;
+      }
+      return result;
+    } catch {
+      return {};
+    }
+  }
+
+  /**
+   * Reset category unread counts in Redis after broadcasting to connected clients
+   */
+  public static async resetCategoryCounts(): Promise<void> {
+    if (!redis) return;
+    try {
+      await redis.del(REDIS_KEY_CATEGORY_COUNTS);
+    } catch (err: any) {
+      console.warn('[NewsBroadcast] Redis del error:', err.message);
+    }
+  }
+
+  /**
    * Broadcast new articles to all connected mobile devices
    * Called by RSS Ingest Worker whenever brand-new articles are saved
    */
   public static async notifyNewArticles(payload: NewArticlesBroadcastPayload): Promise<void> {
     const nowIso = payload.checkedAt || new Date().toISOString();
 
+    const categoryCounts = payload.categoryCounts || {};
+    const categoriesWithNew = payload.categoriesWithNew || Object.keys(categoryCounts).filter(
+      (cat) => (categoryCounts[cat] || 0) > 0
+    );
+
+    const enrichedPayload: NewArticlesBroadcastPayload = {
+      ...payload,
+      categoryCounts,
+      categoriesWithNew,
+      checkedAt: nowIso,
+    };
+
     // 1. Persist latest batch info in Redis for sub-millisecond HTTP polling gating
     if (redis) {
       try {
         await Promise.all([
           redis.set(REDIS_KEY_LATEST_TIME, nowIso),
-          redis.set(REDIS_KEY_LATEST_BATCH, JSON.stringify(payload)),
-          redis.publish(REDIS_CHANNEL, JSON.stringify(payload)),
+          redis.set(REDIS_KEY_LATEST_BATCH, JSON.stringify(enrichedPayload)),
+          redis.publish(REDIS_CHANNEL, JSON.stringify(enrichedPayload)),
         ]);
+        // ⚡ Atomic Reset: Reset category unread counts in Redis right after broadcast
+        // Prevents duplicate accumulation across consecutive cron runs
+        await redis.del(REDIS_KEY_CATEGORY_COUNTS);
       } catch (err: any) {
         console.warn('[NewsBroadcast] Redis publish note:', err.message);
       }
     }
 
     // 2. Emit to locally connected SSE clients on this Node instance
-    this.emitToLocalClients(payload);
+    this.emitToLocalClients(enrichedPayload);
   }
 
   private static emitToLocalClients(payload: NewArticlesBroadcastPayload): void {
     if (this.clients.size === 0) return;
 
     const data = `event: new_articles\ndata: ${JSON.stringify(payload)}\n\n`;
-    console.log(`⚡ [NewsBroadcast] Emitting new articles event (${payload.count} new) to ${this.clients.size} connected devices.`);
+    console.log(
+      `⚡ [NewsBroadcast] Emitting new articles event (${payload.count} new, categories: ${(payload.categoriesWithNew || []).join(', ') || 'all'}) to ${this.clients.size} connected devices.`
+    );
 
     this.clients.forEach((res) => {
       try {

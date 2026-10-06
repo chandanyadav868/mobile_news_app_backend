@@ -282,6 +282,8 @@ export async function checkNewArticles(req: Request, res: Response) {
             source: 'redis-ingest-gate',
             hasNew: false,
             count: 0,
+            categoryCounts: {},
+            categoriesWithNew: [],
             checkedAt: new Date().toISOString(),
             latestArticle: null,
           });
@@ -308,7 +310,7 @@ export async function checkNewArticles(req: Request, res: Response) {
       whereClause.category = { in: categoryList, mode: 'insensitive' };
     }
 
-    const [newCount, latestArticle] = await Promise.all([
+    const [newCount, latestArticle, categoryGroupings] = await Promise.all([
       prisma.article.count({ where: whereClause }),
       prisma.article.findFirst({
         where: whereClause,
@@ -324,12 +326,28 @@ export async function checkNewArticles(req: Request, res: Response) {
           publishedAt: true,
         },
       }),
+      prisma.article.groupBy({
+        by: ['category'],
+        where: whereClause,
+        _count: { id: true },
+      }).catch(() => []),
     ]);
+
+    const categoryCounts: Record<string, number> = {};
+    categoryGroupings.forEach((g: any) => {
+      if (g.category && g._count?.id > 0) {
+        categoryCounts[g.category] = g._count.id;
+      }
+    });
+
+    const categoriesWithNew = Object.keys(categoryCounts).filter((c) => categoryCounts[c] > 0);
 
     return res.json({
       success: true,
       hasNew: newCount > 0,
       count: newCount,
+      categoryCounts,
+      categoriesWithNew,
       checkedAt: new Date().toISOString(),
       latestArticle: latestArticle
         ? {

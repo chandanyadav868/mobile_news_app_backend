@@ -424,6 +424,7 @@ export async function ingestAllFeeds(): Promise<{
     const feedTasks = getUnifiedFeedTasks();
     const allCandidateArticles: ParsedArticle[] = [];
 
+    console.log(`📡 [Ingest Worker] Scanning ${feedTasks.length} unified RSS feeds across all categories...`);
     logStream.emitLog(
       'scan',
       `📡 Loaded ${feedTasks.length} unified & deduplicated RSS endpoints across all categories. Starting XML fetch...`
@@ -442,15 +443,19 @@ export async function ingestAllFeeds(): Promise<{
           allCandidateArticles.push(...res.value);
         }
       });
+
+      if ((i + batchSize) % 60 === 0 || i + batchSize >= feedTasks.length) {
+        console.log(`📡 [Ingest Progress] Scanned ${Math.min(i + batchSize, feedTasks.length)}/${feedTasks.length} feeds (Collected ${allCandidateArticles.length} candidate stories so far)...`);
+      }
       // Small pause between XML batches
       await new Promise((r) => setTimeout(r, 10));
     }
 
     // ─── STAGE 1: IN-MEMORY TIMESTAMP CUTOFF FILTERING ───
-    // Rolling 36-hour window or 2-hour buffer before last successful run
+    // Rolling 7-day window on cold start, or 4-hour window on subsequent runs
     const cutoffDate = lastSuccessfulScrapeTime
-      ? new Date(lastSuccessfulScrapeTime.getTime() - 2 * 3600 * 1000)
-      : new Date(Date.now() - 36 * 3600 * 1000);
+      ? new Date(lastSuccessfulScrapeTime.getTime() - 4 * 3600 * 1000)
+      : new Date(Date.now() - 7 * 24 * 3600 * 1000);
 
     const freshCandidates = allCandidateArticles.filter((art) => {
       const pub = new Date(art.publishedAt);
@@ -468,16 +473,18 @@ export async function ingestAllFeeds(): Promise<{
     const uniqueArticles = Array.from(uniqueMap.values());
     const candidateHashes = uniqueArticles.map((a) => a.hash);
 
-    // ─── STAGE 2: POSTGRESQL GLOBAL HASH DEDUPLICATION (O(1) Indexed B-Tree) ───
-    // Query global indexed hashes across the table to ensure 100% of candidate articles are genuinely new
-    const existingArticles = await prisma.article.findMany({
-      where: {
-        hash: { in: candidateHashes },
-      },
-      select: { hash: true },
-    });
+    // ─── STAGE 2: POSTGRESQL GLOBAL HASH DEDUPLICATION (O(1) Indexed B-Tree in Safe 2000-Hash Chunks) ───
+    const existingHashSet = new Set<string>();
+    const HASH_CHUNK_SIZE = 2000;
+    for (let c = 0; c < candidateHashes.length; c += HASH_CHUNK_SIZE) {
+      const slice = candidateHashes.slice(c, c + HASH_CHUNK_SIZE);
+      const existing = await prisma.article.findMany({
+        where: { hash: { in: slice } },
+        select: { hash: true },
+      });
+      existing.forEach((a) => existingHashSet.add(a.hash));
+    }
 
-    const existingHashSet = new Set(existingArticles.map((a: { hash: string }) => a.hash));
     const newArticles = uniqueArticles.filter((a: ParsedArticle) => !existingHashSet.has(a.hash));
 
     const scanMsg = `⚡ [Deduplication] Filtered ${allCandidateArticles.length} raw RSS items ➔ ${uniqueArticles.length} fresh candidate stories (cutoff: ${cutoffDate.toLocaleTimeString()}). Found ${newArticles.length} brand-new stories to enrich.`;
@@ -497,14 +504,30 @@ export async function ingestAllFeeds(): Promise<{
       activeJobs: 1,
     });
 
-    // 4. High-Speed Batch Ingestion (Up to 250 fresh candidate articles immediately saved to PostgreSQL)
-    // Ensures the database and mobile app are instantly filled with hundreds of fresh stories!
+    // 4. Balanced Multi-Category Batch Ingestion (Guarantees ALL categories receive fresh stories!)
+    // Ensures Sports, Entertainment, Health, Science, Food, Hindi News etc. are never starved by Top Stories
     let insertedCount = 0;
-    const MAX_STORIES_PER_CYCLE = 250;
-    const storiesToInsert = newArticles.slice(0, MAX_STORIES_PER_CYCLE);
+    const categoryBuckets = new Map<string, ParsedArticle[]>();
+    newArticles.forEach((art) => {
+      const cat = art.category || 'General';
+      if (!categoryBuckets.has(cat)) {
+        categoryBuckets.set(cat, []);
+      }
+      categoryBuckets.get(cat)!.push(art);
+    });
+
+    const MAX_PER_CATEGORY = 35;
+    const storiesToInsert: ParsedArticle[] = [];
+    for (const [category, articles] of categoryBuckets.entries()) {
+      const takeCount = Math.min(articles.length, MAX_PER_CATEGORY);
+      storiesToInsert.push(...articles.slice(0, takeCount));
+    }
+
+    const categoryInsertedCounts: Record<string, number> = {};
 
     if (storiesToInsert.length > 0) {
-      logStream.emitLog('info', `⚡ Batch-inserting ${storiesToInsert.length} fresh stories into PostgreSQL database...`);
+      console.log(`💾 [Ingest Pipeline] Batch-inserting ${storiesToInsert.length} balanced stories across ${categoryBuckets.size} categories into PostgreSQL & Redis ring buffer...`);
+      logStream.emitLog('info', `⚡ Batch-inserting ${storiesToInsert.length} balanced stories across ${categoryBuckets.size} categories into PostgreSQL database...`);
 
       const preparedArticles = storiesToInsert.map((art) => ({
         hash: art.hash,
@@ -533,17 +556,21 @@ export async function ingestAllFeeds(): Promise<{
           TelemetryService.incrementFunnel('dbInserted', result.count);
           TelemetryService.incrementFunnel('directSaved', result.count);
 
-          // Push into Redis ring buffers for instant sub-millisecond serving
+          // Push into Redis ring buffers for instant sub-millisecond serving & count per category
           for (const item of chunk) {
             pushArticleToRingBuffer(item as any).catch(() => {});
+            const cat = item.category || 'General';
+            categoryInsertedCounts[cat] = (categoryInsertedCounts[cat] || 0) + 1;
+            NewsBroadcastService.incrementCategoryNewCount(cat, 1).catch(() => {});
           }
+          console.log(`💾 [Batch Insert] Inserted chunk ${Math.floor(i / INSERT_CHUNK) + 1} (${result.count} new articles saved across categories)...`);
         } catch (dbErr: any) {
           console.warn(`[Batch Insert Error]:`, dbErr?.message || dbErr);
         }
       }
 
-      console.log(`✅ [Ingest Pipeline] Inserted ${insertedCount} fresh stories into database & Redis.`);
-      logStream.emitLog('info', `✅ Successfully saved ${insertedCount} new stories across all categories.`);
+      console.log(`✅ [Ingest Pipeline] Inserted ${insertedCount} fresh stories across ${Object.keys(categoryInsertedCounts).length} active categories into database & Redis.`);
+      logStream.emitLog('info', `✅ Successfully saved ${insertedCount} new stories across ${Object.keys(categoryInsertedCounts).length} active categories.`);
     }
 
     // 5. Targeted AI Polish on Top 5 Breaking News (Runs seamlessly in background)
@@ -588,7 +615,7 @@ export async function ingestAllFeeds(): Promise<{
       }
     }
 
-    // 5. Invalidate Redis cache & Broadcast breaking news to all connected mobile devices in Redis
+    // 6. Invalidate Redis cache & Broadcast breaking news to all connected mobile devices
     if (insertedCount > 0) {
       await invalidateFeedCache();
       logStream.emitLog('info', '⚡ Redis cache invalidated with fresh headlines.');
@@ -608,9 +635,15 @@ export async function ingestAllFeeds(): Promise<{
           url: latestInserted.url,
         }).catch((e) => console.warn('[Push Broadcast Error]:', e.message));
 
-        // 📡 Real-Time Server Broadcast: Notify all connected mobile clients over SSE & Redis
+        const categoriesWithNew = Object.keys(categoryInsertedCounts).filter(
+          (c) => categoryInsertedCounts[c] > 0
+        );
+
+        // 📡 Real-Time Server Broadcast: Notify all connected mobile clients with per-category breakdown
         NewsBroadcastService.notifyNewArticles({
           count: insertedCount,
+          categoryCounts: categoryInsertedCounts,
+          categoriesWithNew,
           latestArticle: {
             id: latestInserted.id,
             title: latestInserted.title,
